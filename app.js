@@ -14,6 +14,7 @@ const HOTEL = {
 };
 
 const GOOGLE_MAPS_API_KEY = window.GOOGLE_MAPS_API_KEY || "";
+const GOOGLE_MAPS_USE_EMBED_API = window.GOOGLE_MAPS_USE_EMBED_API === true;
 
 const rawData = Array.isArray(window.WANHUA_POI_DATA) ? window.WANHUA_POI_DATA : [];
 const hotelRecord = rawData.find((place) => place.id === "wanhua_001");
@@ -489,7 +490,7 @@ function buildRouteUrl(place) {
 
 function buildEmbedUrl(place) {
   const query = buildMapQuery(place);
-  if (GOOGLE_MAPS_API_KEY) {
+  if (GOOGLE_MAPS_USE_EMBED_API && GOOGLE_MAPS_API_KEY) {
     return `https://www.google.com/maps/embed/v1/place?key=${encodeURIComponent(
       GOOGLE_MAPS_API_KEY
     )}&q=${encodeURIComponent(query)}&zoom=16`;

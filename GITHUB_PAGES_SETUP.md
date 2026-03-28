@@ -35,5 +35,7 @@ Recommended restrictions:
 
 - The repository keeps `google-maps-config.js` empty on purpose.
 - The real key is injected only during the GitHub Pages deployment workflow.
+- The deployed site currently keeps `window.GOOGLE_MAPS_USE_EMBED_API = false`, so it uses the stable Google Maps iframe fallback by default.
+- After you enable `Maps Embed API` in Google Cloud, you can switch that flag to `true` in the deployment workflow or output config.
 - The key will still be visible in the final browser-delivered page source, so restrictions are required.
 - Because this key was already pasted into chat/project history, rotating it after restrictions are in place is strongly recommended.

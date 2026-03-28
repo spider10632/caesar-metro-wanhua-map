@@ -35,7 +35,10 @@ jobs:
             --exclude ".github" \
             --exclude "dist" \
             ./ dist/
-          printf 'window.GOOGLE_MAPS_API_KEY = "%s";\n' "$MAPS_KEY" > dist/google-maps-config.js
+          {
+            printf 'window.GOOGLE_MAPS_API_KEY = "%s";\n' "$MAPS_KEY"
+            printf 'window.GOOGLE_MAPS_USE_EMBED_API = false;\n'
+          } > dist/google-maps-config.js
           touch dist/.nojekyll
 
       - name: Upload artifact
