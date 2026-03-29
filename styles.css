@@ -176,6 +176,8 @@ a {
 .hero__controls {
   display: inline-flex;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 10px;
 }
 
@@ -998,6 +1000,64 @@ html[lang="ja"] .hero-quick-nav__label {
   }
 }
 
+@media (max-width: 1280px) {
+  .hero--title-only {
+    padding: 28px 22px;
+    text-align: left;
+  }
+
+  .hero__title-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .hero__controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 10px;
+  }
+
+  .weather-widget {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .lang-switch {
+    justify-self: end;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.6rem, 8.2vw, 4.2rem);
+    line-height: 0.97;
+  }
+
+  .hero-quick-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 2px 0 4px;
+    gap: 8px;
+    scrollbar-width: none;
+  }
+
+  .hero-quick-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hero-quick-nav__label,
+  .hero-jump {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .hero-jump {
+    min-height: 36px;
+    padding: 0 12px;
+    font-size: 0.83rem;
+  }
+}
+
 @media (max-width: 1120px) {
   .experience,
   .spotlight__content {
@@ -1059,7 +1119,8 @@ html[lang="ja"] .hero-quick-nav__label {
   }
 
   .hero__controls {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
     align-items: stretch;
   }
 
@@ -1068,11 +1129,13 @@ html[lang="ja"] .hero-quick-nav__label {
   }
 
   .hero-quick-nav__label {
-    width: 100%;
+    width: auto;
   }
 
   .lang-switch {
-    align-self: flex-start;
+    width: 100%;
+    justify-content: space-between;
+    justify-self: stretch;
   }
 
   .weather-widget {
@@ -1233,18 +1296,19 @@ html[lang="ja"] .hero-quick-nav__label {
     padding: 20px 16px;
   }
 
-  .lang-switch {
-    width: 100%;
-    justify-content: space-between;
-  }
-
   .lang-button {
     flex: 1 1 0;
     min-width: 0;
   }
 
+  .hero-quick-nav__label {
+    display: none;
+  }
+
   .hero-jump {
-    flex: 1 1 calc(50% - 10px);
+    min-height: 34px;
+    font-size: 0.8rem;
+    padding: 0 11px;
   }
 
   .hero h1 {
