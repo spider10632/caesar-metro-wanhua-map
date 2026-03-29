@@ -61,6 +61,8 @@ const TEXT = {
     spotlight: "地圖聚焦", spotlightNote: "中間地圖直接使用 Google Maps 嵌入視窗",
     collection: "周邊清單", collectionHint: "點選卡片即可把中間 Google 地圖切到該地點。",
     baseLabel: "Concierge Base", baseName: "凱達大飯店", baseLocation: "位置", baseNearby: "鄰近", baseVersion: "飯店電話", baseOpen: "開啟飯店 Google Maps",
+    statusBeforeSearch: "請先設定條件後按「搜尋」，再顯示點位。",
+    listBeforeSearch: "請先按「搜尋」顯示點位清單。",
     statusNoResult: "目前沒有符合條件的地點，地圖先停留在凱達大飯店。",
     statusNoSelect: (n) => `共有 ${n} 個地點符合條件，目前維持以凱達大飯店作為地圖中心。`,
     statusSelected: (n, name) => `共有 ${n} 個地點符合條件，目前聚焦在「${name}」。`,
@@ -92,6 +94,8 @@ const TEXT = {
     spotlight: "Spotlight", spotlightNote: "The center map uses embedded Google Maps",
     collection: "Nearby List", collectionHint: "Tap a card to move the center map to that place.",
     baseLabel: "Concierge Base", baseName: "Caesar Metro Taipei", baseLocation: "Location", baseNearby: "Nearby", baseVersion: "Hotel Phone", baseOpen: "Open Hotel in Google Maps",
+    statusBeforeSearch: "Set your filters first, then tap Search to show places.",
+    listBeforeSearch: "Tap Search to show the place list.",
     statusNoResult: "No matching places right now. The map stays on Caesar Metro Taipei.",
     statusNoSelect: (n) => `${n} places match. The map remains centered on Caesar Metro Taipei.`,
     statusSelected: (n, name) => `${n} places match. Current focus: ${name}.`,
@@ -123,6 +127,8 @@ const TEXT = {
     spotlight: "地図フォーカス", spotlightNote: "中央地図は Google Maps 埋め込み表示です",
     collection: "周辺リスト", collectionHint: "カードを押すと中央地図がその場所に切り替わります。",
     baseLabel: "Concierge Base", baseName: "シーザーメトロ台北", baseLocation: "場所", baseNearby: "最寄り", baseVersion: "ホテル電話", baseOpen: "ホテルを Google Maps で開く",
+    statusBeforeSearch: "条件を設定して「検索」を押すと、スポット一覧が表示されます。",
+    listBeforeSearch: "「検索」を押すと周辺スポット一覧が表示されます。",
     statusNoResult: "条件に合うスポットがありません。地図はホテル中心のままです。",
     statusNoSelect: (n) => `${n}件が条件に一致しています。地図はホテル中心です。`,
     statusSelected: (n, name) => `${n}件が条件に一致しています。現在のフォーカス：${name}。`,
@@ -169,6 +175,7 @@ const state = {
   draft: createFilterState(),
   applied: createFilterState(),
   selectedPlaceId: null,
+  hasSearched: false,
   dirty: false,
   favorites: readFavorites(),
   walkingCache: readWalkingCache(),
@@ -226,6 +233,7 @@ const dom = {
   langButtons: document.querySelectorAll(".lang-button"),
   primaryFilters: document.querySelector("#primary-filters"),
   subcategoryFilters: document.querySelector("#subcategory-filters"),
+  mealBlock: document.querySelector("#meal-block"),
   mealFilters: document.querySelector("#meal-filters"),
   primaryCount: document.querySelector("#primary-count"),
   subcategoryCount: document.querySelector("#subcategory-count"),
@@ -259,7 +267,7 @@ const dom = {
 
 const filterValues = {
   primary: uniqueValues(places.map((p) => p.primary_category)),
-  subcategory: uniqueValues([...places.map((p) => p.subcategory), WALK_10MIN_SUBCATEGORY]),
+  subcategory: [WALK_10MIN_SUBCATEGORY],
   meal: uniqueValues(places.flatMap((p) => p.meal_tags)),
 };
 
@@ -405,6 +413,7 @@ function initializeFilters() {
   renderChipGroup(dom.primaryFilters, filterValues.primary, state.draft.primary, "primary");
   renderChipGroup(dom.subcategoryFilters, filterValues.subcategory, state.draft.subcategory, "subcategory");
   renderChipGroup(dom.mealFilters, filterValues.meal, state.draft.meal, "meal");
+  syncMealFilterVisibility();
   updateCounts();
   renderQuickFilters();
   syncPendingState();
@@ -510,7 +519,7 @@ function attachEvents() {
       dom.activeOnly.checked = true;
       if (button.dataset.quickPrimary) state.draft.primary.add(button.dataset.quickPrimary);
       initializeFilters();
-      applyDraftFilters();
+      markDirty();
     });
   });
 
@@ -518,6 +527,7 @@ function attachEvents() {
     state.draft = createFilterState();
     state.applied = createFilterState();
     state.selectedPlaceId = null;
+    state.hasSearched = false;
     state.dirty = false;
     dom.searchInput.value = "";
     dom.activeOnly.checked = true;
@@ -564,17 +574,22 @@ function attachEvents() {
 
 function markDirty() {
   state.dirty = true;
+  syncMealFilterVisibility();
   renderQuickFilters();
   syncPendingState();
 }
 
 function syncPendingState() {
-  dom.applyFilters.disabled = !state.dirty;
+  dom.applyFilters.disabled = !state.dirty && state.hasSearched;
   dom.filterPending.hidden = !state.dirty;
 }
 
 function applyDraftFilters() {
+  if (!state.draft.primary.has("餐飲")) {
+    state.draft.meal.clear();
+  }
   state.applied = cloneFilterState(state.draft);
+  state.hasSearched = true;
   state.dirty = false;
   renderQuickFilters();
   syncPendingState();
@@ -585,26 +600,36 @@ function applyDraftFilters() {
 }
 
 function renderQuickFilters() {
+  const base = state.dirty ? state.draft : state.applied;
   const activePrimary =
-    state.applied.primary.size === 1 &&
-    state.applied.subcategory.size === 0 &&
-    state.applied.meal.size === 0 &&
-    !state.applied.search &&
-    state.applied.activeOnly
-      ? [...state.applied.primary][0]
+    base.primary.size === 1 &&
+    base.subcategory.size === 0 &&
+    base.meal.size === 0 &&
+    !base.search &&
+    base.activeOnly
+      ? [...base.primary][0]
       : null;
 
   dom.quickFilters.forEach((button) => {
     const isAll =
       button.dataset.quickFilter === "all" &&
-      !state.applied.search &&
-      state.applied.activeOnly &&
-      state.applied.primary.size === 0 &&
-      state.applied.subcategory.size === 0 &&
-      state.applied.meal.size === 0;
+      !base.search &&
+      base.activeOnly &&
+      base.primary.size === 0 &&
+      base.subcategory.size === 0 &&
+      base.meal.size === 0;
     const isPrimary = button.dataset.quickPrimary && button.dataset.quickPrimary === activePrimary;
     button.classList.toggle("is-active", Boolean(isAll || isPrimary));
   });
+}
+
+function syncMealFilterVisibility() {
+  const showMealFilters = state.draft.primary.has("餐飲");
+  if (dom.mealBlock) dom.mealBlock.hidden = !showMealFilters;
+  if (!showMealFilters && state.draft.meal.size) {
+    state.draft.meal.clear();
+    renderChipGroup(dom.mealFilters, filterValues.meal, state.draft.meal, "meal");
+  }
 }
 
 function syncBackToTop() {
@@ -664,8 +689,10 @@ function isOpeningHoursRecordFresh(record) {
 
 function isClosedByGoogle(place) {
   const record = state.openingHoursCache[place.id];
-  if (!isOpeningHoursRecordFresh(record)) return false;
-  return record.businessStatus === "CLOSED_TEMPORARILY" || record.businessStatus === "CLOSED_PERMANENTLY";
+  if (!record) return false;
+  const status = normalizeText(record.businessStatus).toUpperCase();
+  if (status === "CLOSED_TEMPORARILY" || status === "CLOSED_PERMANENTLY") return true;
+  return hasClosedMarker(record.hours);
 }
 
 function getResolvedOpeningHours(place) {
@@ -733,7 +760,6 @@ function refreshOpeningHoursInBackground() {
       let changed = false;
 
       for (const place of targets) {
-        if (normalizeText(place.opening_hours)) continue;
         const record = state.openingHoursCache[place.id];
         if (isOpeningHoursRecordFresh(record)) continue;
 
@@ -1034,6 +1060,18 @@ function buildPlaceLookupQueries(place) {
 }
 
 function render() {
+  const text = TEXT[state.lang] || TEXT.zh;
+  if (!state.hasSearched) {
+    dom.resultCount.textContent = "0";
+    dom.focusLabel.textContent = getDisplayName(HOTEL);
+    dom.statusText.textContent = text.statusBeforeSearch;
+    renderSpotlight(null);
+    renderListBeforeSearch();
+    renderFavorites();
+    updateFavoriteCount();
+    return;
+  }
+
   const filtered = places.filter(applyFilters);
   syncSelection(filtered);
   const selected = null;
@@ -1057,7 +1095,8 @@ function applyFilters(place) {
     if (requiresWalk10 && !isWithin10MinWalk(place)) return false;
     if (normalSubcategories.length && !normalSubcategories.includes(place.subcategory)) return false;
   }
-  if (state.applied.meal.size && !place.meal_tags.some((tag) => state.applied.meal.has(tag))) return false;
+  const useMealFilter = state.applied.primary.has("餐飲");
+  if (useMealFilter && state.applied.meal.size && !place.meal_tags.some((tag) => state.applied.meal.has(tag))) return false;
   if (!state.applied.search) return true;
 
   const haystack = [
@@ -1141,8 +1180,13 @@ function renderSpotlight(selected) {
   dom.mapFrame.src = buildEmbedUrl(focus);
 }
 
+function renderListBeforeSearch() {
+  dom.results.innerHTML = `<div class="empty-state">${escapeHtml(tt("listBeforeSearch"))}</div>`;
+}
+
 function renderList(filtered) {
   const text = TEXT[state.lang] || TEXT.zh;
+  const showMealBadges = state.applied.primary.has("餐飲");
 
   if (!filtered.length) {
     dom.results.innerHTML = `<div class="empty-state">${escapeHtml(text.empty)}</div>`;
@@ -1156,10 +1200,12 @@ function renderList(filtered) {
       const address = stripPlusCodeForDisplay(normalizeText(place.address_zh));
       const secondary = getSecondaryName(place);
       const subcategoryDisplay = trCategory(normalizeSubcategory(place.subcategory), "subcategory");
-      const mealBadges = uniqueValues(place.meal_tags.map(normalizeMealTag))
-        .filter((tag) => trCategory(tag, "meal") !== subcategoryDisplay)
-        .map((tag) => `<span class="badge">${escapeHtml(trCategory(tag, "meal"))}</span>`)
-        .join("");
+      const mealBadges = showMealBadges
+        ? uniqueValues(place.meal_tags.map(normalizeMealTag))
+          .filter((tag) => trCategory(tag, "meal") !== subcategoryDisplay)
+          .map((tag) => `<span class="badge">${escapeHtml(trCategory(tag, "meal"))}</span>`)
+          .join("")
+        : "";
       const walk10Badge = isWithin10MinWalk(place) ? `<span class="badge">${escapeHtml(trCategory(WALK_10MIN_SUBCATEGORY, "subcategory"))}</span>` : "";
       const hoursLine = openingHours ? `<div>${escapeHtml(text.hours)}${escapeHtml(openingHours)}</div>` : "";
       const notesLine = intro ? `<div>${escapeHtml(text.notes)}${escapeHtml(intro)}</div>` : "";
@@ -1471,11 +1517,17 @@ function stripPlusCodeForDisplay(input) {
 
 function isSuppressedPlace(place) {
   const notes = normalizeText(place.notes);
+  const openingHours = normalizeText(place.opening_hours);
   return (
     place.source_status === "closed" ||
     place.is_active === false ||
-    /暫停營業|暫時關閉|歇業|停業/i.test(notes)
+    hasClosedMarker(notes) ||
+    hasClosedMarker(openingHours)
   );
+}
+
+function hasClosedMarker(value) {
+  return /暫停營業|暫時關閉|永久停業|停業|歇業|已歇業|停止營業|休業中?/i.test(normalizeText(value));
 }
 
 function buildSearchUrl(place) {
