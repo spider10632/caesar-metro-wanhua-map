@@ -43,7 +43,7 @@ const PLACE_NAME_OVERRIDES = {
 const TEXT = {
   zh: {
     title: "凱達大飯店周邊地圖",
-    versionTag: "Version",
+    versionTag: "Version 2",
     desc: "以凱達大飯店為中心的萬華周邊地圖，支援分類篩選並可直接開啟 Google Maps。",
     quickReach: "快速抵達",
     jumpFilters: "行程條件",
@@ -76,7 +76,7 @@ const TEXT = {
   },
   en: {
     title: "Caesar Metro Taipei Nearby Map",
-    versionTag: "Version",
+    versionTag: "Version 2",
     desc: "A Wanhua area map centered on Caesar Metro Taipei with category filters and direct Google Maps links.",
     quickReach: "Quick Access",
     jumpFilters: "Filters",
@@ -109,7 +109,7 @@ const TEXT = {
   },
   ja: {
     title: "シーザーメトロ台北 周辺マップ",
-    versionTag: "Version",
+    versionTag: "Version 2",
     desc: "シーザーメトロ台北を中心にした萬華エリア地図。カテゴリ絞り込みとGoogleマップ連携に対応。",
     quickReach: "クイック移動",
     jumpFilters: "条件設定",

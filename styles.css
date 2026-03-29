@@ -173,18 +173,18 @@ a {
   letter-spacing: 0.08em;
 }
 
-.version-tag--floating {
-  position: fixed;
-  right: 94px;
-  bottom: 22px;
-  z-index: 26;
-  min-height: 34px;
-  padding: 0 14px;
-  border-color: rgba(145, 112, 67, 0.18);
-  background: rgba(255, 250, 243, 0.88);
+.version-tag--hotel {
+  position: absolute;
+  right: 20px;
+  bottom: 14px;
+  z-index: 2;
+  min-height: 32px;
+  padding: 0 12px;
+  border-color: rgba(145, 112, 67, 0.22);
+  background: rgba(255, 247, 236, 0.92);
   color: var(--accent-deep);
-  box-shadow: 0 12px 26px rgba(46, 29, 12, 0.12);
-  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 18px rgba(46, 29, 12, 0.18);
+  backdrop-filter: blur(8px);
 }
 
 .hero__controls {
@@ -250,6 +250,11 @@ a {
   font: inherit;
   font-size: 0.9rem;
   cursor: pointer;
+}
+
+.lang-select option {
+  color: #2a1f13;
+  background: #fffaf3;
 }
 
 .lang-select:focus-visible {
@@ -1410,9 +1415,9 @@ html[lang="ja"] .hero-quick-nav__label {
     font-size: 0.88rem;
   }
 
-  .version-tag--floating {
+  .version-tag--hotel {
     right: 14px;
-    bottom: calc(74px + env(safe-area-inset-bottom, 0px));
+    bottom: 12px;
   }
 }
 
