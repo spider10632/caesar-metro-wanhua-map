@@ -1111,24 +1111,15 @@ html[lang="ja"] .hero-quick-nav__label {
   }
 
   .hero-quick-nav {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding: 2px 0 4px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
-    scrollbar-width: none;
-  }
-
-  .hero-quick-nav::-webkit-scrollbar {
-    display: none;
-  }
-
-  .hero-quick-nav__label,
-  .hero-jump {
-    flex: 0 0 auto;
-    white-space: nowrap;
+    padding: 2px 0 4px;
   }
 
   .hero-jump {
+    width: 100%;
+    white-space: normal;
     min-height: 36px;
     padding: 0 12px;
     font-size: 0.83rem;
@@ -1204,6 +1195,7 @@ html[lang="ja"] .hero-quick-nav__label {
 
   .hero-quick-nav {
     margin-top: 14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .hero-quick-nav__label {
@@ -1402,6 +1394,10 @@ html[lang="ja"] .hero-quick-nav__label {
 
   .hero-quick-nav__label {
     display: none;
+  }
+
+  .hero-quick-nav {
+    grid-template-columns: 1fr;
   }
 
   .hero-jump {
