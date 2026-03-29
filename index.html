@@ -31,7 +31,6 @@
         <nav class="hero-quick-nav" aria-label="Section quick navigation">
           <a id="jump-filters" class="hero-jump" href="#panel-filters">行程條件</a>
           <a id="jump-spotlight" class="hero-jump" href="#panel-spotlight">地圖聚焦</a>
-          <a id="jump-favorites" class="hero-jump" href="#panel-favorites">蒐藏清單</a>
           <a id="jump-hotel" class="hero-jump" href="#panel-hotel">飯店資訊</a>
         </nav>
 
@@ -143,20 +142,6 @@
             <p id="status-text" class="status-text">目前以凱達大飯店為地圖中心，篩選後可切換成你想看的單一重點地點。</p>
           </section>
 
-          <section id="panel-favorites" class="panel panel--favorites jump-target">
-            <div class="section-heading">
-              <p class="eyebrow">My List</p>
-              <h2 id="favorites-title">蒐藏清單</h2>
-            </div>
-
-            <div class="filter-block__head">
-              <span id="favorites-count">0 筆</span>
-              <button id="favorites-clear" class="text-button" type="button">清空</button>
-            </div>
-
-            <p id="favorites-hint" class="status-text">在右側地點卡按「加入蒐藏」，就會出現在這裡。</p>
-            <div id="favorites-list" class="favorites-list"></div>
-          </section>
         </aside>
 
         <section id="panel-spotlight" class="spotlight panel jump-target">
@@ -268,9 +253,28 @@
           </a>
         </div>
       </section>
+
+      <section id="panel-favorites" class="panel panel--favorites panel--favorites-bottom jump-target" hidden>
+        <div class="section-heading">
+          <p class="eyebrow">My List</p>
+          <h2 id="favorites-title">蒐藏清單</h2>
+        </div>
+
+        <div class="filter-block__head">
+          <span id="favorites-count">0 筆</span>
+          <div class="favorites-inline-actions">
+            <button id="favorites-clear" class="text-button" type="button">清空</button>
+            <button id="favorites-back-search" class="text-button" type="button">回到搜尋</button>
+          </div>
+        </div>
+
+        <p id="favorites-hint" class="status-text">在地點卡按「加入蒐藏」，就會出現在這裡。</p>
+        <div id="favorites-list" class="favorites-list"></div>
+      </section>
     </div>
 
     <p id="version-tag" class="version-tag version-tag--floating">Version</p>
+    <button id="open-favorites" class="open-favorites" type="button" aria-label="開啟蒐藏清單">蒐藏清單</button>
     <button id="back-to-top" class="back-to-top" type="button" aria-label="回到頁面頂端">Top</button>
 
     <script src="./google-maps-config.js"></script>

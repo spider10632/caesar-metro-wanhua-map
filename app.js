@@ -68,7 +68,7 @@ const TEXT = {
     statusSelected: (n, name) => `共有 ${n} 個地點符合條件，目前聚焦在「${name}」。`,
     center: "中心點", recommended: "推薦地點", openCurrent: "查看目前地點", openHotel: "查看飯店位置", routeFromHotel: "從飯店前往", routeFromHotelCard: "從飯店出發", openHotelArea: "查看飯店周邊",
     addFavorite: "加入蒐藏", removeFavorite: "移出蒐藏", favoriteOpen: "地圖開啟",
-    favoritesTitle: "蒐藏清單", favoritesHint: "在右側地點卡按「加入蒐藏」，就會出現在這裡。", favoritesClear: "清空", favoritesEmpty: "目前尚未蒐藏任何地點。", favoritesCountUnit: "筆",
+    favoritesTitle: "蒐藏清單", favoritesHint: "在地點卡按「加入蒐藏」，即可整理你的行程清單。", favoritesClear: "清空", favoritesBackSearch: "回到搜尋", favoritesLauncher: "蒐藏清單", favoritesEmpty: "目前尚未蒐藏任何地點。", favoritesCountUnit: "筆",
     weatherTitle: "今日天氣", weatherLoading: "讀取中...", weatherRain: (p) => `降雨機率 ${p}%`, weatherTemp: (min, max) => `${min}°C - ${max}°C`, weatherUnavailable: "天氣暫時無法取得",
     hours: "營業時間：", addr: "地址：", mrt: "捷運：", notes: "基本介紹：", addrPending: "地址未提供", mrtPending: "未提供", noNotes: "此地點位於凱達大飯店周邊，適合安排步行造訪。",
     empty: "目前沒有符合條件的結果。你可以放寬分類、清除搜尋，或重新打開停用中的資料。",
@@ -101,7 +101,7 @@ const TEXT = {
     statusSelected: (n, name) => `${n} places match. Current focus: ${name}.`,
     center: "Center", recommended: "Recommended", openCurrent: "Open current place", openHotel: "View hotel location", routeFromHotel: "Route from hotel", routeFromHotelCard: "From hotel", openHotelArea: "View hotel surroundings",
     addFavorite: "Add to list", removeFavorite: "Remove", favoriteOpen: "Open",
-    favoritesTitle: "Saved List", favoritesHint: "Tap Add to list on place cards to build your own itinerary list.", favoritesClear: "Clear", favoritesEmpty: "No saved places yet.", favoritesCountUnit: "items",
+    favoritesTitle: "Saved List", favoritesHint: "Tap Add to list on place cards to build your itinerary list.", favoritesClear: "Clear", favoritesBackSearch: "Back to results", favoritesLauncher: "Saved List", favoritesEmpty: "No saved places yet.", favoritesCountUnit: "items",
     weatherTitle: "Today's Weather", weatherLoading: "Loading...", weatherRain: (p) => `Rain chance ${p}%`, weatherTemp: (min, max) => `${min}°C - ${max}°C`, weatherUnavailable: "Weather unavailable",
     hours: "Hours: ", addr: "Address: ", mrt: "MRT: ", notes: "Intro: ", addrPending: "Address not provided", mrtPending: "Not provided", noNotes: "Near Caesar Metro Taipei and suitable for a short walk.",
     empty: "No places match your current filters. Try broader categories or clear the search.",
@@ -134,7 +134,7 @@ const TEXT = {
     statusSelected: (n, name) => `${n}件が条件に一致しています。現在のフォーカス：${name}。`,
     center: "中心", recommended: "おすすめ", openCurrent: "現在地を開く", openHotel: "ホテル位置を見る", routeFromHotel: "ホテルからの経路", routeFromHotelCard: "ホテルから出発", openHotelArea: "ホテル周辺を見る",
     addFavorite: "リスト追加", removeFavorite: "削除", favoriteOpen: "地図を開く",
-    favoritesTitle: "保存リスト", favoritesHint: "右側カードの「リスト追加」でお客様用の行き先リストを作れます。", favoritesClear: "クリア", favoritesEmpty: "保存した地点はまだありません。", favoritesCountUnit: "件",
+    favoritesTitle: "保存リスト", favoritesHint: "地点カードの「リスト追加」で行き先リストを作れます。", favoritesClear: "クリア", favoritesBackSearch: "検索へ戻る", favoritesLauncher: "保存リスト", favoritesEmpty: "保存した地点はまだありません。", favoritesCountUnit: "件",
     weatherTitle: "今日の天気", weatherLoading: "読込中...", weatherRain: (p) => `降水確率 ${p}%`, weatherTemp: (min, max) => `${min}°C - ${max}°C`, weatherUnavailable: "天気情報を取得できません",
     hours: "営業時間：", addr: "住所：", mrt: "MRT：", notes: "基本紹介：", addrPending: "住所未登録", mrtPending: "未登録", noNotes: "ホテル周辺で徒歩で立ち寄りやすいスポットです。",
     empty: "条件に合う結果がありません。カテゴリを広げるか検索をクリアしてください。",
@@ -176,6 +176,7 @@ const state = {
   applied: createFilterState(),
   selectedPlaceId: null,
   hasSearched: false,
+  favoritesPanelOpen: false,
   dirty: false,
   favorites: readFavorites(),
   walkingCache: readWalkingCache(),
@@ -254,12 +255,15 @@ const dom = {
   selectedFavorite: document.querySelector("#selected-favorite"),
   mapFrame: document.querySelector("#map-frame"),
   panelCollection: document.querySelector("#panel-collection"),
+  panelFavorites: document.querySelector("#panel-favorites"),
   results: document.querySelector("#results"),
   favoritesTitle: document.querySelector("#favorites-title"),
   favoritesCount: document.querySelector("#favorites-count"),
   favoritesHint: document.querySelector("#favorites-hint"),
   favoritesList: document.querySelector("#favorites-list"),
   favoritesClear: document.querySelector("#favorites-clear"),
+  favoritesBackSearch: document.querySelector("#favorites-back-search"),
+  openFavorites: document.querySelector("#open-favorites"),
   quickFilters: document.querySelectorAll(".quick-filter"),
   backToTop: document.querySelector("#back-to-top"),
 };
@@ -276,6 +280,7 @@ function init() {
   applyStaticText();
   initializeFilters();
   attachEvents();
+  syncFavoritesPanelVisibility();
   syncBackToTop();
   refreshWeather();
   window.setInterval(refreshWeather, 30 * 60 * 1000);
@@ -489,6 +494,11 @@ function applyStaticText() {
   dom.favoritesTitle.textContent = text.favoritesTitle;
   dom.favoritesHint.textContent = text.favoritesHint;
   dom.favoritesClear.textContent = text.favoritesClear;
+  if (dom.favoritesBackSearch) dom.favoritesBackSearch.textContent = text.favoritesBackSearch;
+  if (dom.openFavorites) {
+    dom.openFavorites.textContent = text.favoritesLauncher;
+    dom.openFavorites.setAttribute("aria-label", text.favoritesLauncher);
+  }
   dom.weatherTitle.textContent = text.weatherTitle;
   dom.backToTop.textContent = text.top;
   dom.backToTop.setAttribute("aria-label", text.backTop);
@@ -559,6 +569,18 @@ function attachEvents() {
       state.favorites.clear();
       saveFavorites();
       render();
+    });
+  }
+
+  if (dom.openFavorites) {
+    dom.openFavorites.addEventListener("click", () => {
+      showFavoritesPanel(true);
+    });
+  }
+
+  if (dom.favoritesBackSearch) {
+    dom.favoritesBackSearch.addEventListener("click", () => {
+      hideFavoritesPanel(true);
     });
   }
 
@@ -635,6 +657,31 @@ function syncMealFilterVisibility() {
 function syncBackToTop() {
   if (!dom.backToTop) return;
   dom.backToTop.classList.toggle("is-visible", window.scrollY > 320);
+}
+
+function syncFavoritesPanelVisibility() {
+  if (dom.panelFavorites) {
+    dom.panelFavorites.hidden = !state.favoritesPanelOpen;
+  }
+  if (dom.openFavorites) {
+    dom.openFavorites.classList.toggle("is-active", state.favoritesPanelOpen);
+  }
+}
+
+function showFavoritesPanel(withScroll) {
+  state.favoritesPanelOpen = true;
+  syncFavoritesPanelVisibility();
+  if (withScroll && dom.panelFavorites) {
+    dom.panelFavorites.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
+function hideFavoritesPanel(withScroll) {
+  state.favoritesPanelOpen = false;
+  syncFavoritesPanelVisibility();
+  if (withScroll && dom.panelCollection) {
+    dom.panelCollection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 }
 
 function isFavorite(placeId) {
