@@ -23,7 +23,10 @@
     <div class="page-shell">
       <header class="hero hero--title-only">
         <div class="hero__title-row">
-          <h1 id="page-title">凱達大飯店周邊地圖</h1>
+          <div class="hero__title-stack">
+            <h1 id="page-title">凱達大飯店周邊地圖</h1>
+            <p id="version-tag" class="version-tag">修改版 V2</p>
+          </div>
           <div class="hero__controls">
             <section id="weather-widget" class="weather-widget" aria-live="polite">
               <p id="weather-title" class="weather-widget__title">今日天氣</p>
@@ -45,7 +48,6 @@
           <a id="jump-spotlight" class="hero-jump" href="#panel-spotlight">地圖聚焦</a>
           <a id="jump-collection" class="hero-jump" href="#panel-collection">周邊清單</a>
           <a id="jump-favorites" class="hero-jump" href="#panel-favorites">蒐藏清單</a>
-          <a id="jump-comment" class="hero-jump" href="#panel-comment">客人留言</a>
           <a id="jump-hotel" class="hero-jump" href="#panel-hotel">飯店資訊</a>
         </nav>
       </header>
@@ -155,40 +157,6 @@
 
             <p id="favorites-hint" class="status-text">在右側地點卡按「加入蒐藏」，就會出現在這裡。</p>
             <div id="favorites-list" class="favorites-list"></div>
-          </section>
-
-          <section id="panel-comment" class="panel panel--comment jump-target">
-            <div class="section-heading">
-              <p class="eyebrow">Comment</p>
-              <h2 id="comment-title">客人留言</h2>
-            </div>
-
-            <div class="comment-focus">
-              <span id="comment-focus-label">目前地圖焦點</span>
-              <strong id="comment-focus-value">凱達大飯店</strong>
-            </div>
-
-            <label class="search-field comment-field">
-              <span id="comment-name-label">客人稱呼（選填）</span>
-              <input id="comment-name" type="text" placeholder="例如：王小姐" />
-            </label>
-
-            <label class="search-field comment-field">
-              <span id="comment-room-label">房號（選填）</span>
-              <input id="comment-room" type="text" placeholder="例如：1208" />
-            </label>
-
-            <label class="search-field comment-field">
-              <span id="comment-input-label">留言內容</span>
-              <textarea id="comment-input" class="comment-textarea" rows="4" placeholder="請輸入客人回饋、需求或備註"></textarea>
-            </label>
-
-            <div class="filter-actions">
-              <button id="comment-submit" class="button button--slim" type="button">送出留言</button>
-              <span id="comment-status" class="filter-pending" hidden></span>
-            </div>
-
-            <pre id="comment-preview" class="comment-preview" hidden></pre>
           </section>
         </aside>
 

@@ -18,8 +18,6 @@ const HOTEL_DEFAULT = {
 
 const GOOGLE_MAPS_API_KEY = window.GOOGLE_MAPS_API_KEY || "";
 const GOOGLE_MAPS_USE_EMBED_API = window.GOOGLE_MAPS_USE_EMBED_API === true;
-const COMMENT_API_ENDPOINT = window.COMMENT_API_ENDPOINT || "";
-const COMMENT_API_TOKEN = window.COMMENT_API_TOKEN || "";
 const LANGS = ["zh", "en", "ja"];
 const PLUS_CODE_REGEX = /([23456789CFGHJMPQRVWX]{4,8}\+[23456789CFGHJMPQRVWX]{2,3})/i;
 const WALK_10MIN_SUBCATEGORY = "走路10分內";
@@ -45,13 +43,13 @@ const PLACE_NAME_OVERRIDES = {
 const TEXT = {
   zh: {
     title: "凱達大飯店周邊地圖",
+    versionTag: "修改版 V2",
     desc: "以凱達大飯店為中心的萬華周邊地圖，支援分類篩選並可直接開啟 Google Maps。",
     quickReach: "快速抵達",
     jumpFilters: "行程條件",
     jumpSpotlight: "地圖聚焦",
     jumpCollection: "周邊清單",
     jumpFavorites: "蒐藏清單",
-    jumpComment: "客人留言",
     jumpHotel: "飯店資訊",
     note: "歡迎使用本地圖。請先選擇左側分類或輸入關鍵字，再按「搜尋」；點選右側地點卡片後，中間地圖會立即切換，並可直接開啟 Google Maps 導航。",
     filters: "行程條件", searchLabel: "搜尋名稱、地址或基本介紹", searchPlaceholder: "例如：夜市、星巴克、龍山寺",
@@ -69,20 +67,6 @@ const TEXT = {
     center: "中心點", openCurrent: "查看目前地點", openHotel: "查看飯店位置", routeFromHotel: "從飯店前往", openHotelArea: "查看飯店周邊",
     addFavorite: "加入蒐藏", removeFavorite: "移出蒐藏", favoriteFocus: "清單定位", favoriteOpen: "地圖開啟",
     favoritesTitle: "蒐藏清單", favoritesHint: "在右側地點卡按「加入蒐藏」，就會出現在這裡。", favoritesClear: "清空", favoritesEmpty: "目前尚未蒐藏任何地點。", favoritesCountUnit: "筆",
-    commentTitle: "客人留言",
-    commentFocusLabel: "目前地圖焦點",
-    commentNameLabel: "客人稱呼（選填）",
-    commentNamePlaceholder: "例如：王小姐",
-    commentRoomLabel: "房號（選填）",
-    commentRoomPlaceholder: "例如：1208",
-    commentInputLabel: "留言內容",
-    commentInputPlaceholder: "請輸入客人回饋、需求或備註",
-    commentSubmit: "送出留言",
-    commentSending: "正在回傳後端...",
-    commentSuccess: "已送出，後端已收到留言。",
-    commentServerError: "送出失敗，請稍後再試。",
-    commentEndpointMissing: "尚未設定留言後端網址（COMMENT_API_ENDPOINT）。",
-    commentEmpty: "請先輸入留言內容。",
     weatherTitle: "今日天氣", weatherLoading: "讀取中...", weatherRain: (p) => `降雨機率 ${p}%`, weatherTemp: (min, max) => `${min}°C - ${max}°C`, weatherUnavailable: "天氣暫時無法取得",
     hours: "營業時間：", addr: "地址：", mrt: "捷運：", notes: "基本介紹：", addrPending: "地址未提供", mrtPending: "未提供", noNotes: "此地點位於凱達大飯店周邊，適合安排步行造訪。",
     empty: "目前沒有符合條件的結果。你可以放寬分類、清除搜尋，或重新打開停用中的資料。",
@@ -90,13 +74,13 @@ const TEXT = {
   },
   en: {
     title: "Caesar Metro Taipei Nearby Map",
+    versionTag: "Updated Version V2",
     desc: "A Wanhua area map centered on Caesar Metro Taipei with category filters and direct Google Maps links.",
     quickReach: "Quick Access",
     jumpFilters: "Filters",
     jumpSpotlight: "Map Spotlight",
     jumpCollection: "Nearby List",
     jumpFavorites: "Saved List",
-    jumpComment: "Guest Comment",
     jumpHotel: "Hotel Info",
     note: "Choose categories or keywords, then tap Search. Tap any place card to update the center map and open Google Maps navigation.",
     filters: "Trip Filters", searchLabel: "Search by name, address, or intro", searchPlaceholder: "Example: night market, Starbucks, Longshan Temple",
@@ -114,20 +98,6 @@ const TEXT = {
     center: "Center", openCurrent: "Open current place", openHotel: "View hotel location", routeFromHotel: "Route from hotel", openHotelArea: "View hotel surroundings",
     addFavorite: "Add to list", removeFavorite: "Remove", favoriteFocus: "Focus", favoriteOpen: "Open",
     favoritesTitle: "Saved List", favoritesHint: "Tap Add to list on place cards to build your own itinerary list.", favoritesClear: "Clear", favoritesEmpty: "No saved places yet.", favoritesCountUnit: "items",
-    commentTitle: "Guest Comment",
-    commentFocusLabel: "Current map focus",
-    commentNameLabel: "Guest name (optional)",
-    commentNamePlaceholder: "e.g. Ms. Wang",
-    commentRoomLabel: "Room no. (optional)",
-    commentRoomPlaceholder: "e.g. 1208",
-    commentInputLabel: "Comment",
-    commentInputPlaceholder: "Enter guest feedback, request, or note",
-    commentSubmit: "Send Comment",
-    commentSending: "Sending to backend...",
-    commentSuccess: "Sent. Backend received the comment.",
-    commentServerError: "Send failed. Please try again later.",
-    commentEndpointMissing: "COMMENT_API_ENDPOINT is not configured.",
-    commentEmpty: "Please enter a comment first.",
     weatherTitle: "Today's Weather", weatherLoading: "Loading...", weatherRain: (p) => `Rain chance ${p}%`, weatherTemp: (min, max) => `${min}°C - ${max}°C`, weatherUnavailable: "Weather unavailable",
     hours: "Hours: ", addr: "Address: ", mrt: "MRT: ", notes: "Intro: ", addrPending: "Address not provided", mrtPending: "Not provided", noNotes: "Near Caesar Metro Taipei and suitable for a short walk.",
     empty: "No places match your current filters. Try broader categories or clear the search.",
@@ -135,13 +105,13 @@ const TEXT = {
   },
   ja: {
     title: "シーザーメトロ台北 周辺マップ",
+    versionTag: "改訂版 V2",
     desc: "シーザーメトロ台北を中心にした萬華エリア地図。カテゴリ絞り込みとGoogleマップ連携に対応。",
     quickReach: "クイック移動",
     jumpFilters: "条件設定",
     jumpSpotlight: "地図フォーカス",
     jumpCollection: "周辺リスト",
     jumpFavorites: "保存リスト",
-    jumpComment: "ゲストコメント",
     jumpHotel: "ホテル情報",
     note: "左側でカテゴリまたはキーワードを選び、「検索」を押してください。右側のカードを押すと中央地図が切り替わり、Googleマップで案内できます。",
     filters: "条件設定", searchLabel: "名称・住所・紹介文で検索", searchPlaceholder: "例：夜市、スターバックス、龍山寺",
@@ -159,20 +129,6 @@ const TEXT = {
     center: "中心", openCurrent: "現在地を開く", openHotel: "ホテル位置を見る", routeFromHotel: "ホテルからの経路", openHotelArea: "ホテル周辺を見る",
     addFavorite: "リスト追加", removeFavorite: "削除", favoriteFocus: "地図表示", favoriteOpen: "地図を開く",
     favoritesTitle: "保存リスト", favoritesHint: "右側カードの「リスト追加」でお客様用の行き先リストを作れます。", favoritesClear: "クリア", favoritesEmpty: "保存した地点はまだありません。", favoritesCountUnit: "件",
-    commentTitle: "ゲストコメント",
-    commentFocusLabel: "現在の地図フォーカス",
-    commentNameLabel: "お客様名（任意）",
-    commentNamePlaceholder: "例：王様",
-    commentRoomLabel: "部屋番号（任意）",
-    commentRoomPlaceholder: "例：1208",
-    commentInputLabel: "コメント内容",
-    commentInputPlaceholder: "お客様のご要望・感想・メモをご入力ください",
-    commentSubmit: "コメント送信",
-    commentSending: "バックエンドへ送信中...",
-    commentSuccess: "送信完了。バックエンドで受信しました。",
-    commentServerError: "送信に失敗しました。しばらくして再試行してください。",
-    commentEndpointMissing: "COMMENT_API_ENDPOINT が未設定です。",
-    commentEmpty: "コメント内容を入力してください。",
     weatherTitle: "今日の天気", weatherLoading: "読込中...", weatherRain: (p) => `降水確率 ${p}%`, weatherTemp: (min, max) => `${min}°C - ${max}°C`, weatherUnavailable: "天気情報を取得できません",
     hours: "営業時間：", addr: "住所：", mrt: "MRT：", notes: "基本紹介：", addrPending: "住所未登録", mrtPending: "未登録", noNotes: "ホテル周辺で徒歩で立ち寄りやすいスポットです。",
     empty: "条件に合う結果がありません。カテゴリを広げるか検索をクリアしてください。",
@@ -224,6 +180,7 @@ const state = {
 };
 const dom = {
   pageTitle: document.querySelector("#page-title"),
+  versionTag: document.querySelector("#version-tag"),
   guestNoteText: document.querySelector("#guest-note-text"),
   filtersTitle: document.querySelector("#filters-title"),
   searchLabel: document.querySelector("#search-label"),
@@ -265,7 +222,6 @@ const dom = {
   jumpSpotlight: document.querySelector("#jump-spotlight"),
   jumpCollection: document.querySelector("#jump-collection"),
   jumpFavorites: document.querySelector("#jump-favorites"),
-  jumpComment: document.querySelector("#jump-comment"),
   jumpHotel: document.querySelector("#jump-hotel"),
   langButtons: document.querySelectorAll(".lang-button"),
   primaryFilters: document.querySelector("#primary-filters"),
@@ -297,18 +253,6 @@ const dom = {
   favoritesHint: document.querySelector("#favorites-hint"),
   favoritesList: document.querySelector("#favorites-list"),
   favoritesClear: document.querySelector("#favorites-clear"),
-  commentTitle: document.querySelector("#comment-title"),
-  commentFocusLabel: document.querySelector("#comment-focus-label"),
-  commentFocusValue: document.querySelector("#comment-focus-value"),
-  commentNameLabel: document.querySelector("#comment-name-label"),
-  commentName: document.querySelector("#comment-name"),
-  commentRoomLabel: document.querySelector("#comment-room-label"),
-  commentRoom: document.querySelector("#comment-room"),
-  commentInputLabel: document.querySelector("#comment-input-label"),
-  commentInput: document.querySelector("#comment-input"),
-  commentSubmit: document.querySelector("#comment-submit"),
-  commentStatus: document.querySelector("#comment-status"),
-  commentPreview: document.querySelector("#comment-preview"),
   quickFilters: document.querySelectorAll(".quick-filter"),
   backToTop: document.querySelector("#back-to-top"),
 };
@@ -496,12 +440,12 @@ function applyStaticText() {
   const meta = document.querySelector('meta[name="description"]');
   if (meta) meta.setAttribute("content", text.desc);
   dom.pageTitle.textContent = text.title;
+  dom.versionTag.textContent = text.versionTag;
   dom.quickNavLabel.textContent = text.quickReach;
   dom.jumpFilters.textContent = text.jumpFilters;
   dom.jumpSpotlight.textContent = text.jumpSpotlight;
   dom.jumpCollection.textContent = text.jumpCollection;
   dom.jumpFavorites.textContent = text.jumpFavorites;
-  dom.jumpComment.textContent = text.jumpComment;
   dom.jumpHotel.textContent = text.jumpHotel;
   dom.guestNoteText.textContent = text.note;
   dom.filtersTitle.textContent = text.filters;
@@ -539,22 +483,12 @@ function applyStaticText() {
   dom.favoritesTitle.textContent = text.favoritesTitle;
   dom.favoritesHint.textContent = text.favoritesHint;
   dom.favoritesClear.textContent = text.favoritesClear;
-  dom.commentTitle.textContent = text.commentTitle;
-  dom.commentFocusLabel.textContent = text.commentFocusLabel;
-  dom.commentNameLabel.textContent = text.commentNameLabel;
-  dom.commentName.placeholder = text.commentNamePlaceholder;
-  dom.commentRoomLabel.textContent = text.commentRoomLabel;
-  dom.commentRoom.placeholder = text.commentRoomPlaceholder;
-  dom.commentInputLabel.textContent = text.commentInputLabel;
-  dom.commentInput.placeholder = text.commentInputPlaceholder;
-  dom.commentSubmit.textContent = text.commentSubmit;
   dom.weatherTitle.textContent = text.weatherTitle;
   dom.backToTop.textContent = text.top;
   dom.backToTop.setAttribute("aria-label", text.backTop);
   dom.langButtons.forEach((b) => b.classList.toggle("is-active", b.dataset.lang === state.lang));
   updateFavoriteCount();
   renderFavoriteButtonLabel();
-  renderCommentFocus();
 }
 function attachEvents() {
   dom.searchInput.addEventListener("input", (event) => {
@@ -618,12 +552,6 @@ function attachEvents() {
       state.favorites.clear();
       saveFavorites();
       render();
-    });
-  }
-
-  if (dom.commentSubmit) {
-    dom.commentSubmit.addEventListener("click", () => {
-      submitCommentToBackend();
     });
   }
 
@@ -712,118 +640,6 @@ function renderFavoriteButtonLabel() {
 
   dom.selectedFavorite.hidden = false;
   dom.selectedFavorite.textContent = isFavorite(selected.id) ? text.removeFavorite : text.addFavorite;
-}
-
-function renderCommentFocus(selected) {
-  if (!dom.commentFocusValue) return;
-  const focus = selected || getSelectedPlace(places) || HOTEL;
-  dom.commentFocusValue.textContent = getDisplayName(focus);
-}
-
-function setCommentStatus(message, isError = false) {
-  if (!dom.commentStatus) return;
-  dom.commentStatus.hidden = !message;
-  dom.commentStatus.textContent = message || "";
-  dom.commentStatus.style.color = isError ? "#b3261e" : "";
-}
-
-function setCommentPreview(payload, responsePayload) {
-  if (!dom.commentPreview) return;
-  const preview = {
-    sent_at: new Date().toISOString(),
-    payload,
-    backend_response: responsePayload ?? null,
-  };
-  dom.commentPreview.textContent = JSON.stringify(preview, null, 2);
-  dom.commentPreview.hidden = false;
-}
-
-function buildCommentPayload() {
-  const focus = getSelectedPlace(places) || HOTEL;
-  const comment = normalizeText(dom.commentInput?.value);
-  const guestName = normalizeText(dom.commentName?.value);
-  const room = normalizeText(dom.commentRoom?.value);
-
-  return {
-    source: "caesar-metro-wanhua-map",
-    created_at: new Date().toISOString(),
-    language: state.lang,
-    place: {
-      id: focus.id,
-      name_zh: getPlaceName(focus, "name_zh") || normalizeText(focus.map_label_name),
-      name_en: getPlaceName(focus, "name_en"),
-      near_mrt: normalizeText(focus.near_mrt),
-      address_zh: stripPlusCodeForDisplay(normalizeText(focus.address_zh)),
-    },
-    guest: {
-      name: guestName || null,
-      room: room || null,
-    },
-    comment,
-    page_url: window.location.href,
-  };
-}
-
-async function postCommentPayload(payload) {
-  const headers = { "Content-Type": "application/json" };
-  if (COMMENT_API_TOKEN) {
-    headers.Authorization = `Bearer ${COMMENT_API_TOKEN}`;
-  }
-
-  const response = await fetch(COMMENT_API_ENDPOINT, {
-    method: "POST",
-    headers,
-    body: JSON.stringify(payload),
-  });
-
-  let parsed = null;
-  try {
-    parsed = await response.json();
-  } catch (_error) {
-    parsed = null;
-  }
-
-  if (!response.ok) {
-    const err = new Error(`HTTP_${response.status}`);
-    err.responseBody = parsed;
-    throw err;
-  }
-
-  return parsed;
-}
-
-async function submitCommentToBackend() {
-  const text = TEXT[state.lang] || TEXT.zh;
-  const payload = buildCommentPayload();
-
-  if (!payload.comment) {
-    setCommentStatus(text.commentEmpty, true);
-    return;
-  }
-
-  if (!COMMENT_API_ENDPOINT) {
-    setCommentStatus(text.commentEndpointMissing, true);
-    setCommentPreview(payload, { error: "COMMENT_API_ENDPOINT_NOT_CONFIGURED" });
-    return;
-  }
-
-  dom.commentSubmit.disabled = true;
-  setCommentStatus(text.commentSending, false);
-
-  try {
-    const backendResponse = await postCommentPayload(payload);
-    setCommentStatus(text.commentSuccess, false);
-    setCommentPreview(payload, backendResponse);
-    dom.commentInput.value = "";
-    if (dom.commentName) dom.commentName.value = "";
-    if (dom.commentRoom) dom.commentRoom.value = "";
-  } catch (error) {
-    setCommentStatus(text.commentServerError, true);
-    const errorResponse = error && typeof error === "object" && "responseBody" in error ? error.responseBody : null;
-    setCommentPreview(payload, errorResponse || { error: String(error && error.message ? error.message : "UNKNOWN_ERROR") });
-  } finally {
-    dom.commentSubmit.disabled = false;
-  }
 }
 
 function isWithin10MinWalk(place) {
@@ -1224,7 +1040,6 @@ function render() {
   dom.resultCount.textContent = String(filtered.length);
   dom.focusLabel.textContent = selected ? getDisplayName(selected) : getDisplayName(HOTEL);
   dom.statusText.textContent = buildStatusText(filtered, selected);
-  renderCommentFocus(selected);
   renderSpotlight(selected);
   renderList(filtered, selected);
   renderFavorites();

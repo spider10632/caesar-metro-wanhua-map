@@ -153,6 +153,26 @@ a {
   gap: 16px;
 }
 
+.hero__title-stack {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+}
+
+.version-tag {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 244, 230, 0.95);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+}
+
 .hero__controls {
   display: inline-flex;
   align-items: center;
@@ -638,64 +658,6 @@ html[lang="ja"] .hero-quick-nav__label {
   padding: 24px;
 }
 
-.panel--comment {
-  padding: 24px;
-}
-
-.comment-focus {
-  display: grid;
-  gap: 4px;
-  margin-top: 14px;
-  padding: 12px 14px;
-  border-radius: 14px;
-  border: 1px solid rgba(145, 112, 67, 0.16);
-  background: rgba(255, 255, 255, 0.74);
-}
-
-.comment-focus span {
-  color: var(--ink-soft);
-  font-size: 0.84rem;
-}
-
-.comment-focus strong {
-  font-size: 0.96rem;
-}
-
-.comment-field {
-  margin-top: 12px;
-}
-
-.comment-textarea {
-  width: 100%;
-  min-height: 108px;
-  padding: 12px 14px;
-  border-radius: 16px;
-  border: 1px solid rgba(117, 89, 58, 0.16);
-  background: rgba(255, 255, 255, 0.72);
-  color: var(--ink);
-  font: inherit;
-  line-height: 1.6;
-  resize: vertical;
-}
-
-.comment-textarea:focus {
-  outline: 2px solid rgba(176, 139, 86, 0.18);
-  border-color: rgba(176, 139, 86, 0.4);
-}
-
-.comment-preview {
-  margin: 12px 0 0;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(145, 112, 67, 0.18);
-  background: rgba(255, 255, 255, 0.78);
-  color: #4f4336;
-  font-size: 0.76rem;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
 .favorites-list {
   display: grid;
   gap: 10px;
@@ -1074,7 +1036,6 @@ html[lang="ja"] .hero-quick-nav__label {
   .panel--filters,
   .panel--summary,
   .panel--favorites,
-  .panel--comment,
   .spotlight,
   .collection {
     padding: 18px;
@@ -1091,6 +1052,10 @@ html[lang="ja"] .hero-quick-nav__label {
   .hero__title-row {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .hero__title-stack {
+    justify-items: start;
   }
 
   .hero__controls {
@@ -1259,7 +1224,6 @@ html[lang="ja"] .hero-quick-nav__label {
   .panel--filters,
   .panel--summary,
   .panel--favorites,
-  .panel--comment,
   .spotlight,
   .collection {
     padding: 16px;
