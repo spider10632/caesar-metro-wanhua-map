@@ -25,15 +25,8 @@
         <div class="hero__title-row">
           <div class="hero__title-stack">
             <h1 id="page-title">凱達大飯店周邊地圖</h1>
-            <p id="version-tag" class="version-tag">修改版 V2</p>
           </div>
           <div class="hero__controls">
-            <section id="weather-widget" class="weather-widget" aria-live="polite">
-              <p id="weather-title" class="weather-widget__title">今日天氣</p>
-              <p id="weather-summary" class="weather-widget__summary">讀取中...</p>
-              <p id="weather-rain" class="weather-widget__rain">降雨機率 --%</p>
-            </section>
-
             <div class="lang-switch" role="group" aria-label="Language switch">
               <button id="lang-zh" class="lang-button is-active" type="button" data-lang="zh">中文</button>
               <button id="lang-en" class="lang-button" type="button" data-lang="en">EN</button>
@@ -129,6 +122,12 @@
               <p class="eyebrow">Overview</p>
               <h2 id="overview-title">目前結果</h2>
             </div>
+
+            <section id="weather-widget" class="weather-widget weather-widget--panel" aria-live="polite">
+              <p id="weather-title" class="weather-widget__title">今日天氣</p>
+              <p id="weather-summary" class="weather-widget__summary">讀取中...</p>
+              <p id="weather-rain" class="weather-widget__rain">降雨機率 --%</p>
+            </section>
 
             <div class="summary-grid">
               <article class="summary-card">
@@ -271,6 +270,7 @@
       </section>
     </div>
 
+    <p id="version-tag" class="version-tag version-tag--floating">Version</p>
     <button id="back-to-top" class="back-to-top" type="button" aria-label="回到頁面頂端">Top</button>
 
     <script src="./google-maps-config.js"></script>

@@ -43,7 +43,7 @@ const PLACE_NAME_OVERRIDES = {
 const TEXT = {
   zh: {
     title: "凱達大飯店周邊地圖",
-    versionTag: "修改版 V2",
+    versionTag: "Version",
     desc: "以凱達大飯店為中心的萬華周邊地圖，支援分類篩選並可直接開啟 Google Maps。",
     quickReach: "快速抵達",
     jumpFilters: "行程條件",
@@ -66,7 +66,7 @@ const TEXT = {
     statusNoResult: "目前沒有符合條件的地點，地圖先停留在凱達大飯店。",
     statusNoSelect: (n) => `共有 ${n} 個地點符合條件，目前維持以凱達大飯店作為地圖中心。`,
     statusSelected: (n, name) => `共有 ${n} 個地點符合條件，目前聚焦在「${name}」。`,
-    center: "中心點", openCurrent: "查看目前地點", openHotel: "查看飯店位置", routeFromHotel: "從飯店前往", openHotelArea: "查看飯店周邊",
+    center: "中心點", recommended: "推薦地點", openCurrent: "查看目前地點", openHotel: "查看飯店位置", routeFromHotel: "從飯店前往", openHotelArea: "查看飯店周邊",
     addFavorite: "加入蒐藏", removeFavorite: "移出蒐藏", favoriteOpen: "地圖開啟",
     favoritesTitle: "蒐藏清單", favoritesHint: "在右側地點卡按「加入蒐藏」，就會出現在這裡。", favoritesClear: "清空", favoritesEmpty: "目前尚未蒐藏任何地點。", favoritesCountUnit: "筆",
     weatherTitle: "今日天氣", weatherLoading: "讀取中...", weatherRain: (p) => `降雨機率 ${p}%`, weatherTemp: (min, max) => `${min}°C - ${max}°C`, weatherUnavailable: "天氣暫時無法取得",
@@ -76,7 +76,7 @@ const TEXT = {
   },
   en: {
     title: "Caesar Metro Taipei Nearby Map",
-    versionTag: "Updated Version V2",
+    versionTag: "Version",
     desc: "A Wanhua area map centered on Caesar Metro Taipei with category filters and direct Google Maps links.",
     quickReach: "Quick Access",
     jumpFilters: "Filters",
@@ -99,7 +99,7 @@ const TEXT = {
     statusNoResult: "No matching places right now. The map stays on Caesar Metro Taipei.",
     statusNoSelect: (n) => `${n} places match. The map remains centered on Caesar Metro Taipei.`,
     statusSelected: (n, name) => `${n} places match. Current focus: ${name}.`,
-    center: "Center", openCurrent: "Open current place", openHotel: "View hotel location", routeFromHotel: "Route from hotel", openHotelArea: "View hotel surroundings",
+    center: "Center", recommended: "Recommended", openCurrent: "Open current place", openHotel: "View hotel location", routeFromHotel: "Route from hotel", openHotelArea: "View hotel surroundings",
     addFavorite: "Add to list", removeFavorite: "Remove", favoriteOpen: "Open",
     favoritesTitle: "Saved List", favoritesHint: "Tap Add to list on place cards to build your own itinerary list.", favoritesClear: "Clear", favoritesEmpty: "No saved places yet.", favoritesCountUnit: "items",
     weatherTitle: "Today's Weather", weatherLoading: "Loading...", weatherRain: (p) => `Rain chance ${p}%`, weatherTemp: (min, max) => `${min}°C - ${max}°C`, weatherUnavailable: "Weather unavailable",
@@ -109,7 +109,7 @@ const TEXT = {
   },
   ja: {
     title: "シーザーメトロ台北 周辺マップ",
-    versionTag: "改訂版 V2",
+    versionTag: "Version",
     desc: "シーザーメトロ台北を中心にした萬華エリア地図。カテゴリ絞り込みとGoogleマップ連携に対応。",
     quickReach: "クイック移動",
     jumpFilters: "条件設定",
@@ -132,7 +132,7 @@ const TEXT = {
     statusNoResult: "条件に合うスポットがありません。地図はホテル中心のままです。",
     statusNoSelect: (n) => `${n}件が条件に一致しています。地図はホテル中心です。`,
     statusSelected: (n, name) => `${n}件が条件に一致しています。現在のフォーカス：${name}。`,
-    center: "中心", openCurrent: "現在地を開く", openHotel: "ホテル位置を見る", routeFromHotel: "ホテルからの経路", openHotelArea: "ホテル周辺を見る",
+    center: "中心", recommended: "おすすめ", openCurrent: "現在地を開く", openHotel: "ホテル位置を見る", routeFromHotel: "ホテルからの経路", openHotelArea: "ホテル周辺を見る",
     addFavorite: "リスト追加", removeFavorite: "削除", favoriteOpen: "地図を開く",
     favoritesTitle: "保存リスト", favoritesHint: "右側カードの「リスト追加」でお客様用の行き先リストを作れます。", favoritesClear: "クリア", favoritesEmpty: "保存した地点はまだありません。", favoritesCountUnit: "件",
     weatherTitle: "今日の天気", weatherLoading: "読込中...", weatherRain: (p) => `降水確率 ${p}%`, weatherTemp: (min, max) => `${min}°C - ${max}°C`, weatherUnavailable: "天気情報を取得できません",
@@ -1147,7 +1147,7 @@ function renderSpotlight(selected) {
   dom.selectedKicker.textContent = isHotel ? "Hotel Anchor" : "Selected Place";
   dom.selectedName.textContent = getDisplayName(focus);
   dom.selectedSecondary.textContent = getSecondaryName(focus);
-  dom.selectedStatus.textContent = isHotel ? text.center : humanizeSourceStatus(focus.source_status);
+  dom.selectedStatus.textContent = isHotel ? text.center : text.recommended;
   dom.selectedPrimary.textContent = trCategory(focus.primary_category, "primary");
   dom.selectedSubcategory.textContent = isWithin10MinWalk(focus)
     ? `${trCategory(normalizeSubcategory(focus.subcategory), "subcategory")}・${trCategory(WALK_10MIN_SUBCATEGORY, "subcategory")}`
@@ -1486,26 +1486,22 @@ function buildTourLeadJa(place, mrt) {
 function getBasicIntro(place) {
   const mrt = trMrt(place.near_mrt || tt("mrtPending"));
   const hours = getResolvedOpeningHours(place);
-  const highlight = cleanupTourHighlight(place.notes);
 
   if (state.lang === "en") {
     const lead = buildTourLeadEn(place, mrt);
-    const h = highlight ? ` Highlight: ${highlight}.` : "";
     const t = hours ? ` Best time: ${hours}.` : "";
-    return `${lead}${h}${t}`.trim();
+    return `${lead}${t}`.trim();
   }
 
   if (state.lang === "ja") {
     const lead = buildTourLeadJa(place, mrt);
-    const h = highlight ? ` 見どころ：${highlight}。` : "";
     const t = hours ? ` おすすめ時間：${hours}。` : "";
-    return `${lead}${h}${t}`.trim();
+    return `${lead}${t}`.trim();
   }
 
   const lead = buildTourLeadZh(place, mrt);
-  const h = highlight ? ` 推薦亮點：${highlight}。` : "";
   const t = hours ? ` 建議時段：${hours}。` : "";
-  return `${lead}${h}${t}`.trim();
+  return `${lead}${t}`.trim();
 }
 
 function stripPlusCodeForDisplay(input) {

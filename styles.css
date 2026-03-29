@@ -173,6 +173,20 @@ a {
   letter-spacing: 0.08em;
 }
 
+.version-tag--floating {
+  position: fixed;
+  right: 94px;
+  bottom: 22px;
+  z-index: 26;
+  min-height: 34px;
+  padding: 0 14px;
+  border-color: rgba(145, 112, 67, 0.18);
+  background: rgba(255, 250, 243, 0.88);
+  color: var(--accent-deep);
+  box-shadow: 0 12px 26px rgba(46, 29, 12, 0.12);
+  backdrop-filter: blur(10px);
+}
+
 .hero__controls {
   display: inline-flex;
   align-items: center;
@@ -249,6 +263,28 @@ a {
   margin: 2px 0 0;
   font-size: 0.85rem;
   opacity: 0.86;
+}
+
+.weather-widget--panel {
+  margin-top: 14px;
+  min-width: 0;
+  border: 1px solid rgba(145, 112, 67, 0.16);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(249, 241, 229, 0.84));
+  color: var(--ink);
+}
+
+.weather-widget--panel .weather-widget__title {
+  color: var(--ink-soft);
+  opacity: 1;
+}
+
+.weather-widget--panel .weather-widget__summary {
+  color: var(--ink);
+}
+
+.weather-widget--panel .weather-widget__rain {
+  color: var(--ink-soft);
+  opacity: 1;
 }
 
 .hero--title-only h1 {
@@ -1014,14 +1050,10 @@ html[lang="ja"] .hero-quick-nav__label {
 
   .hero__controls {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: auto;
     align-items: start;
     gap: 10px;
-  }
-
-  .weather-widget {
-    min-width: 0;
-    width: 100%;
+    justify-content: end;
   }
 
   .lang-switch {
@@ -1120,8 +1152,9 @@ html[lang="ja"] .hero-quick-nav__label {
 
   .hero__controls {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: auto;
     align-items: stretch;
+    justify-content: end;
   }
 
   .hero-quick-nav {
@@ -1136,11 +1169,6 @@ html[lang="ja"] .hero-quick-nav__label {
     width: 100%;
     justify-content: space-between;
     justify-self: stretch;
-  }
-
-  .weather-widget {
-    width: 100%;
-    min-width: 0;
   }
 
   .hero::after {
@@ -1274,6 +1302,11 @@ html[lang="ja"] .hero-quick-nav__label {
     min-height: 52px;
     padding: 0 16px;
     font-size: 0.9rem;
+  }
+
+  .version-tag--floating {
+    right: 14px;
+    bottom: calc(74px + env(safe-area-inset-bottom, 0px));
   }
 }
 
