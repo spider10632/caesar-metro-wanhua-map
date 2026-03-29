@@ -231,6 +231,32 @@ a {
   background: rgba(255, 255, 255, 0.14);
 }
 
+.hero__footer-controls {
+  position: relative;
+  z-index: 1;
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.lang-select {
+  min-height: 40px;
+  min-width: 128px;
+  padding: 0 36px 0 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 245, 230, 0.95);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.lang-select:focus-visible {
+  outline: 2px solid rgba(176, 139, 86, 0.5);
+  outline-offset: 3px;
+}
+
 .jump-target {
   scroll-margin-top: 16px;
 }
@@ -1188,6 +1214,15 @@ html[lang="ja"] .hero-quick-nav__label {
     width: 100%;
     justify-content: space-between;
     justify-self: stretch;
+  }
+
+  .hero__footer-controls {
+    margin-top: 10px;
+    justify-content: flex-end;
+  }
+
+  .lang-select {
+    min-width: 118px;
   }
 
   .hero::after {

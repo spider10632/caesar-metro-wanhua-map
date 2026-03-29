@@ -48,7 +48,7 @@ const TEXT = {
     quickReach: "快速抵達",
     jumpFilters: "行程條件",
     jumpSpotlight: "地圖聚焦",
-    jumpCollection: "周邊清單",
+    jumpCollection: "搜尋結果",
     jumpFavorites: "蒐藏清單",
     jumpHotel: "飯店資訊",
     note: "歡迎使用本地圖。請先選擇左側分類或輸入關鍵字，再按「搜尋」；點選右側地點卡片後，中間地圖會立即切換，並可直接開啟 Google Maps 導航。",
@@ -59,7 +59,7 @@ const TEXT = {
     primary: "主分類", subcategory: "次分類", meal: "餐食標籤", countUnit: "類",
     overview: "目前結果", match: "符合條件", focus: "地圖焦點",
     spotlight: "地圖聚焦", spotlightNote: "中間地圖直接使用 Google Maps 嵌入視窗",
-    collection: "周邊清單", collectionHint: "點選卡片即可把中間 Google 地圖切到該地點。",
+    collection: "搜尋結果", collectionHint: "搜尋後會顯示符合條件的地點；點選卡片即可把中間 Google 地圖切到該地點。",
     baseLabel: "Concierge Base", baseName: "凱達大飯店", baseLocation: "位置", baseNearby: "鄰近", baseVersion: "飯店電話", baseOpen: "開啟飯店 Google Maps",
     statusBeforeSearch: "請先設定條件後按「搜尋」，再顯示點位。",
     listBeforeSearch: "請先按「搜尋」顯示點位清單。",
@@ -81,7 +81,7 @@ const TEXT = {
     quickReach: "Quick Access",
     jumpFilters: "Filters",
     jumpSpotlight: "Map Spotlight",
-    jumpCollection: "Nearby List",
+    jumpCollection: "Search Results",
     jumpFavorites: "Saved List",
     jumpHotel: "Hotel Info",
     note: "Choose categories or keywords, then tap Search. Tap any place card to update the center map and open Google Maps navigation.",
@@ -92,7 +92,7 @@ const TEXT = {
     primary: "Primary Category", subcategory: "Subcategory", meal: "Meal Tags", countUnit: "types",
     overview: "Current Result", match: "Matched", focus: "Map Focus",
     spotlight: "Spotlight", spotlightNote: "The center map uses embedded Google Maps",
-    collection: "Nearby List", collectionHint: "Tap a card to move the center map to that place.",
+    collection: "Search Results", collectionHint: "Matching places appear after Search. Tap a card to move the center map to that place.",
     baseLabel: "Concierge Base", baseName: "Caesar Metro Taipei", baseLocation: "Location", baseNearby: "Nearby", baseVersion: "Hotel Phone", baseOpen: "Open Hotel in Google Maps",
     statusBeforeSearch: "Set your filters first, then tap Search to show places.",
     listBeforeSearch: "Tap Search to show the place list.",
@@ -114,7 +114,7 @@ const TEXT = {
     quickReach: "クイック移動",
     jumpFilters: "条件設定",
     jumpSpotlight: "地図フォーカス",
-    jumpCollection: "周辺リスト",
+    jumpCollection: "検索結果",
     jumpFavorites: "保存リスト",
     jumpHotel: "ホテル情報",
     note: "左側でカテゴリまたはキーワードを選び、「検索」を押してください。右側のカードを押すと中央地図が切り替わり、Googleマップで案内できます。",
@@ -125,7 +125,7 @@ const TEXT = {
     primary: "主カテゴリ", subcategory: "サブカテゴリ", meal: "食事タグ", countUnit: "種類",
     overview: "現在の結果", match: "一致件数", focus: "地図の中心",
     spotlight: "地図フォーカス", spotlightNote: "中央地図は Google Maps 埋め込み表示です",
-    collection: "周辺リスト", collectionHint: "カードを押すと中央地図がその場所に切り替わります。",
+    collection: "検索結果", collectionHint: "「検索」後に条件に合う地点が表示されます。カードを押すと中央地図が切り替わります。",
     baseLabel: "Concierge Base", baseName: "シーザーメトロ台北", baseLocation: "場所", baseNearby: "最寄り", baseVersion: "ホテル電話", baseOpen: "ホテルを Google Maps で開く",
     statusBeforeSearch: "条件を設定して「検索」を押すと、スポット一覧が表示されます。",
     listBeforeSearch: "「検索」を押すと周辺スポット一覧が表示されます。",
@@ -224,13 +224,11 @@ const dom = {
   weatherTitle: document.querySelector("#weather-title"),
   weatherSummary: document.querySelector("#weather-summary"),
   weatherRain: document.querySelector("#weather-rain"),
-  quickNavLabel: document.querySelector("#quick-nav-label"),
   jumpFilters: document.querySelector("#jump-filters"),
   jumpSpotlight: document.querySelector("#jump-spotlight"),
-  jumpCollection: document.querySelector("#jump-collection"),
   jumpFavorites: document.querySelector("#jump-favorites"),
   jumpHotel: document.querySelector("#jump-hotel"),
-  langButtons: document.querySelectorAll(".lang-button"),
+  langSelect: document.querySelector("#lang-select"),
   primaryFilters: document.querySelector("#primary-filters"),
   subcategoryFilters: document.querySelector("#subcategory-filters"),
   mealBlock: document.querySelector("#meal-block"),
@@ -255,6 +253,7 @@ const dom = {
   selectedRoute: document.querySelector("#selected-route"),
   selectedFavorite: document.querySelector("#selected-favorite"),
   mapFrame: document.querySelector("#map-frame"),
+  panelCollection: document.querySelector("#panel-collection"),
   results: document.querySelector("#results"),
   favoritesTitle: document.querySelector("#favorites-title"),
   favoritesCount: document.querySelector("#favorites-count"),
@@ -450,12 +449,10 @@ function applyStaticText() {
   if (meta) meta.setAttribute("content", text.desc);
   dom.pageTitle.textContent = text.title;
   dom.versionTag.textContent = text.versionTag;
-  dom.quickNavLabel.textContent = text.quickReach;
-  dom.jumpFilters.textContent = text.jumpFilters;
-  dom.jumpSpotlight.textContent = text.jumpSpotlight;
-  dom.jumpCollection.textContent = text.jumpCollection;
-  dom.jumpFavorites.textContent = text.jumpFavorites;
-  dom.jumpHotel.textContent = text.jumpHotel;
+  if (dom.jumpFilters) dom.jumpFilters.textContent = text.jumpFilters;
+  if (dom.jumpSpotlight) dom.jumpSpotlight.textContent = text.jumpSpotlight;
+  if (dom.jumpFavorites) dom.jumpFavorites.textContent = text.jumpFavorites;
+  if (dom.jumpHotel) dom.jumpHotel.textContent = text.jumpHotel;
   dom.guestNoteText.textContent = text.note;
   dom.filtersTitle.textContent = text.filters;
   dom.searchLabel.textContent = text.searchLabel;
@@ -495,7 +492,7 @@ function applyStaticText() {
   dom.weatherTitle.textContent = text.weatherTitle;
   dom.backToTop.textContent = text.top;
   dom.backToTop.setAttribute("aria-label", text.backTop);
-  dom.langButtons.forEach((b) => b.classList.toggle("is-active", b.dataset.lang === state.lang));
+  if (dom.langSelect) dom.langSelect.value = state.lang;
   updateFavoriteCount();
   renderFavoriteButtonLabel();
 }
@@ -535,9 +532,9 @@ function attachEvents() {
     render();
   });
 
-  dom.langButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const nextLang = button.dataset.lang;
+  if (dom.langSelect) {
+    dom.langSelect.addEventListener("change", () => {
+      const nextLang = dom.langSelect.value;
       if (!LANGS.includes(nextLang) || nextLang === state.lang) return;
       state.lang = nextLang;
       saveLang(nextLang);
@@ -546,7 +543,7 @@ function attachEvents() {
       refreshWeather();
       render();
     });
-  });
+  }
 
   if (dom.selectedFavorite) {
     dom.selectedFavorite.addEventListener("click", () => {
@@ -594,6 +591,9 @@ function applyDraftFilters() {
   renderQuickFilters();
   syncPendingState();
   render();
+  if (dom.panelCollection) {
+    dom.panelCollection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
   if (state.applied.subcategory.has(WALK_10MIN_SUBCATEGORY)) {
     refreshWalkingTimesInBackground();
   }

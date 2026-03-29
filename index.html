@@ -26,23 +26,22 @@
           <div class="hero__title-stack">
             <h1 id="page-title">凱達大飯店周邊地圖</h1>
           </div>
-          <div class="hero__controls">
-            <div class="lang-switch" role="group" aria-label="Language switch">
-              <button id="lang-zh" class="lang-button is-active" type="button" data-lang="zh">中文</button>
-              <button id="lang-en" class="lang-button" type="button" data-lang="en">EN</button>
-              <button id="lang-ja" class="lang-button" type="button" data-lang="ja">日本語</button>
-            </div>
-          </div>
         </div>
 
         <nav class="hero-quick-nav" aria-label="Section quick navigation">
-          <span id="quick-nav-label" class="hero-quick-nav__label">快速抵達</span>
           <a id="jump-filters" class="hero-jump" href="#panel-filters">行程條件</a>
           <a id="jump-spotlight" class="hero-jump" href="#panel-spotlight">地圖聚焦</a>
-          <a id="jump-collection" class="hero-jump" href="#panel-collection">周邊清單</a>
           <a id="jump-favorites" class="hero-jump" href="#panel-favorites">蒐藏清單</a>
           <a id="jump-hotel" class="hero-jump" href="#panel-hotel">飯店資訊</a>
         </nav>
+
+        <div class="hero__footer-controls">
+          <select id="lang-select" class="lang-select" aria-label="Language">
+            <option value="zh">中文</option>
+            <option value="en">EN</option>
+            <option value="ja">日本語</option>
+          </select>
+        </div>
       </header>
 
       <section class="intro-row">
@@ -230,7 +229,7 @@
           <div class="collection__header">
             <div class="section-heading">
               <p class="eyebrow">Collection</p>
-              <h2 id="collection-title">周邊清單</h2>
+              <h2 id="collection-title">搜尋結果</h2>
             </div>
             <p id="collection-hint" class="collection__hint">點選卡片即可把中間 Google 地圖切到該地點。</p>
           </div>
