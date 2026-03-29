@@ -139,18 +139,19 @@ a {
 
 .hero--title-only {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  align-items: start;
   padding: 34px 28px;
-  text-align: center;
+  text-align: left;
 }
 
 .hero__title-row {
   display: flex;
   width: 100%;
-  align-items: center;
-  justify-content: space-between;
+  align-items: flex-start;
+  justify-content: flex-start;
   gap: 16px;
+  padding-bottom: 2px;
 }
 
 .hero__title-stack {
@@ -200,8 +201,9 @@ a {
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 16px;
-  width: 100%;
+  margin-top: 0;
+  width: auto;
+  flex: 1 1 auto;
   justify-content: flex-start;
 }
 
@@ -239,12 +241,28 @@ a {
   background: rgba(255, 255, 255, 0.14);
 }
 
+.hero__bottom-row {
+  position: relative;
+  z-index: 1;
+  margin-top: 20px;
+  padding: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
 .hero__footer-controls {
   position: relative;
   z-index: 1;
-  margin-top: 12px;
+  margin-top: 0;
   display: flex;
   justify-content: flex-end;
+  flex: 0 0 auto;
 }
 
 .lang-select {
@@ -1142,6 +1160,14 @@ html[lang="ja"] .hero-quick-nav__label {
     gap: 14px;
   }
 
+  .hero__bottom-row {
+    margin-top: 16px;
+    padding: 12px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
   .hero__controls {
     display: grid;
     grid-template-columns: auto;
@@ -1164,14 +1190,15 @@ html[lang="ja"] .hero-quick-nav__label {
   }
 
   .hero-quick-nav {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
-    padding: 2px 0 4px;
+    padding: 0;
+    width: 100%;
   }
 
   .hero-jump {
-    width: auto;
+    width: 100%;
     white-space: nowrap;
     min-height: 36px;
     padding: 0 12px;
@@ -1247,9 +1274,16 @@ html[lang="ja"] .hero-quick-nav__label {
   }
 
   .hero-quick-nav {
+    margin-top: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .hero__bottom-row {
     margin-top: 14px;
-    display: flex;
-    flex-wrap: wrap;
+    padding: 10px;
+    gap: 10px;
   }
 
   .hero-quick-nav__label {
@@ -1263,8 +1297,12 @@ html[lang="ja"] .hero-quick-nav__label {
   }
 
   .hero__footer-controls {
-    margin-top: 10px;
-    justify-content: flex-end;
+    margin-top: 0;
+    justify-content: stretch;
+  }
+
+  .hero__footer-controls .lang-select {
+    width: 100%;
   }
 
   .lang-select {
@@ -1460,8 +1498,8 @@ html[lang="ja"] .hero-quick-nav__label {
   }
 
   .hero-quick-nav {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .hero-jump {
