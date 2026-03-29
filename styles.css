@@ -928,6 +928,7 @@ html[lang="ja"] .hero-quick-nav__label {
   border-radius: 24px;
   border: 1px solid rgba(145, 112, 67, 0.14);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 241, 233, 0.96));
+  cursor: pointer;
   transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 
@@ -968,8 +969,8 @@ html[lang="ja"] .hero-quick-nav__label {
 }
 
 .place-card__actions .button {
-  flex: 1 1 calc(50% - 8px);
-  min-width: 116px;
+  flex: 1 1 calc(33.333% - 8px);
+  min-width: 110px;
 }
 
 .empty-state {
