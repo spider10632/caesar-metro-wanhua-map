@@ -65,12 +65,12 @@ const TEXT = {
     statusNoSelect: (n) => `共有 ${n} 個地點符合條件，目前維持以凱達大飯店作為地圖中心。`,
     statusSelected: (n, name) => `共有 ${n} 個地點符合條件，目前聚焦在「${name}」。`,
     center: "中心點", openCurrent: "查看目前地點", openHotel: "查看飯店位置", routeFromHotel: "從飯店前往", openHotelArea: "查看飯店周邊",
-    addFavorite: "加入蒐藏", removeFavorite: "移出蒐藏", favoriteFocus: "清單定位", favoriteOpen: "地圖開啟",
+    addFavorite: "加入蒐藏", removeFavorite: "移出蒐藏", favoriteOpen: "地圖開啟",
     favoritesTitle: "蒐藏清單", favoritesHint: "在右側地點卡按「加入蒐藏」，就會出現在這裡。", favoritesClear: "清空", favoritesEmpty: "目前尚未蒐藏任何地點。", favoritesCountUnit: "筆",
     weatherTitle: "今日天氣", weatherLoading: "讀取中...", weatherRain: (p) => `降雨機率 ${p}%`, weatherTemp: (min, max) => `${min}°C - ${max}°C`, weatherUnavailable: "天氣暫時無法取得",
     hours: "營業時間：", addr: "地址：", mrt: "捷運：", notes: "基本介紹：", addrPending: "地址未提供", mrtPending: "未提供", noNotes: "此地點位於凱達大飯店周邊，適合安排步行造訪。",
     empty: "目前沒有符合條件的結果。你可以放寬分類、清除搜尋，或重新打開停用中的資料。",
-    focusMap: "切到中間地圖", sourceUnknown: "行程點位", backTop: "回到頁面頂端", top: "Top"
+    sourceUnknown: "行程點位", backTop: "回到頁面頂端", top: "Top"
   },
   en: {
     title: "Caesar Metro Taipei Nearby Map",
@@ -96,12 +96,12 @@ const TEXT = {
     statusNoSelect: (n) => `${n} places match. The map remains centered on Caesar Metro Taipei.`,
     statusSelected: (n, name) => `${n} places match. Current focus: ${name}.`,
     center: "Center", openCurrent: "Open current place", openHotel: "View hotel location", routeFromHotel: "Route from hotel", openHotelArea: "View hotel surroundings",
-    addFavorite: "Add to list", removeFavorite: "Remove", favoriteFocus: "Focus", favoriteOpen: "Open",
+    addFavorite: "Add to list", removeFavorite: "Remove", favoriteOpen: "Open",
     favoritesTitle: "Saved List", favoritesHint: "Tap Add to list on place cards to build your own itinerary list.", favoritesClear: "Clear", favoritesEmpty: "No saved places yet.", favoritesCountUnit: "items",
     weatherTitle: "Today's Weather", weatherLoading: "Loading...", weatherRain: (p) => `Rain chance ${p}%`, weatherTemp: (min, max) => `${min}°C - ${max}°C`, weatherUnavailable: "Weather unavailable",
     hours: "Hours: ", addr: "Address: ", mrt: "MRT: ", notes: "Intro: ", addrPending: "Address not provided", mrtPending: "Not provided", noNotes: "Near Caesar Metro Taipei and suitable for a short walk.",
     empty: "No places match your current filters. Try broader categories or clear the search.",
-    focusMap: "Focus on map", sourceUnknown: "POI", backTop: "Back to top", top: "Top"
+    sourceUnknown: "POI", backTop: "Back to top", top: "Top"
   },
   ja: {
     title: "シーザーメトロ台北 周辺マップ",
@@ -127,12 +127,12 @@ const TEXT = {
     statusNoSelect: (n) => `${n}件が条件に一致しています。地図はホテル中心です。`,
     statusSelected: (n, name) => `${n}件が条件に一致しています。現在のフォーカス：${name}。`,
     center: "中心", openCurrent: "現在地を開く", openHotel: "ホテル位置を見る", routeFromHotel: "ホテルからの経路", openHotelArea: "ホテル周辺を見る",
-    addFavorite: "リスト追加", removeFavorite: "削除", favoriteFocus: "地図表示", favoriteOpen: "地図を開く",
+    addFavorite: "リスト追加", removeFavorite: "削除", favoriteOpen: "地図を開く",
     favoritesTitle: "保存リスト", favoritesHint: "右側カードの「リスト追加」でお客様用の行き先リストを作れます。", favoritesClear: "クリア", favoritesEmpty: "保存した地点はまだありません。", favoritesCountUnit: "件",
     weatherTitle: "今日の天気", weatherLoading: "読込中...", weatherRain: (p) => `降水確率 ${p}%`, weatherTemp: (min, max) => `${min}°C - ${max}°C`, weatherUnavailable: "天気情報を取得できません",
     hours: "営業時間：", addr: "住所：", mrt: "MRT：", notes: "基本紹介：", addrPending: "住所未登録", mrtPending: "未登録", noNotes: "ホテル周辺で徒歩で立ち寄りやすいスポットです。",
     empty: "条件に合う結果がありません。カテゴリを広げるか検索をクリアしてください。",
-    focusMap: "中央地図へ", sourceUnknown: "スポット", backTop: "ページ上部へ戻る", top: "Top"
+    sourceUnknown: "スポット", backTop: "ページ上部へ戻る", top: "Top"
   }
 };
 
@@ -1036,12 +1036,12 @@ function buildPlaceLookupQueries(place) {
 function render() {
   const filtered = places.filter(applyFilters);
   syncSelection(filtered);
-  const selected = getSelectedPlace(filtered);
+  const selected = null;
   dom.resultCount.textContent = String(filtered.length);
-  dom.focusLabel.textContent = selected ? getDisplayName(selected) : getDisplayName(HOTEL);
+  dom.focusLabel.textContent = getDisplayName(HOTEL);
   dom.statusText.textContent = buildStatusText(filtered, selected);
   renderSpotlight(selected);
-  renderList(filtered, selected);
+  renderList(filtered);
   renderFavorites();
   updateFavoriteCount();
 }
@@ -1083,22 +1083,7 @@ function applyFilters(place) {
 }
 
 function syncSelection(filtered) {
-  if (!filtered.length) {
-    state.selectedPlaceId = null;
-    return;
-  }
-  if (state.selectedPlaceId && filtered.some((place) => place.id === state.selectedPlaceId)) return;
-  state.selectedPlaceId = hasActiveFilters() ? filtered[0].id : null;
-}
-
-function hasActiveFilters() {
-  return (
-    Boolean(state.applied.search) ||
-    !state.applied.activeOnly ||
-    state.applied.primary.size > 0 ||
-    state.applied.subcategory.size > 0 ||
-    state.applied.meal.size > 0
-  );
+  state.selectedPlaceId = null;
 }
 
 function getSelectedPlace(filtered) {
@@ -1156,7 +1141,7 @@ function renderSpotlight(selected) {
   dom.mapFrame.src = buildEmbedUrl(focus);
 }
 
-function renderList(filtered, selected) {
+function renderList(filtered) {
   const text = TEXT[state.lang] || TEXT.zh;
 
   if (!filtered.length) {
@@ -1166,7 +1151,6 @@ function renderList(filtered, selected) {
 
   dom.results.innerHTML = filtered
     .map((place) => {
-      const isSelected = selected?.id === place.id;
       const openingHours = getResolvedOpeningHours(place);
       const intro = getBasicIntro(place);
       const address = stripPlusCodeForDisplay(normalizeText(place.address_zh));
@@ -1182,7 +1166,7 @@ function renderList(filtered, selected) {
       const favoriteLabel = isFavorite(place.id) ? text.removeFavorite : text.addFavorite;
 
       return `
-        <article class="place-card${isSelected ? " is-selected" : ""}" data-card-id="${escapeHtml(place.id)}">
+        <article class="place-card">
           <div class="place-card__top">
             <div>
               <h3 class="place-card__title">${escapeHtml(getDisplayName(place))}</h3>
@@ -1206,29 +1190,12 @@ function renderList(filtered, selected) {
 
           <div class="place-card__actions">
             <a class="button button--slim" href="${escapeAttribute(buildSearchUrl(place))}" target="_blank" rel="noreferrer">Google Maps</a>
-            <a class="button button--ghost button--slim" href="#" data-focus-id="${escapeAttribute(place.id)}">${escapeHtml(text.focusMap)}</a>
             <button class="button button--ghost button--slim" type="button" data-favorite-id="${escapeAttribute(place.id)}">${escapeHtml(favoriteLabel)}</button>
           </div>
         </article>
       `;
     })
     .join("");
-
-  dom.results.querySelectorAll("[data-focus-id]").forEach((button) => {
-    button.addEventListener("click", (event) => {
-      event.preventDefault();
-      state.selectedPlaceId = event.currentTarget.dataset.focusId;
-      render();
-    });
-  });
-
-  dom.results.querySelectorAll("[data-card-id]").forEach((card) => {
-    card.addEventListener("click", (event) => {
-      if (event.target.closest("a, button")) return;
-      state.selectedPlaceId = card.dataset.cardId;
-      render();
-    });
-  });
 
   dom.results.querySelectorAll("[data-favorite-id]").forEach((button) => {
     button.addEventListener("click", (event) => {
@@ -1260,7 +1227,6 @@ function renderFavorites() {
             <p>${escapeHtml(trCategory(place.primary_category, "primary"))} / ${escapeHtml(trCategory(place.subcategory, "subcategory"))}</p>
           </div>
           <div class="favorite-item__actions">
-            <a class="button button--ghost button--slim" href="#" data-favorite-focus-id="${escapeAttribute(place.id)}">${escapeHtml(text.favoriteFocus)}</a>
             <a class="button button--slim" href="${escapeAttribute(buildSearchUrl(place))}" target="_blank" rel="noreferrer">${escapeHtml(text.favoriteOpen)}</a>
             <button class="button button--ghost button--slim" type="button" data-favorite-remove-id="${escapeAttribute(place.id)}">${escapeHtml(text.removeFavorite)}</button>
           </div>
@@ -1268,15 +1234,6 @@ function renderFavorites() {
       `;
     })
     .join("");
-
-  dom.favoritesList.querySelectorAll("[data-favorite-focus-id]").forEach((button) => {
-    button.addEventListener("click", (event) => {
-      event.preventDefault();
-      state.selectedPlaceId = button.dataset.favoriteFocusId;
-      render();
-      dom.mapFrame.scrollIntoView({ behavior: "smooth", block: "center" });
-    });
-  });
 
   dom.favoritesList.querySelectorAll("[data-favorite-remove-id]").forEach((button) => {
     button.addEventListener("click", (event) => {

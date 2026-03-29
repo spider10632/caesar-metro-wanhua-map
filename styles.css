@@ -700,7 +700,7 @@ html[lang="ja"] .hero-quick-nav__label {
 }
 
 .favorite-item__actions .button {
-  flex: 1 1 calc(33.33% - 8px);
+  flex: 1 1 calc(50% - 8px);
   min-width: 90px;
 }
 
@@ -932,7 +932,7 @@ html[lang="ja"] .hero-quick-nav__label {
 }
 
 .place-card__actions .button {
-  flex: 1 1 calc(33.33% - 8px);
+  flex: 1 1 calc(50% - 8px);
   min-width: 116px;
 }
 
