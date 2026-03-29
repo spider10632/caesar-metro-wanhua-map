@@ -495,10 +495,7 @@ function applyStaticText() {
   dom.favoritesHint.textContent = text.favoritesHint;
   dom.favoritesClear.textContent = text.favoritesClear;
   if (dom.favoritesBackSearch) dom.favoritesBackSearch.textContent = text.favoritesBackSearch;
-  if (dom.openFavorites) {
-    dom.openFavorites.textContent = text.favoritesLauncher;
-    dom.openFavorites.setAttribute("aria-label", text.favoritesLauncher);
-  }
+  if (dom.openFavorites) dom.openFavorites.setAttribute("aria-label", text.favoritesLauncher);
   dom.weatherTitle.textContent = text.weatherTitle;
   dom.backToTop.textContent = text.top;
   dom.backToTop.setAttribute("aria-label", text.backTop);
@@ -574,6 +571,12 @@ function attachEvents() {
 
   if (dom.openFavorites) {
     dom.openFavorites.addEventListener("click", () => {
+      showFavoritesPanel(true);
+    });
+  }
+
+  if (dom.jumpFavorites) {
+    dom.jumpFavorites.addEventListener("click", () => {
       showFavoritesPanel(true);
     });
   }
@@ -697,7 +700,11 @@ function toggleFavorite(placeId) {
 
 function updateFavoriteCount() {
   const unit = tt("favoritesCountUnit");
+  const text = TEXT[state.lang] || TEXT.zh;
   dom.favoritesCount.textContent = `${state.favorites.size} ${unit}`;
+  if (dom.openFavorites) {
+    dom.openFavorites.textContent = `${text.favoritesLauncher} (${state.favorites.size})`;
+  }
 }
 
 function renderFavoriteButtonLabel() {

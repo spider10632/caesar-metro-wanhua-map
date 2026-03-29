@@ -201,6 +201,8 @@ a {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 16px;
+  width: 100%;
+  justify-content: flex-start;
 }
 
 .hero-quick-nav__label {
@@ -222,7 +224,13 @@ a {
   color: rgba(255, 245, 230, 0.96);
   text-decoration: none;
   font-size: 0.86rem;
+  white-space: nowrap;
   transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.hero-jump--button {
+  font: inherit;
+  cursor: pointer;
 }
 
 .hero-jump:hover {
@@ -1065,13 +1073,13 @@ html[lang="ja"] .hero-quick-nav__label {
 
 .open-favorites {
   position: fixed;
-  left: 22px;
+  right: 92px;
   bottom: 22px;
-  z-index: 29;
+  z-index: 41;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 96px;
+  min-width: 120px;
   min-height: 56px;
   padding: 0 18px;
   border: 1px solid rgba(255, 255, 255, 0.24);
@@ -1081,6 +1089,7 @@ html[lang="ja"] .hero-quick-nav__label {
   box-shadow: 0 18px 40px rgba(46, 29, 12, 0.2);
   cursor: pointer;
   backdrop-filter: blur(14px);
+  white-space: nowrap;
 }
 
 .open-favorites.is-active {
@@ -1155,15 +1164,15 @@ html[lang="ja"] .hero-quick-nav__label {
   }
 
   .hero-quick-nav {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 8px;
     padding: 2px 0 4px;
   }
 
   .hero-jump {
-    width: 100%;
-    white-space: normal;
+    width: auto;
+    white-space: nowrap;
     min-height: 36px;
     padding: 0 12px;
     font-size: 0.83rem;
@@ -1239,7 +1248,8 @@ html[lang="ja"] .hero-quick-nav__label {
 
   .hero-quick-nav {
     margin-top: 14px;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: flex;
+    flex-wrap: wrap;
   }
 
   .hero-quick-nav__label {
@@ -1407,9 +1417,9 @@ html[lang="ja"] .hero-quick-nav__label {
   }
 
   .open-favorites {
-    left: 14px;
+    right: 78px;
     bottom: calc(14px + env(safe-area-inset-bottom, 0px));
-    min-width: 88px;
+    min-width: 108px;
     min-height: 52px;
     padding: 0 14px;
     font-size: 0.88rem;
@@ -1450,7 +1460,8 @@ html[lang="ja"] .hero-quick-nav__label {
   }
 
   .hero-quick-nav {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-wrap: wrap;
   }
 
   .hero-jump {
