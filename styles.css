@@ -225,6 +225,7 @@ a {
   background: rgba(255, 255, 255, 0.08);
   color: rgba(255, 245, 230, 0.96);
   text-decoration: none;
+  font-family: var(--font-ui-current);
   font-size: 0.86rem;
   white-space: nowrap;
   transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
@@ -274,6 +275,7 @@ a {
   background: rgba(255, 255, 255, 0.12);
   color: rgba(255, 245, 230, 0.95);
   font: inherit;
+  font-family: var(--font-ui-current);
   font-size: 0.9rem;
   cursor: pointer;
 }
@@ -281,6 +283,7 @@ a {
 .lang-select option {
   color: #2a1f13;
   background: #fffaf3;
+  font-family: var(--font-ui-current);
 }
 
 .lang-select:focus-visible {
@@ -300,10 +303,6 @@ a {
   background: rgba(255, 255, 255, 0.08);
   color: rgba(255, 245, 230, 0.96);
   text-align: left;
-}
-
-.hero__bottom-row .weather-widget {
-  flex: 0 0 auto;
 }
 
 .weather-widget__title {
@@ -398,7 +397,14 @@ a {
 
 .intro-row {
   margin-top: 16px;
-  display: block;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.intro-row .weather-widget {
+  width: 100%;
 }
 
 .hero--bottom {
@@ -1160,6 +1166,7 @@ html[lang="ja"] .hero-quick-nav__label {
   .hero__bottom-row {
     margin-top: 16px;
     padding: 12px;
+    display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
@@ -1196,6 +1203,19 @@ html[lang="ja"] .hero-quick-nav__label {
     min-height: 36px;
     padding: 0 12px;
     font-size: 0.83rem;
+  }
+
+  .hero__footer-controls {
+    justify-content: center;
+  }
+
+  .hero__footer-controls .lang-select {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .intro-row {
+    grid-template-columns: minmax(0, 1fr) 340px;
   }
 }
 
@@ -1267,7 +1287,6 @@ html[lang="ja"] .hero-quick-nav__label {
   }
 
   .hero-quick-nav {
-    grid-area: nav;
     margin-top: 0;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1280,11 +1299,9 @@ html[lang="ja"] .hero-quick-nav__label {
 
   .hero__bottom-row {
     margin-top: 14px;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 150px;
-    grid-template-areas:
-      "nav weather"
-      "lang lang";
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     padding: 0;
     border: 0;
     border-top: 0;
@@ -1304,22 +1321,15 @@ html[lang="ja"] .hero-quick-nav__label {
   }
 
   .hero__footer-controls {
-    grid-area: lang;
     margin-top: 0;
-    justify-content: flex-end;
-    align-self: center;
+    justify-content: center;
+    align-self: stretch;
   }
 
   .hero__footer-controls .lang-select {
-    width: auto;
-    min-width: 148px;
-  }
-
-  .hero__bottom-row .weather-widget {
-    grid-area: weather;
+    width: 100%;
+    max-width: none;
     min-width: 0;
-    min-height: 100%;
-    padding: 10px 12px;
   }
 
   .lang-select {
@@ -1375,7 +1385,9 @@ html[lang="ja"] .hero-quick-nav__label {
 
   .intro-row {
     margin-top: 12px;
-    display: block;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .weather-widget--panel {
