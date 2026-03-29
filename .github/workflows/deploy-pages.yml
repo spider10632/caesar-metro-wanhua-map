@@ -28,6 +28,8 @@ jobs:
       - name: Prepare static site
         env:
           MAPS_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          COMMENT_API_ENDPOINT: ${{ secrets.COMMENT_API_ENDPOINT }}
+          COMMENT_API_TOKEN: ${{ secrets.COMMENT_API_TOKEN }}
         run: |
           mkdir -p dist
           rsync -av --delete \
@@ -38,6 +40,8 @@ jobs:
           {
             printf 'window.GOOGLE_MAPS_API_KEY = "%s";\n' "$MAPS_KEY"
             printf 'window.GOOGLE_MAPS_USE_EMBED_API = false;\n'
+            printf 'window.COMMENT_API_ENDPOINT = "%s";\n' "$COMMENT_API_ENDPOINT"
+            printf 'window.COMMENT_API_TOKEN = "%s";\n' "$COMMENT_API_TOKEN"
           } > dist/google-maps-config.js
           touch dist/.nojekyll
 

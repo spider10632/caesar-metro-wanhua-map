@@ -1,8 +1,11 @@
-const HOTEL = {
+﻿"use strict";
+
+const HOTEL_DEFAULT = {
   id: "hotel_center",
   map_label_name: "凱達大飯店",
   name_zh: "凱達大飯店",
   name_en: "Caesar Metro Taipei",
+  name_ja: "シーザーメトロ台北",
   primary_category: "其他設施",
   subcategory: "飯店",
   near_mrt: "龍山寺站",
@@ -15,44 +18,256 @@ const HOTEL = {
 
 const GOOGLE_MAPS_API_KEY = window.GOOGLE_MAPS_API_KEY || "";
 const GOOGLE_MAPS_USE_EMBED_API = window.GOOGLE_MAPS_USE_EMBED_API === true;
+const COMMENT_API_ENDPOINT = window.COMMENT_API_ENDPOINT || "";
+const COMMENT_API_TOKEN = window.COMMENT_API_TOKEN || "";
+const LANGS = ["zh", "en", "ja"];
+const PLUS_CODE_REGEX = /([23456789CFGHJMPQRVWX]{4,8}\+[23456789CFGHJMPQRVWX]{2,3})/i;
+const WALK_10MIN_SUBCATEGORY = "走路10分內";
+const WALKING_CACHE_KEY = "wanhua_google_walking_cache_v1";
+const WALKING_CACHE_TTL_MS = 1000 * 60 * 60 * 24 * 14;
+const WALKING_THROTTLE_MS = 180;
+const OPENING_HOURS_CACHE_KEY = "wanhua_google_opening_hours_cache_v1";
+const OPENING_HOURS_CACHE_TTL_MS = 1000 * 60 * 60 * 24 * 7;
+const OPENING_HOURS_THROTTLE_MS = 180;
+const FAVORITES_STORAGE_KEY = "wanhua_map_favorites_v1";
+const WEATHER_ENDPOINT =
+  "https://api.open-meteo.com/v1/forecast?latitude=25.036&longitude=121.499&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FTaipei&forecast_days=1";
+const LEGACY_NIGHT_TAG = "消夜";
+const NIGHT_TAG = "宵夜";
+const PLACE_NAME_OVERRIDES = {
+  wanhua_028: {
+    name_zh: "五十嵐龍山寺店",
+    name_en: "50 Lan Longshan Temple Branch",
+    name_ja: "50嵐 龍山寺店",
+  },
+};
+
+const TEXT = {
+  zh: {
+    title: "凱達大飯店周邊地圖",
+    desc: "以凱達大飯店為中心的萬華周邊地圖，支援分類篩選並可直接開啟 Google Maps。",
+    quickReach: "快速抵達",
+    jumpFilters: "行程條件",
+    jumpSpotlight: "地圖聚焦",
+    jumpCollection: "周邊清單",
+    jumpFavorites: "蒐藏清單",
+    jumpComment: "客人留言",
+    jumpHotel: "飯店資訊",
+    note: "歡迎使用本地圖。請先選擇左側分類或輸入關鍵字，再按「搜尋」；點選右側地點卡片後，中間地圖會立即切換，並可直接開啟 Google Maps 導航。",
+    filters: "行程條件", searchLabel: "搜尋名稱、地址或基本介紹", searchPlaceholder: "例如：夜市、星巴克、龍山寺",
+    activeOnly: "只顯示啟用資料", clear: "清除條件", quick: "快速篩選", quickSub: "給客人常用",
+    quickAll: "全部推薦", quickFood: "在地美食", quickSight: "必看景點", quickTransport: "交通節點", quickShop: "生活採買", quickFacility: "旅宿機能",
+    apply: "搜尋", pending: "已修改條件，按「搜尋」更新結果。",
+    primary: "主分類", subcategory: "次分類", meal: "餐食標籤", countUnit: "類",
+    overview: "目前結果", match: "符合條件", focus: "地圖焦點",
+    spotlight: "地圖聚焦", spotlightNote: "中間地圖直接使用 Google Maps 嵌入視窗",
+    collection: "周邊清單", collectionHint: "點選卡片即可把中間 Google 地圖切到該地點。",
+    baseLabel: "Concierge Base", baseName: "凱達大飯店", baseLocation: "位置", baseNearby: "鄰近", baseVersion: "飯店電話", baseOpen: "開啟飯店 Google Maps",
+    statusNoResult: "目前沒有符合條件的地點，地圖先停留在凱達大飯店。",
+    statusNoSelect: (n) => `共有 ${n} 個地點符合條件，目前維持以凱達大飯店作為地圖中心。`,
+    statusSelected: (n, name) => `共有 ${n} 個地點符合條件，目前聚焦在「${name}」。`,
+    center: "中心點", openCurrent: "查看目前地點", openHotel: "查看飯店位置", routeFromHotel: "從飯店前往", openHotelArea: "查看飯店周邊",
+    addFavorite: "加入蒐藏", removeFavorite: "移出蒐藏", favoriteFocus: "清單定位", favoriteOpen: "地圖開啟",
+    favoritesTitle: "蒐藏清單", favoritesHint: "在右側地點卡按「加入蒐藏」，就會出現在這裡。", favoritesClear: "清空", favoritesEmpty: "目前尚未蒐藏任何地點。", favoritesCountUnit: "筆",
+    commentTitle: "客人留言",
+    commentFocusLabel: "目前地圖焦點",
+    commentNameLabel: "客人稱呼（選填）",
+    commentNamePlaceholder: "例如：王小姐",
+    commentRoomLabel: "房號（選填）",
+    commentRoomPlaceholder: "例如：1208",
+    commentInputLabel: "留言內容",
+    commentInputPlaceholder: "請輸入客人回饋、需求或備註",
+    commentSubmit: "送出留言",
+    commentSending: "正在回傳後端...",
+    commentSuccess: "已送出，後端已收到留言。",
+    commentServerError: "送出失敗，請稍後再試。",
+    commentEndpointMissing: "尚未設定留言後端網址（COMMENT_API_ENDPOINT）。",
+    commentEmpty: "請先輸入留言內容。",
+    weatherTitle: "今日天氣", weatherLoading: "讀取中...", weatherRain: (p) => `降雨機率 ${p}%`, weatherTemp: (min, max) => `${min}°C - ${max}°C`, weatherUnavailable: "天氣暫時無法取得",
+    hours: "營業時間：", addr: "地址：", mrt: "捷運：", notes: "基本介紹：", addrPending: "地址未提供", mrtPending: "未提供", noNotes: "此地點位於凱達大飯店周邊，適合安排步行造訪。",
+    empty: "目前沒有符合條件的結果。你可以放寬分類、清除搜尋，或重新打開停用中的資料。",
+    focusMap: "切到中間地圖", sourceUnknown: "行程點位", backTop: "回到頁面頂端", top: "Top"
+  },
+  en: {
+    title: "Caesar Metro Taipei Nearby Map",
+    desc: "A Wanhua area map centered on Caesar Metro Taipei with category filters and direct Google Maps links.",
+    quickReach: "Quick Access",
+    jumpFilters: "Filters",
+    jumpSpotlight: "Map Spotlight",
+    jumpCollection: "Nearby List",
+    jumpFavorites: "Saved List",
+    jumpComment: "Guest Comment",
+    jumpHotel: "Hotel Info",
+    note: "Choose categories or keywords, then tap Search. Tap any place card to update the center map and open Google Maps navigation.",
+    filters: "Trip Filters", searchLabel: "Search by name, address, or intro", searchPlaceholder: "Example: night market, Starbucks, Longshan Temple",
+    activeOnly: "Show active items only", clear: "Clear", quick: "Quick Picks", quickSub: "Guest favorites",
+    quickAll: "All", quickFood: "Local Food", quickSight: "Top Sights", quickTransport: "Transport", quickShop: "Shopping", quickFacility: "Convenience",
+    apply: "Search", pending: "Filters changed. Tap Search to refresh results.",
+    primary: "Primary Category", subcategory: "Subcategory", meal: "Meal Tags", countUnit: "types",
+    overview: "Current Result", match: "Matched", focus: "Map Focus",
+    spotlight: "Spotlight", spotlightNote: "The center map uses embedded Google Maps",
+    collection: "Nearby List", collectionHint: "Tap a card to move the center map to that place.",
+    baseLabel: "Concierge Base", baseName: "Caesar Metro Taipei", baseLocation: "Location", baseNearby: "Nearby", baseVersion: "Hotel Phone", baseOpen: "Open Hotel in Google Maps",
+    statusNoResult: "No matching places right now. The map stays on Caesar Metro Taipei.",
+    statusNoSelect: (n) => `${n} places match. The map remains centered on Caesar Metro Taipei.`,
+    statusSelected: (n, name) => `${n} places match. Current focus: ${name}.`,
+    center: "Center", openCurrent: "Open current place", openHotel: "View hotel location", routeFromHotel: "Route from hotel", openHotelArea: "View hotel surroundings",
+    addFavorite: "Add to list", removeFavorite: "Remove", favoriteFocus: "Focus", favoriteOpen: "Open",
+    favoritesTitle: "Saved List", favoritesHint: "Tap Add to list on place cards to build your own itinerary list.", favoritesClear: "Clear", favoritesEmpty: "No saved places yet.", favoritesCountUnit: "items",
+    commentTitle: "Guest Comment",
+    commentFocusLabel: "Current map focus",
+    commentNameLabel: "Guest name (optional)",
+    commentNamePlaceholder: "e.g. Ms. Wang",
+    commentRoomLabel: "Room no. (optional)",
+    commentRoomPlaceholder: "e.g. 1208",
+    commentInputLabel: "Comment",
+    commentInputPlaceholder: "Enter guest feedback, request, or note",
+    commentSubmit: "Send Comment",
+    commentSending: "Sending to backend...",
+    commentSuccess: "Sent. Backend received the comment.",
+    commentServerError: "Send failed. Please try again later.",
+    commentEndpointMissing: "COMMENT_API_ENDPOINT is not configured.",
+    commentEmpty: "Please enter a comment first.",
+    weatherTitle: "Today's Weather", weatherLoading: "Loading...", weatherRain: (p) => `Rain chance ${p}%`, weatherTemp: (min, max) => `${min}°C - ${max}°C`, weatherUnavailable: "Weather unavailable",
+    hours: "Hours: ", addr: "Address: ", mrt: "MRT: ", notes: "Intro: ", addrPending: "Address not provided", mrtPending: "Not provided", noNotes: "Near Caesar Metro Taipei and suitable for a short walk.",
+    empty: "No places match your current filters. Try broader categories or clear the search.",
+    focusMap: "Focus on map", sourceUnknown: "POI", backTop: "Back to top", top: "Top"
+  },
+  ja: {
+    title: "シーザーメトロ台北 周辺マップ",
+    desc: "シーザーメトロ台北を中心にした萬華エリア地図。カテゴリ絞り込みとGoogleマップ連携に対応。",
+    quickReach: "クイック移動",
+    jumpFilters: "条件設定",
+    jumpSpotlight: "地図フォーカス",
+    jumpCollection: "周辺リスト",
+    jumpFavorites: "保存リスト",
+    jumpComment: "ゲストコメント",
+    jumpHotel: "ホテル情報",
+    note: "左側でカテゴリまたはキーワードを選び、「検索」を押してください。右側のカードを押すと中央地図が切り替わり、Googleマップで案内できます。",
+    filters: "条件設定", searchLabel: "名称・住所・紹介文で検索", searchPlaceholder: "例：夜市、スターバックス、龍山寺",
+    activeOnly: "有効データのみ表示", clear: "クリア", quick: "クイック選択", quickSub: "よく使う項目",
+    quickAll: "おすすめ全部", quickFood: "ローカルグルメ", quickSight: "必見スポット", quickTransport: "交通拠点", quickShop: "買い物", quickFacility: "便利施設",
+    apply: "検索", pending: "条件を変更しました。「検索」で結果を更新します。",
+    primary: "主カテゴリ", subcategory: "サブカテゴリ", meal: "食事タグ", countUnit: "種類",
+    overview: "現在の結果", match: "一致件数", focus: "地図の中心",
+    spotlight: "地図フォーカス", spotlightNote: "中央地図は Google Maps 埋め込み表示です",
+    collection: "周辺リスト", collectionHint: "カードを押すと中央地図がその場所に切り替わります。",
+    baseLabel: "Concierge Base", baseName: "シーザーメトロ台北", baseLocation: "場所", baseNearby: "最寄り", baseVersion: "ホテル電話", baseOpen: "ホテルを Google Maps で開く",
+    statusNoResult: "条件に合うスポットがありません。地図はホテル中心のままです。",
+    statusNoSelect: (n) => `${n}件が条件に一致しています。地図はホテル中心です。`,
+    statusSelected: (n, name) => `${n}件が条件に一致しています。現在のフォーカス：${name}。`,
+    center: "中心", openCurrent: "現在地を開く", openHotel: "ホテル位置を見る", routeFromHotel: "ホテルからの経路", openHotelArea: "ホテル周辺を見る",
+    addFavorite: "リスト追加", removeFavorite: "削除", favoriteFocus: "地図表示", favoriteOpen: "地図を開く",
+    favoritesTitle: "保存リスト", favoritesHint: "右側カードの「リスト追加」でお客様用の行き先リストを作れます。", favoritesClear: "クリア", favoritesEmpty: "保存した地点はまだありません。", favoritesCountUnit: "件",
+    commentTitle: "ゲストコメント",
+    commentFocusLabel: "現在の地図フォーカス",
+    commentNameLabel: "お客様名（任意）",
+    commentNamePlaceholder: "例：王様",
+    commentRoomLabel: "部屋番号（任意）",
+    commentRoomPlaceholder: "例：1208",
+    commentInputLabel: "コメント内容",
+    commentInputPlaceholder: "お客様のご要望・感想・メモをご入力ください",
+    commentSubmit: "コメント送信",
+    commentSending: "バックエンドへ送信中...",
+    commentSuccess: "送信完了。バックエンドで受信しました。",
+    commentServerError: "送信に失敗しました。しばらくして再試行してください。",
+    commentEndpointMissing: "COMMENT_API_ENDPOINT が未設定です。",
+    commentEmpty: "コメント内容を入力してください。",
+    weatherTitle: "今日の天気", weatherLoading: "読込中...", weatherRain: (p) => `降水確率 ${p}%`, weatherTemp: (min, max) => `${min}°C - ${max}°C`, weatherUnavailable: "天気情報を取得できません",
+    hours: "営業時間：", addr: "住所：", mrt: "MRT：", notes: "基本紹介：", addrPending: "住所未登録", mrtPending: "未登録", noNotes: "ホテル周辺で徒歩で立ち寄りやすいスポットです。",
+    empty: "条件に合う結果がありません。カテゴリを広げるか検索をクリアしてください。",
+    focusMap: "中央地図へ", sourceUnknown: "スポット", backTop: "ページ上部へ戻る", top: "Top"
+  }
+};
+
+const CAT = {
+  primary: { 交通: { en: "Transport", ja: "交通" }, 景點: { en: "Attractions", ja: "観光" }, 餐飲: { en: "Food", ja: "飲食" }, 商店: { en: "Shops", ja: "店舗" }, 其他設施: { en: "Facilities", ja: "その他施設" } },
+  subcategory: { 火車站: { en: "Train Station", ja: "鉄道駅" }, 捷運站: { en: "MRT Station", ja: "MRT駅" }, 寺廟: { en: "Temple", ja: "寺院" }, 公園: { en: "Park", ja: "公園" }, 其他: { en: "Other", ja: "その他" }, 古蹟: { en: "Historic Site", ja: "史跡" }, 商圈: { en: "Commercial Area", ja: "商業エリア" }, 飯店: { en: "Hotel", ja: "ホテル" }, 銀行: { en: "Bank", ja: "銀行" }, 郵局: { en: "Post Office", ja: "郵便局" }, 停車場: { en: "Parking", ja: "駐車場" }, 早餐: { en: "Breakfast", ja: "朝食" }, 午餐: { en: "Lunch", ja: "昼食" }, 晚餐: { en: "Dinner", ja: "夕食" }, 宵夜: { en: "Late Night", ja: "夜食" }, 超市: { en: "Supermarket", ja: "スーパー" }, 藥妝: { en: "Drugstore", ja: "ドラッグストア" }, 走路10分內: { en: "Within 10-min walk", ja: "徒歩10分以内" } },
+  meal: { 早餐: { en: "Breakfast", ja: "朝食" }, 午餐: { en: "Lunch", ja: "昼食" }, 晚餐: { en: "Dinner", ja: "夕食" }, 下午茶: { en: "Tea Time", ja: "ティータイム" }, 宵夜: { en: "Late Night", ja: "夜食" }, 飲料: { en: "Drinks", ja: "ドリンク" } }
+};
+
+const SOURCE_STATUS = {
+  verified: { zh: "已核實", en: "Verified", ja: "確認済み" },
+  partially_verified: { zh: "部分核實", en: "Partially Verified", ja: "一部確認" },
+  paper_map_corrected: { zh: "紙本校正", en: "Paper-map corrected", ja: "紙地図補正" },
+  needs_review: { zh: "待複核", en: "Needs review", ja: "要確認" },
+  map_only: { zh: "地圖點位", en: "Map point", ja: "地図上の地点" },
+  closed: { zh: "已停業", en: "Closed", ja: "閉業" }
+};
 
 const rawData = Array.isArray(window.WANHUA_POI_DATA) ? window.WANHUA_POI_DATA : [];
-const hotelRecord = rawData.find((place) => place.id === "wanhua_001");
-
-if (hotelRecord) {
-  HOTEL.map_label_name = hotelRecord.map_label_name || HOTEL.map_label_name;
-  HOTEL.name_zh = hotelRecord.name_zh || HOTEL.name_zh;
-  HOTEL.name_en = hotelRecord.name_en || HOTEL.name_en;
-  HOTEL.primary_category = hotelRecord.primary_category || HOTEL.primary_category;
-  HOTEL.subcategory = hotelRecord.subcategory || HOTEL.subcategory;
-  HOTEL.near_mrt = hotelRecord.near_mrt || HOTEL.near_mrt;
-  HOTEL.opening_hours = hotelRecord.opening_hours || HOTEL.opening_hours;
-  HOTEL.notes = hotelRecord.notes || HOTEL.notes;
-  HOTEL.google_maps_url = hotelRecord.google_maps_url || HOTEL.google_maps_url;
-  HOTEL.address_zh = hotelRecord.address_zh || HOTEL.address_zh;
-}
-
+const hotelRecord = rawData.find((p) => p.id === "wanhua_001");
+const HOTEL = { ...HOTEL_DEFAULT, ...(hotelRecord || {}), id: "hotel_center" };
 const places = rawData
-  .filter((place) => place.id !== "wanhua_001")
-  .map((place) => ({
-    ...place,
-    meal_tags: Array.isArray(place.meal_tags) ? place.meal_tags : [],
+  .filter((p) => p.id !== "wanhua_001")
+  .map((p) => ({
+    ...p,
+    subcategory: normalizeSubcategory(p.subcategory),
+    meal_tags: uniqueValues((Array.isArray(p.meal_tags) ? p.meal_tags : []).map(normalizeMealTag)),
   }))
+  .filter((p) => !isSuppressedPlace(p))
   .sort((a, b) => Number(a.display_order ?? 9999) - Number(b.display_order ?? 9999));
 
 const state = {
+  lang: readLang(),
   draft: createFilterState(),
   applied: createFilterState(),
   selectedPlaceId: null,
   dirty: false,
+  favorites: readFavorites(),
+  walkingCache: readWalkingCache(),
+  openingHoursCache: readOpeningHoursCache(),
+  walkingRefreshRunning: false,
+  openingHoursRefreshRunning: false,
+  placesRestDisabled: false,
+  mapsLoaderPromise: null,
 };
-
 const dom = {
+  pageTitle: document.querySelector("#page-title"),
+  guestNoteText: document.querySelector("#guest-note-text"),
+  filtersTitle: document.querySelector("#filters-title"),
+  searchLabel: document.querySelector("#search-label"),
   searchInput: document.querySelector("#search-input"),
   activeOnly: document.querySelector("#active-only"),
+  activeOnlyText: document.querySelector("#active-only-text"),
   resetFilters: document.querySelector("#reset-filters"),
+  quickTitle: document.querySelector("#quick-title"),
+  quickSubtitle: document.querySelector("#quick-subtitle"),
+  quickAll: document.querySelector("#quick-all"),
+  quickFood: document.querySelector("#quick-food"),
+  quickSight: document.querySelector("#quick-sight"),
+  quickTransport: document.querySelector("#quick-transport"),
+  quickShopping: document.querySelector("#quick-shopping"),
+  quickFacility: document.querySelector("#quick-facility"),
   applyFilters: document.querySelector("#apply-filters"),
   filterPending: document.querySelector("#filter-pending"),
+  primaryTitle: document.querySelector("#primary-title"),
+  subcategoryTitle: document.querySelector("#subcategory-title"),
+  mealTitle: document.querySelector("#meal-title"),
+  overviewTitle: document.querySelector("#overview-title"),
+  summaryMatchLabel: document.querySelector("#summary-match-label"),
+  summaryFocusLabel: document.querySelector("#summary-focus-label"),
+  spotlightTitle: document.querySelector("#spotlight-title"),
+  spotlightNote: document.querySelector("#spotlight-note"),
+  collectionTitle: document.querySelector("#collection-title"),
+  collectionHint: document.querySelector("#collection-hint"),
+  baseLabel: document.querySelector("#base-label"),
+  baseName: document.querySelector("#base-name"),
+  baseLocationLabel: document.querySelector("#base-location-label"),
+  baseNearbyLabel: document.querySelector("#base-nearby-label"),
+  baseVersionLabel: document.querySelector("#base-version-label"),
+  baseOpenBtn: document.querySelector("#base-open-btn"),
+  weatherTitle: document.querySelector("#weather-title"),
+  weatherSummary: document.querySelector("#weather-summary"),
+  weatherRain: document.querySelector("#weather-rain"),
+  quickNavLabel: document.querySelector("#quick-nav-label"),
+  jumpFilters: document.querySelector("#jump-filters"),
+  jumpSpotlight: document.querySelector("#jump-spotlight"),
+  jumpCollection: document.querySelector("#jump-collection"),
+  jumpFavorites: document.querySelector("#jump-favorites"),
+  jumpComment: document.querySelector("#jump-comment"),
+  jumpHotel: document.querySelector("#jump-hotel"),
+  langButtons: document.querySelectorAll(".lang-button"),
   primaryFilters: document.querySelector("#primary-filters"),
   subcategoryFilters: document.querySelector("#subcategory-filters"),
   mealFilters: document.querySelector("#meal-filters"),
@@ -74,80 +289,273 @@ const dom = {
   selectedNotes: document.querySelector("#selected-notes"),
   selectedOpen: document.querySelector("#selected-open"),
   selectedRoute: document.querySelector("#selected-route"),
+  selectedFavorite: document.querySelector("#selected-favorite"),
   mapFrame: document.querySelector("#map-frame"),
   results: document.querySelector("#results"),
+  favoritesTitle: document.querySelector("#favorites-title"),
+  favoritesCount: document.querySelector("#favorites-count"),
+  favoritesHint: document.querySelector("#favorites-hint"),
+  favoritesList: document.querySelector("#favorites-list"),
+  favoritesClear: document.querySelector("#favorites-clear"),
+  commentTitle: document.querySelector("#comment-title"),
+  commentFocusLabel: document.querySelector("#comment-focus-label"),
+  commentFocusValue: document.querySelector("#comment-focus-value"),
+  commentNameLabel: document.querySelector("#comment-name-label"),
+  commentName: document.querySelector("#comment-name"),
+  commentRoomLabel: document.querySelector("#comment-room-label"),
+  commentRoom: document.querySelector("#comment-room"),
+  commentInputLabel: document.querySelector("#comment-input-label"),
+  commentInput: document.querySelector("#comment-input"),
+  commentSubmit: document.querySelector("#comment-submit"),
+  commentStatus: document.querySelector("#comment-status"),
+  commentPreview: document.querySelector("#comment-preview"),
   quickFilters: document.querySelectorAll(".quick-filter"),
+  backToTop: document.querySelector("#back-to-top"),
 };
 
 const filterValues = {
-  primary: uniqueValues(places.map((place) => place.primary_category)),
-  subcategory: uniqueValues(places.map((place) => place.subcategory)),
-  meal: uniqueValues(places.flatMap((place) => place.meal_tags)),
+  primary: uniqueValues(places.map((p) => p.primary_category)),
+  subcategory: uniqueValues([...places.map((p) => p.subcategory), WALK_10MIN_SUBCATEGORY]),
+  meal: uniqueValues(places.flatMap((p) => p.meal_tags)),
 };
 
-initializeFilters();
-attachEvents();
-render();
+init();
 
-function createFilterState() {
-  return {
-    search: "",
-    activeOnly: true,
-    primary: new Set(),
-    subcategory: new Set(),
-    meal: new Set(),
-  };
+function init() {
+  applyStaticText();
+  initializeFilters();
+  attachEvents();
+  syncBackToTop();
+  refreshWeather();
+  window.setInterval(refreshWeather, 30 * 60 * 1000);
+  render();
+  refreshWalkingTimesInBackground();
+  refreshOpeningHoursInBackground();
 }
 
-function cloneFilterState(filterState) {
-  return {
-    search: filterState.search,
-    activeOnly: filterState.activeOnly,
-    primary: new Set(filterState.primary),
-    subcategory: new Set(filterState.subcategory),
-    meal: new Set(filterState.meal),
-  };
+function readLang() {
+  try {
+    const v = localStorage.getItem("wanhua_map_lang");
+    return LANGS.includes(v) ? v : "zh";
+  } catch (_e) {
+    return "zh";
+  }
+}
+
+function saveLang(lang) {
+  try {
+    localStorage.setItem("wanhua_map_lang", lang);
+  } catch (_e) {
+    // ignore
+  }
+}
+
+function readFavorites() {
+  try {
+    const raw = localStorage.getItem(FAVORITES_STORAGE_KEY);
+    if (!raw) return new Set();
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return new Set();
+    const validIds = new Set(places.map((p) => p.id));
+    return new Set(parsed.filter((id) => validIds.has(id)));
+  } catch (_e) {
+    return new Set();
+  }
+}
+
+function saveFavorites() {
+  try {
+    localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify([...state.favorites]));
+  } catch (_e) {
+    // ignore
+  }
+}
+
+function readWalkingCache() {
+  try {
+    const raw = localStorage.getItem(WALKING_CACHE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return {};
+
+    const validIds = new Set(places.map((p) => p.id));
+    const output = {};
+
+    Object.entries(parsed).forEach(([id, record]) => {
+      if (!validIds.has(id)) return;
+      if (!record || typeof record !== "object") return;
+      const seconds = Number(record.seconds);
+      const updatedAt = Number(record.updatedAt);
+      if (!Number.isFinite(seconds) || seconds <= 0) return;
+      if (!Number.isFinite(updatedAt) || updatedAt <= 0) return;
+      output[id] = { seconds, updatedAt };
+    });
+
+    return output;
+  } catch (_e) {
+    return {};
+  }
+}
+
+function saveWalkingCache() {
+  try {
+    localStorage.setItem(WALKING_CACHE_KEY, JSON.stringify(state.walkingCache));
+  } catch (_e) {
+    // ignore
+  }
+}
+
+function readOpeningHoursCache() {
+  try {
+    const raw = localStorage.getItem(OPENING_HOURS_CACHE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return {};
+
+    const validIds = new Set(places.map((p) => p.id));
+    const output = {};
+
+    Object.entries(parsed).forEach(([id, record]) => {
+      if (!validIds.has(id)) return;
+      if (!record || typeof record !== "object") return;
+
+      const updatedAt = Number(record.updatedAt);
+      if (!Number.isFinite(updatedAt) || updatedAt <= 0) return;
+
+      const hours = normalizeText(record.hours);
+      const businessStatus = normalizeText(record.businessStatus).toUpperCase();
+      output[id] = { hours, businessStatus, updatedAt };
+    });
+
+    return output;
+  } catch (_e) {
+    return {};
+  }
+}
+
+function saveOpeningHoursCache() {
+  try {
+    localStorage.setItem(OPENING_HOURS_CACHE_KEY, JSON.stringify(state.openingHoursCache));
+  } catch (_e) {
+    // ignore
+  }
+}
+
+function tt(key) {
+  return (TEXT[state.lang] && TEXT[state.lang][key]) || TEXT.zh[key] || "";
 }
 
 function uniqueValues(values) {
   return [...new Set(values.filter(Boolean))];
 }
 
+function createFilterState() {
+  return { search: "", activeOnly: true, primary: new Set(), subcategory: new Set(), meal: new Set() };
+}
+
+function cloneFilterState(s) {
+  return { search: s.search, activeOnly: s.activeOnly, primary: new Set(s.primary), subcategory: new Set(s.subcategory), meal: new Set(s.meal) };
+}
+
 function initializeFilters() {
-  renderChipGroup(dom.primaryFilters, filterValues.primary, state.draft.primary);
-  renderChipGroup(dom.subcategoryFilters, filterValues.subcategory, state.draft.subcategory);
-  renderChipGroup(dom.mealFilters, filterValues.meal, state.draft.meal);
-  dom.primaryCount.textContent = `${filterValues.primary.length} 類`;
-  dom.subcategoryCount.textContent = `${filterValues.subcategory.length} 類`;
-  dom.mealCount.textContent = `${filterValues.meal.length} 類`;
+  renderChipGroup(dom.primaryFilters, filterValues.primary, state.draft.primary, "primary");
+  renderChipGroup(dom.subcategoryFilters, filterValues.subcategory, state.draft.subcategory, "subcategory");
+  renderChipGroup(dom.mealFilters, filterValues.meal, state.draft.meal, "meal");
+  updateCounts();
   renderQuickFilters();
   syncPendingState();
 }
 
-function renderChipGroup(container, values, selectedSet) {
-  container.innerHTML = "";
+function updateCounts() {
+  const unit = tt("countUnit");
+  dom.primaryCount.textContent = `${filterValues.primary.length} ${unit}`;
+  dom.subcategoryCount.textContent = `${filterValues.subcategory.length} ${unit}`;
+  dom.mealCount.textContent = `${filterValues.meal.length} ${unit}`;
+}
 
+function renderChipGroup(container, values, selectedSet, type) {
+  container.innerHTML = "";
   values.forEach((value) => {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `chip${selectedSet.has(value) ? " is-active" : ""}`;
-    button.textContent = value;
-
+    button.textContent = trCategory(value, type);
     button.addEventListener("click", () => {
-      if (selectedSet.has(value)) {
-        selectedSet.delete(value);
-      } else {
-        selectedSet.add(value);
-      }
-
-      renderChipGroup(container, values, selectedSet);
+      if (selectedSet.has(value)) selectedSet.delete(value); else selectedSet.add(value);
+      renderChipGroup(container, values, selectedSet, type);
       markDirty();
     });
-
     container.appendChild(button);
   });
 }
 
+function applyStaticText() {
+  const text = TEXT[state.lang] || TEXT.zh;
+  document.documentElement.lang = state.lang === "zh" ? "zh-Hant" : state.lang;
+  document.title = text.title;
+  const meta = document.querySelector('meta[name="description"]');
+  if (meta) meta.setAttribute("content", text.desc);
+  dom.pageTitle.textContent = text.title;
+  dom.quickNavLabel.textContent = text.quickReach;
+  dom.jumpFilters.textContent = text.jumpFilters;
+  dom.jumpSpotlight.textContent = text.jumpSpotlight;
+  dom.jumpCollection.textContent = text.jumpCollection;
+  dom.jumpFavorites.textContent = text.jumpFavorites;
+  dom.jumpComment.textContent = text.jumpComment;
+  dom.jumpHotel.textContent = text.jumpHotel;
+  dom.guestNoteText.textContent = text.note;
+  dom.filtersTitle.textContent = text.filters;
+  dom.searchLabel.textContent = text.searchLabel;
+  dom.searchInput.placeholder = text.searchPlaceholder;
+  dom.activeOnlyText.textContent = text.activeOnly;
+  dom.resetFilters.textContent = text.clear;
+  dom.quickTitle.textContent = text.quick;
+  dom.quickSubtitle.textContent = text.quickSub;
+  dom.quickAll.textContent = text.quickAll;
+  dom.quickFood.textContent = text.quickFood;
+  dom.quickSight.textContent = text.quickSight;
+  dom.quickTransport.textContent = text.quickTransport;
+  dom.quickShopping.textContent = text.quickShop;
+  dom.quickFacility.textContent = text.quickFacility;
+  dom.applyFilters.textContent = text.apply;
+  dom.filterPending.textContent = text.pending;
+  dom.primaryTitle.textContent = text.primary;
+  dom.subcategoryTitle.textContent = text.subcategory;
+  dom.mealTitle.textContent = text.meal;
+  dom.overviewTitle.textContent = text.overview;
+  dom.summaryMatchLabel.textContent = text.match;
+  dom.summaryFocusLabel.textContent = text.focus;
+  dom.spotlightTitle.textContent = text.spotlight;
+  dom.spotlightNote.textContent = text.spotlightNote;
+  dom.collectionTitle.textContent = text.collection;
+  dom.collectionHint.textContent = text.collectionHint;
+  dom.baseLabel.textContent = text.baseLabel;
+  dom.baseName.textContent = text.baseName;
+  dom.baseLocationLabel.textContent = text.baseLocation;
+  dom.baseNearbyLabel.textContent = text.baseNearby;
+  dom.baseVersionLabel.textContent = text.baseVersion;
+  dom.baseOpenBtn.textContent = text.baseOpen;
+  dom.baseOpenBtn.href = buildSearchUrl(HOTEL);
+  dom.favoritesTitle.textContent = text.favoritesTitle;
+  dom.favoritesHint.textContent = text.favoritesHint;
+  dom.favoritesClear.textContent = text.favoritesClear;
+  dom.commentTitle.textContent = text.commentTitle;
+  dom.commentFocusLabel.textContent = text.commentFocusLabel;
+  dom.commentNameLabel.textContent = text.commentNameLabel;
+  dom.commentName.placeholder = text.commentNamePlaceholder;
+  dom.commentRoomLabel.textContent = text.commentRoomLabel;
+  dom.commentRoom.placeholder = text.commentRoomPlaceholder;
+  dom.commentInputLabel.textContent = text.commentInputLabel;
+  dom.commentInput.placeholder = text.commentInputPlaceholder;
+  dom.commentSubmit.textContent = text.commentSubmit;
+  dom.weatherTitle.textContent = text.weatherTitle;
+  dom.backToTop.textContent = text.top;
+  dom.backToTop.setAttribute("aria-label", text.backTop);
+  dom.langButtons.forEach((b) => b.classList.toggle("is-active", b.dataset.lang === state.lang));
+  updateFavoriteCount();
+  renderFavoriteButtonLabel();
+  renderCommentFocus();
+}
 function attachEvents() {
   dom.searchInput.addEventListener("input", (event) => {
     state.draft.search = event.target.value.trim().toLowerCase();
@@ -159,20 +567,14 @@ function attachEvents() {
     markDirty();
   });
 
-  dom.applyFilters.addEventListener("click", () => {
-    applyDraftFilters();
-  });
+  dom.applyFilters.addEventListener("click", () => applyDraftFilters());
 
   dom.quickFilters.forEach((button) => {
     button.addEventListener("click", () => {
       state.draft = createFilterState();
       dom.searchInput.value = "";
       dom.activeOnly.checked = true;
-
-      if (button.dataset.quickPrimary) {
-        state.draft.primary.add(button.dataset.quickPrimary);
-      }
-
+      if (button.dataset.quickPrimary) state.draft.primary.add(button.dataset.quickPrimary);
       initializeFilters();
       applyDraftFilters();
     });
@@ -183,12 +585,53 @@ function attachEvents() {
     state.applied = createFilterState();
     state.selectedPlaceId = null;
     state.dirty = false;
-
     dom.searchInput.value = "";
     dom.activeOnly.checked = true;
     initializeFilters();
     render();
   });
+
+  dom.langButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const nextLang = button.dataset.lang;
+      if (!LANGS.includes(nextLang) || nextLang === state.lang) return;
+      state.lang = nextLang;
+      saveLang(nextLang);
+      applyStaticText();
+      initializeFilters();
+      refreshWeather();
+      render();
+    });
+  });
+
+  if (dom.selectedFavorite) {
+    dom.selectedFavorite.addEventListener("click", () => {
+      const selectedPlace = getSelectedPlace(places);
+      if (!selectedPlace) return;
+      toggleFavorite(selectedPlace.id);
+      render();
+    });
+  }
+
+  if (dom.favoritesClear) {
+    dom.favoritesClear.addEventListener("click", () => {
+      state.favorites.clear();
+      saveFavorites();
+      render();
+    });
+  }
+
+  if (dom.commentSubmit) {
+    dom.commentSubmit.addEventListener("click", () => {
+      submitCommentToBackend();
+    });
+  }
+
+  if (dom.backToTop) {
+    dom.backToTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  }
+
+  window.addEventListener("scroll", syncBackToTop, { passive: true });
 }
 
 function markDirty() {
@@ -208,6 +651,9 @@ function applyDraftFilters() {
   renderQuickFilters();
   syncPendingState();
   render();
+  if (state.applied.subcategory.has(WALK_10MIN_SUBCATEGORY)) {
+    refreshWalkingTimesInBackground();
+  }
 }
 
 function renderQuickFilters() {
@@ -233,50 +679,584 @@ function renderQuickFilters() {
   });
 }
 
+function syncBackToTop() {
+  if (!dom.backToTop) return;
+  dom.backToTop.classList.toggle("is-visible", window.scrollY > 320);
+}
+
+function isFavorite(placeId) {
+  return state.favorites.has(placeId);
+}
+
+function toggleFavorite(placeId) {
+  if (!placeId) return;
+  if (state.favorites.has(placeId)) state.favorites.delete(placeId);
+  else state.favorites.add(placeId);
+  saveFavorites();
+}
+
+function updateFavoriteCount() {
+  const unit = tt("favoritesCountUnit");
+  dom.favoritesCount.textContent = `${state.favorites.size} ${unit}`;
+}
+
+function renderFavoriteButtonLabel() {
+  if (!dom.selectedFavorite) return;
+  const selected = getSelectedPlace(places);
+  const text = TEXT[state.lang] || TEXT.zh;
+
+  if (!selected) {
+    dom.selectedFavorite.hidden = true;
+    return;
+  }
+
+  dom.selectedFavorite.hidden = false;
+  dom.selectedFavorite.textContent = isFavorite(selected.id) ? text.removeFavorite : text.addFavorite;
+}
+
+function renderCommentFocus(selected) {
+  if (!dom.commentFocusValue) return;
+  const focus = selected || getSelectedPlace(places) || HOTEL;
+  dom.commentFocusValue.textContent = getDisplayName(focus);
+}
+
+function setCommentStatus(message, isError = false) {
+  if (!dom.commentStatus) return;
+  dom.commentStatus.hidden = !message;
+  dom.commentStatus.textContent = message || "";
+  dom.commentStatus.style.color = isError ? "#b3261e" : "";
+}
+
+function setCommentPreview(payload, responsePayload) {
+  if (!dom.commentPreview) return;
+  const preview = {
+    sent_at: new Date().toISOString(),
+    payload,
+    backend_response: responsePayload ?? null,
+  };
+  dom.commentPreview.textContent = JSON.stringify(preview, null, 2);
+  dom.commentPreview.hidden = false;
+}
+
+function buildCommentPayload() {
+  const focus = getSelectedPlace(places) || HOTEL;
+  const comment = normalizeText(dom.commentInput?.value);
+  const guestName = normalizeText(dom.commentName?.value);
+  const room = normalizeText(dom.commentRoom?.value);
+
+  return {
+    source: "caesar-metro-wanhua-map",
+    created_at: new Date().toISOString(),
+    language: state.lang,
+    place: {
+      id: focus.id,
+      name_zh: getPlaceName(focus, "name_zh") || normalizeText(focus.map_label_name),
+      name_en: getPlaceName(focus, "name_en"),
+      near_mrt: normalizeText(focus.near_mrt),
+      address_zh: stripPlusCodeForDisplay(normalizeText(focus.address_zh)),
+    },
+    guest: {
+      name: guestName || null,
+      room: room || null,
+    },
+    comment,
+    page_url: window.location.href,
+  };
+}
+
+async function postCommentPayload(payload) {
+  const headers = { "Content-Type": "application/json" };
+  if (COMMENT_API_TOKEN) {
+    headers.Authorization = `Bearer ${COMMENT_API_TOKEN}`;
+  }
+
+  const response = await fetch(COMMENT_API_ENDPOINT, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload),
+  });
+
+  let parsed = null;
+  try {
+    parsed = await response.json();
+  } catch (_error) {
+    parsed = null;
+  }
+
+  if (!response.ok) {
+    const err = new Error(`HTTP_${response.status}`);
+    err.responseBody = parsed;
+    throw err;
+  }
+
+  return parsed;
+}
+
+async function submitCommentToBackend() {
+  const text = TEXT[state.lang] || TEXT.zh;
+  const payload = buildCommentPayload();
+
+  if (!payload.comment) {
+    setCommentStatus(text.commentEmpty, true);
+    return;
+  }
+
+  if (!COMMENT_API_ENDPOINT) {
+    setCommentStatus(text.commentEndpointMissing, true);
+    setCommentPreview(payload, { error: "COMMENT_API_ENDPOINT_NOT_CONFIGURED" });
+    return;
+  }
+
+  dom.commentSubmit.disabled = true;
+  setCommentStatus(text.commentSending, false);
+
+  try {
+    const backendResponse = await postCommentPayload(payload);
+    setCommentStatus(text.commentSuccess, false);
+    setCommentPreview(payload, backendResponse);
+    dom.commentInput.value = "";
+    if (dom.commentName) dom.commentName.value = "";
+    if (dom.commentRoom) dom.commentRoom.value = "";
+  } catch (error) {
+    setCommentStatus(text.commentServerError, true);
+    const errorResponse = error && typeof error === "object" && "responseBody" in error ? error.responseBody : null;
+    setCommentPreview(payload, errorResponse || { error: String(error && error.message ? error.message : "UNKNOWN_ERROR") });
+  } finally {
+    dom.commentSubmit.disabled = false;
+  }
+}
+
+function isWithin10MinWalk(place) {
+  const record = state.walkingCache[place.id];
+  if (record && isWalkingRecordFresh(record)) {
+    return record.seconds <= 10 * 60;
+  }
+  return place.walk_10min_from_hotel === true;
+}
+
+function isWalkingRecordFresh(record) {
+  if (!record || typeof record !== "object") return false;
+  const updatedAt = Number(record.updatedAt);
+  return Number.isFinite(updatedAt) && updatedAt > 0 && Date.now() - updatedAt < WALKING_CACHE_TTL_MS;
+}
+
+function isOpeningHoursRecordFresh(record) {
+  if (!record || typeof record !== "object") return false;
+  const updatedAt = Number(record.updatedAt);
+  return Number.isFinite(updatedAt) && updatedAt > 0 && Date.now() - updatedAt < OPENING_HOURS_CACHE_TTL_MS;
+}
+
+function isClosedByGoogle(place) {
+  const record = state.openingHoursCache[place.id];
+  if (!isOpeningHoursRecordFresh(record)) return false;
+  return record.businessStatus === "CLOSED_TEMPORARILY" || record.businessStatus === "CLOSED_PERMANENTLY";
+}
+
+function getResolvedOpeningHours(place) {
+  const fromData = normalizeText(place.opening_hours);
+  if (fromData) return fromData;
+
+  const record = state.openingHoursCache[place.id];
+  if (!isOpeningHoursRecordFresh(record)) return "";
+  return normalizeText(record.hours);
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
+}
+
+function refreshWalkingTimesInBackground() {
+  if (!GOOGLE_MAPS_API_KEY) return;
+  if (state.walkingRefreshRunning) return;
+
+  state.walkingRefreshRunning = true;
+  (async () => {
+    try {
+      const maps = await loadMapsApiForRoutes();
+      const service = new maps.DirectionsService();
+      const targets = places.filter((place) => place.is_active && !isSuppressedPlace(place));
+      let changed = false;
+
+      for (const place of targets) {
+        const record = state.walkingCache[place.id];
+        if (isWalkingRecordFresh(record)) continue;
+
+        const seconds = await fetchWalkingSecondsWithRetry(service, place);
+        if (!Number.isFinite(seconds) || seconds <= 0) continue;
+
+        state.walkingCache[place.id] = { seconds, updatedAt: Date.now() };
+        changed = true;
+        await sleep(WALKING_THROTTLE_MS);
+      }
+
+      if (changed) {
+        saveWalkingCache();
+        render();
+      }
+    } catch (_error) {
+      // Keep page usable; quietly fallback to curated walk flags.
+    } finally {
+      state.walkingRefreshRunning = false;
+    }
+  })();
+}
+
+function refreshOpeningHoursInBackground() {
+  if (!GOOGLE_MAPS_API_KEY) return;
+  if (state.openingHoursRefreshRunning) return;
+
+  state.openingHoursRefreshRunning = true;
+  (async () => {
+    try {
+      const maps = await loadMapsApiForRoutes();
+      const service =
+        maps.places && maps.places.PlacesService
+          ? new maps.places.PlacesService(document.createElement("div"))
+          : null;
+      const targets = places.filter((place) => place.is_active && !isSuppressedPlace(place));
+      let changed = false;
+
+      for (const place of targets) {
+        if (normalizeText(place.opening_hours)) continue;
+        const record = state.openingHoursCache[place.id];
+        if (isOpeningHoursRecordFresh(record)) continue;
+
+        const result = await fetchOpeningHoursWithRetry(service, place);
+        if (!result) continue;
+
+        state.openingHoursCache[place.id] = {
+          hours: normalizeText(result.hours),
+          businessStatus: normalizeText(result.businessStatus).toUpperCase(),
+          updatedAt: Date.now(),
+        };
+        changed = true;
+        await sleep(OPENING_HOURS_THROTTLE_MS);
+      }
+
+      if (changed) {
+        saveOpeningHoursCache();
+        render();
+      }
+    } catch (_error) {
+      // Keep page usable; quietly fallback to static opening hours.
+    } finally {
+      state.openingHoursRefreshRunning = false;
+    }
+  })();
+}
+
+function loadMapsApiForRoutes() {
+  const hasDirectionsApi = () =>
+    Boolean(
+      window.google &&
+      window.google.maps &&
+      window.google.maps.DirectionsService
+    );
+
+  if (hasDirectionsApi()) {
+    return Promise.resolve(window.google.maps);
+  }
+
+  if (!GOOGLE_MAPS_API_KEY) {
+    return Promise.reject(new Error("Missing GOOGLE_MAPS_API_KEY"));
+  }
+
+  if (state.mapsLoaderPromise) return state.mapsLoaderPromise;
+
+  state.mapsLoaderPromise = new Promise((resolve, reject) => {
+    const callbackName = "__wanhuaRoutesApiInit";
+    const existing = document.querySelector('script[data-google-maps-routes="1"]');
+    const cleanup = () => {
+      try {
+        delete window[callbackName];
+      } catch (_e) {
+        window[callbackName] = undefined;
+      }
+    };
+
+    window[callbackName] = () => {
+      cleanup();
+      if (hasDirectionsApi()) resolve(window.google.maps);
+      else reject(new Error("Google Maps API loaded without maps object"));
+    };
+
+    if (existing) {
+      const maxTry = 25;
+      let attempt = 0;
+      const timer = window.setInterval(() => {
+        attempt += 1;
+        if (hasDirectionsApi()) {
+          window.clearInterval(timer);
+          cleanup();
+          resolve(window.google.maps);
+          return;
+        }
+        if (attempt >= maxTry) {
+          window.clearInterval(timer);
+          reject(new Error("Timed out waiting for Google Maps JS API"));
+        }
+      }, 180);
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.dataset.googleMapsRoutes = "1";
+    script.async = true;
+    script.defer = true;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(GOOGLE_MAPS_API_KEY)}&v=weekly&libraries=places&language=zh-TW&region=TW&callback=${callbackName}`;
+    script.onerror = () => {
+      cleanup();
+      reject(new Error("Failed to load Google Maps JS API"));
+    };
+    document.head.appendChild(script);
+  });
+
+  state.mapsLoaderPromise = state.mapsLoaderPromise.catch((error) => {
+    state.mapsLoaderPromise = null;
+    throw error;
+  });
+
+  return state.mapsLoaderPromise;
+}
+
+function requestWalkingSeconds(service, place) {
+  const destination = buildMapQuery(place);
+  const origin = normalizeText(HOTEL.address_zh) || normalizeText(HOTEL.name_zh) || "Caesar Metro Taipei";
+
+  return new Promise((resolve, reject) => {
+    service.route(
+      {
+        origin,
+        destination,
+        travelMode: window.google.maps.TravelMode.WALKING,
+        provideRouteAlternatives: false,
+      },
+      (result, status) => {
+        if (status !== "OK") {
+          reject(new Error(status));
+          return;
+        }
+
+        const seconds = Number(result?.routes?.[0]?.legs?.[0]?.duration?.value);
+        if (!Number.isFinite(seconds) || seconds <= 0) {
+          reject(new Error("NO_DURATION"));
+          return;
+        }
+        resolve(seconds);
+      }
+    );
+  });
+}
+
+async function fetchWalkingSecondsWithRetry(service, place) {
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      return await requestWalkingSeconds(service, place);
+    } catch (error) {
+      const code = String(error && error.message ? error.message : "");
+      if ((code === "OVER_QUERY_LIMIT" || code === "RESOURCE_EXHAUSTED") && attempt === 0) {
+        await sleep(850);
+        continue;
+      }
+      return null;
+    }
+  }
+  return null;
+}
+
+async function fetchOpeningHoursWithRetry(service, place) {
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      return await requestOpeningHours(service, place);
+    } catch (error) {
+      const code = String(error && error.message ? error.message : "");
+      if ((code === "OVER_QUERY_LIMIT" || code === "RESOURCE_EXHAUSTED" || code === "UNKNOWN_ERROR") && attempt === 0) {
+        await sleep(900);
+        continue;
+      }
+      return null;
+    }
+  }
+  return null;
+}
+
+async function requestOpeningHours(service, place) {
+  const queries = buildPlaceLookupQueries(place);
+  for (const query of queries) {
+    if (!state.placesRestDisabled) {
+      const resultFromNewApi = await requestOpeningHoursByPlacesNewApi(query);
+      if (resultFromNewApi) return resultFromNewApi;
+    }
+
+    if (service && typeof service.findPlaceFromQuery === "function") {
+      const resultFromJsService = await requestOpeningHoursByQuery(service, query);
+      if (resultFromJsService) return resultFromJsService;
+    }
+  }
+  return null;
+}
+
+async function requestOpeningHoursByPlacesNewApi(query) {
+  if (!GOOGLE_MAPS_API_KEY) return null;
+
+  let response;
+  try {
+    response = await fetch("https://places.googleapis.com/v1/places:searchText", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY,
+        "X-Goog-FieldMask": "places.displayName,places.businessStatus,places.regularOpeningHours",
+      },
+      body: JSON.stringify({
+        textQuery: query,
+        languageCode: "zh-TW",
+        regionCode: "TW",
+        maxResultCount: 1,
+      }),
+    });
+  } catch (_error) {
+    state.placesRestDisabled = true;
+    return null;
+  }
+
+  if (response.status === 401 || response.status === 403) {
+    state.placesRestDisabled = true;
+    return null;
+  }
+  if (response.status === 429) {
+    throw new Error("OVER_QUERY_LIMIT");
+  }
+  if (response.status >= 500) {
+    throw new Error("UNKNOWN_ERROR");
+  }
+  if (!response.ok) {
+    return null;
+  }
+
+  const payload = await response.json();
+  const candidate = Array.isArray(payload?.places) ? payload.places[0] : null;
+  if (!candidate) {
+    return null;
+  }
+
+  return {
+    hours: formatGoogleWeekdayText(candidate?.regularOpeningHours?.weekdayDescriptions),
+    businessStatus: normalizeText(candidate?.businessStatus).toUpperCase(),
+  };
+}
+
+function requestOpeningHoursByQuery(service, query) {
+  return new Promise((resolve, reject) => {
+    service.findPlaceFromQuery(
+      {
+        query,
+        fields: ["name", "opening_hours", "business_status"],
+      },
+      (result, status) => {
+        if (status === "OVER_QUERY_LIMIT" || status === "RESOURCE_EXHAUSTED" || status === "UNKNOWN_ERROR") {
+          reject(new Error(status));
+          return;
+        }
+
+        if (status !== "OK") {
+          resolve(null);
+          return;
+        }
+
+        const candidates = Array.isArray(result?.candidates) ? result.candidates : [];
+        if (!candidates.length) {
+          resolve(null);
+          return;
+        }
+
+        const candidate =
+          candidates.find((item) => Array.isArray(item?.opening_hours?.weekday_text) && item.opening_hours.weekday_text.length) ||
+          candidates[0];
+        if (!candidate) {
+          resolve(null);
+          return;
+        }
+
+        resolve({
+          hours: formatGoogleWeekdayText(candidate?.opening_hours?.weekday_text),
+          businessStatus: normalizeText(candidate?.business_status).toUpperCase(),
+        });
+      }
+    );
+  });
+}
+
+function formatGoogleWeekdayText(weekdayText) {
+  if (!Array.isArray(weekdayText) || !weekdayText.length) return "";
+  return weekdayText
+    .map((line) => normalizeText(String(line).replace(/\u200e/g, "")))
+    .filter(Boolean)
+    .join("；");
+}
+
+function buildPlaceLookupQueries(place) {
+  const names = uniqueValues([
+    getPlaceName(place, "name_zh"),
+    normalizeText(place.map_label_name),
+    getPlaceName(place, "name_en"),
+  ]);
+  const cleanedAddress = stripPlusCodeForDisplay(normalizeText(place.address_zh));
+  const fromUrl = extractQueryFromGoogleMapsUrl(place.google_maps_url);
+  const candidates = [];
+
+  names.forEach((name) => {
+    candidates.push(`${name} 台北市萬華區`);
+    if (cleanedAddress) candidates.push(`${name} ${cleanedAddress}`);
+    if (place.near_mrt) candidates.push(`${name} ${place.near_mrt}`);
+  });
+
+  if (fromUrl) candidates.push(fromUrl);
+  candidates.push(buildMapQuery(place));
+
+  return uniqueValues(candidates.map((item) => normalizeText(item)).filter(Boolean));
+}
+
 function render() {
   const filtered = places.filter(applyFilters);
   syncSelection(filtered);
   const selected = getSelectedPlace(filtered);
-
   dom.resultCount.textContent = String(filtered.length);
-  dom.focusLabel.textContent = selected ? getDisplayName(selected) : HOTEL.name_zh;
+  dom.focusLabel.textContent = selected ? getDisplayName(selected) : getDisplayName(HOTEL);
   dom.statusText.textContent = buildStatusText(filtered, selected);
-
+  renderCommentFocus(selected);
   renderSpotlight(selected);
   renderList(filtered, selected);
+  renderFavorites();
+  updateFavoriteCount();
 }
 
 function applyFilters(place) {
-  if (state.applied.activeOnly && !place.is_active) {
-    return false;
+  if (isSuppressedPlace(place)) return false;
+  if (isClosedByGoogle(place)) return false;
+  if (state.applied.activeOnly && !place.is_active) return false;
+  if (state.applied.primary.size && !state.applied.primary.has(place.primary_category)) return false;
+  if (state.applied.subcategory.size) {
+    const requiresWalk10 = state.applied.subcategory.has(WALK_10MIN_SUBCATEGORY);
+    const normalSubcategories = [...state.applied.subcategory].filter((value) => value !== WALK_10MIN_SUBCATEGORY);
+    if (requiresWalk10 && !isWithin10MinWalk(place)) return false;
+    if (normalSubcategories.length && !normalSubcategories.includes(place.subcategory)) return false;
   }
-
-  if (state.applied.primary.size && !state.applied.primary.has(place.primary_category)) {
-    return false;
-  }
-
-  if (state.applied.subcategory.size && !state.applied.subcategory.has(place.subcategory)) {
-    return false;
-  }
-
-  if (state.applied.meal.size && !place.meal_tags.some((tag) => state.applied.meal.has(tag))) {
-    return false;
-  }
-
-  if (!state.applied.search) {
-    return true;
-  }
+  if (state.applied.meal.size && !place.meal_tags.some((tag) => state.applied.meal.has(tag))) return false;
+  if (!state.applied.search) return true;
 
   const haystack = [
     place.id,
     place.map_label_name,
     place.name_zh,
     place.name_en,
+    place.name_ja,
     place.primary_category,
     place.subcategory,
     place.business_type,
     place.address_zh,
-    place.notes,
+    isWithin10MinWalk(place) ? WALK_10MIN_SUBCATEGORY : "",
+    getBasicIntro(place),
     place.near_mrt,
     place.meal_tags.join(" "),
   ]
@@ -292,11 +1272,7 @@ function syncSelection(filtered) {
     state.selectedPlaceId = null;
     return;
   }
-
-  if (state.selectedPlaceId && filtered.some((place) => place.id === state.selectedPlaceId)) {
-    return;
-  }
-
+  if (state.selectedPlaceId && filtered.some((place) => place.id === state.selectedPlaceId)) return;
   state.selectedPlaceId = hasActiveFilters() ? filtered[0].id : null;
 }
 
@@ -311,103 +1287,112 @@ function hasActiveFilters() {
 }
 
 function getSelectedPlace(filtered) {
-  if (!state.selectedPlaceId) {
-    return null;
-  }
-
+  if (!state.selectedPlaceId) return null;
   return filtered.find((place) => place.id === state.selectedPlaceId) || null;
 }
-
 function buildStatusText(filtered, selected) {
-  if (!filtered.length) {
-    return "目前沒有符合條件的點位，地圖會先停留在凱達大飯店。";
-  }
-
-  if (!selected) {
-    return `共 ${filtered.length} 個點位符合條件，目前維持以凱達大飯店作為地圖中心。`;
-  }
-
-  return `共 ${filtered.length} 個點位符合條件，目前聚焦在「${getDisplayName(selected)}」。`;
+  const text = TEXT[state.lang] || TEXT.zh;
+  if (!filtered.length) return text.statusNoResult;
+  if (!selected) return text.statusNoSelect(filtered.length);
+  return text.statusSelected(filtered.length, getDisplayName(selected));
 }
 
 function renderSpotlight(selected) {
   const focus = selected || HOTEL;
   const isHotel = focus.id === HOTEL.id;
+  const text = TEXT[state.lang] || TEXT.zh;
+  const openingHours = getResolvedOpeningHours(focus);
+  const displayAddress = stripPlusCodeForDisplay(normalizeText(focus.address_zh));
+  const displayIntro = getBasicIntro(focus);
 
   dom.selectedKicker.textContent = isHotel ? "Hotel Anchor" : "Selected Place";
   dom.selectedName.textContent = getDisplayName(focus);
-  dom.selectedSecondary.textContent = getSecondaryName(focus) || HOTEL.name_en;
-  dom.selectedStatus.textContent = humanizeSourceStatus(focus.source_status, isHotel);
-  dom.selectedPrimary.textContent = focus.primary_category || "未分類";
-  dom.selectedSubcategory.textContent = focus.subcategory || "其他";
-  dom.selectedMrt.textContent = focus.near_mrt || "萬華";
-  dom.selectedAddress.textContent = focus.address_zh || "地址待補";
-  dom.selectedHours.textContent = focus.opening_hours || "營業資訊待補";
-  dom.selectedNotes.textContent = focus.notes || "目前沒有額外備註。";
+  dom.selectedSecondary.textContent = getSecondaryName(focus);
+  dom.selectedStatus.textContent = isHotel ? text.center : humanizeSourceStatus(focus.source_status);
+  dom.selectedPrimary.textContent = trCategory(focus.primary_category, "primary");
+  dom.selectedSubcategory.textContent = isWithin10MinWalk(focus)
+    ? `${trCategory(normalizeSubcategory(focus.subcategory), "subcategory")}・${trCategory(WALK_10MIN_SUBCATEGORY, "subcategory")}`
+    : trCategory(normalizeSubcategory(focus.subcategory), "subcategory");
+  dom.selectedMrt.textContent = trMrt(focus.near_mrt || text.mrtPending);
+  dom.selectedAddress.textContent = displayAddress || text.addrPending;
 
-  const openUrl = focus.google_maps_url || buildSearchUrl(focus);
-  dom.selectedOpen.href = openUrl;
-  dom.selectedOpen.textContent = isHotel ? "查看飯店位置" : "查看目前地點";
+  if (openingHours) {
+    dom.selectedHours.hidden = false;
+    dom.selectedHours.textContent = `${text.hours}${openingHours}`;
+  } else {
+    dom.selectedHours.hidden = true;
+    dom.selectedHours.textContent = "";
+  }
 
-  dom.selectedRoute.href = isHotel ? HOTEL.google_maps_url : buildRouteUrl(focus);
-  dom.selectedRoute.textContent = isHotel ? "查看飯店周邊" : "從飯店前往";
+  dom.selectedNotes.textContent = displayIntro || text.noNotes;
+
+  dom.selectedOpen.href = buildSearchUrl(focus);
+  dom.selectedOpen.textContent = isHotel ? text.openHotel : text.openCurrent;
+
+  dom.selectedRoute.href = isHotel ? buildSearchUrl(HOTEL) : buildRouteUrl(focus);
+  dom.selectedRoute.textContent = isHotel ? text.openHotelArea : text.routeFromHotel;
+  if (dom.selectedFavorite) {
+    dom.selectedFavorite.hidden = isHotel;
+    if (!isHotel) {
+      dom.selectedFavorite.textContent = isFavorite(focus.id) ? text.removeFavorite : text.addFavorite;
+    }
+  }
 
   dom.mapFrame.src = buildEmbedUrl(focus);
 }
 
 function renderList(filtered, selected) {
+  const text = TEXT[state.lang] || TEXT.zh;
+
   if (!filtered.length) {
-    dom.results.innerHTML =
-      '<div class="empty-state">目前沒有符合條件的結果。你可以放寬分類、清除搜尋，或重新打開停用中的資料。</div>';
+    dom.results.innerHTML = `<div class="empty-state">${escapeHtml(text.empty)}</div>`;
     return;
   }
 
   dom.results.innerHTML = filtered
     .map((place) => {
       const isSelected = selected?.id === place.id;
-      const mealBadges = place.meal_tags
-        .map((tag) => `<span class="badge">${escapeHtml(tag)}</span>`)
+      const openingHours = getResolvedOpeningHours(place);
+      const intro = getBasicIntro(place);
+      const address = stripPlusCodeForDisplay(normalizeText(place.address_zh));
+      const secondary = getSecondaryName(place);
+      const subcategoryDisplay = trCategory(normalizeSubcategory(place.subcategory), "subcategory");
+      const mealBadges = uniqueValues(place.meal_tags.map(normalizeMealTag))
+        .filter((tag) => trCategory(tag, "meal") !== subcategoryDisplay)
+        .map((tag) => `<span class="badge">${escapeHtml(trCategory(tag, "meal"))}</span>`)
         .join("");
+      const walk10Badge = isWithin10MinWalk(place) ? `<span class="badge">${escapeHtml(trCategory(WALK_10MIN_SUBCATEGORY, "subcategory"))}</span>` : "";
+      const hoursLine = openingHours ? `<div>${escapeHtml(text.hours)}${escapeHtml(openingHours)}</div>` : "";
+      const notesLine = intro ? `<div>${escapeHtml(text.notes)}${escapeHtml(intro)}</div>` : "";
+      const favoriteLabel = isFavorite(place.id) ? text.removeFavorite : text.addFavorite;
 
       return `
         <article class="place-card${isSelected ? " is-selected" : ""}" data-card-id="${escapeHtml(place.id)}">
           <div class="place-card__top">
             <div>
               <h3 class="place-card__title">${escapeHtml(getDisplayName(place))}</h3>
-              <p class="place-card__secondary">${escapeHtml(getSecondaryName(place))}</p>
+              ${secondary ? `<p class="place-card__secondary">${escapeHtml(secondary)}</p>` : ""}
             </div>
-            <span class="badge">${escapeHtml(place.primary_category || "未分類")}</span>
+            <span class="badge">${escapeHtml(trCategory(place.primary_category, "primary"))}</span>
           </div>
 
           <div class="badge-row">
-            <span class="badge">${escapeHtml(place.subcategory || "其他")}</span>
-            <span class="badge">${escapeHtml(place.business_type || "poi")}</span>
+            <span class="badge">${escapeHtml(subcategoryDisplay)}</span>
+            ${walk10Badge}
             ${mealBadges}
           </div>
 
           <div class="place-card__meta">
-            <div>地址：${escapeHtml(place.address_zh || "待補")}</div>
-            <div>捷運：${escapeHtml(place.near_mrt || "未提供")}</div>
-            <div>營業：${escapeHtml(place.opening_hours || "待補")}</div>
-            <div>備註：${escapeHtml(place.notes || "無")}</div>
+            <div>${escapeHtml(text.addr)}${escapeHtml(address || text.addrPending)}</div>
+            <div>${escapeHtml(text.mrt)}${escapeHtml(trMrt(place.near_mrt || text.mrtPending))}</div>
+            ${hoursLine}
+            ${notesLine}
           </div>
 
           <div class="place-card__actions">
-            <a
-              class="button button--slim"
-              href="${escapeAttribute(place.google_maps_url || buildSearchUrl(place))}"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Google Maps
-            </a>
-            <a
-              class="button button--ghost button--slim"
-              href="#"
-              data-focus-id="${escapeAttribute(place.id)}"
-            >
-              切到中間地圖
-            </a>
+            <a class="button button--slim" href="${escapeAttribute(buildSearchUrl(place))}" target="_blank" rel="noreferrer">Google Maps</a>
+            <a class="button button--ghost button--slim" href="#" data-focus-id="${escapeAttribute(place.id)}">${escapeHtml(text.focusMap)}</a>
+            <button class="button button--ghost button--slim" type="button" data-favorite-id="${escapeAttribute(place.id)}">${escapeHtml(favoriteLabel)}</button>
           </div>
         </article>
       `;
@@ -424,56 +1409,301 @@ function renderList(filtered, selected) {
 
   dom.results.querySelectorAll("[data-card-id]").forEach((card) => {
     card.addEventListener("click", (event) => {
-      if (event.target.closest("a")) {
-        return;
-      }
-
+      if (event.target.closest("a, button")) return;
       state.selectedPlaceId = card.dataset.cardId;
+      render();
+    });
+  });
+
+  dom.results.querySelectorAll("[data-favorite-id]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      toggleFavorite(button.dataset.favoriteId);
       render();
     });
   });
 }
 
+function renderFavorites() {
+  const text = TEXT[state.lang] || TEXT.zh;
+  const favoritePlaces = [...state.favorites]
+    .map((id) => places.find((place) => place.id === id))
+    .filter(Boolean);
+
+  if (!favoritePlaces.length) {
+    dom.favoritesList.innerHTML = `<div class="favorites-empty">${escapeHtml(text.favoritesEmpty)}</div>`;
+    return;
+  }
+
+  dom.favoritesList.innerHTML = favoritePlaces
+    .map((place) => {
+      return `
+        <article class="favorite-item">
+          <div class="favorite-item__body">
+            <h3>${escapeHtml(getDisplayName(place))}</h3>
+            <p>${escapeHtml(trCategory(place.primary_category, "primary"))} / ${escapeHtml(trCategory(place.subcategory, "subcategory"))}</p>
+          </div>
+          <div class="favorite-item__actions">
+            <a class="button button--ghost button--slim" href="#" data-favorite-focus-id="${escapeAttribute(place.id)}">${escapeHtml(text.favoriteFocus)}</a>
+            <a class="button button--slim" href="${escapeAttribute(buildSearchUrl(place))}" target="_blank" rel="noreferrer">${escapeHtml(text.favoriteOpen)}</a>
+            <button class="button button--ghost button--slim" type="button" data-favorite-remove-id="${escapeAttribute(place.id)}">${escapeHtml(text.removeFavorite)}</button>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
+  dom.favoritesList.querySelectorAll("[data-favorite-focus-id]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      state.selectedPlaceId = button.dataset.favoriteFocusId;
+      render();
+      dom.mapFrame.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  });
+
+  dom.favoritesList.querySelectorAll("[data-favorite-remove-id]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      toggleFavorite(button.dataset.favoriteRemoveId);
+      render();
+    });
+  });
+}
+
+async function refreshWeather() {
+  const text = TEXT[state.lang] || TEXT.zh;
+  dom.weatherSummary.textContent = text.weatherLoading;
+  dom.weatherRain.textContent = text.weatherRain("--");
+
+  try {
+    const response = await fetch(WEATHER_ENDPOINT, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Weather API ${response.status}`);
+    const payload = await response.json();
+    const daily = payload && payload.daily ? payload.daily : null;
+    const max = Number(daily?.temperature_2m_max?.[0]);
+    const min = Number(daily?.temperature_2m_min?.[0]);
+    const rain = Number(daily?.precipitation_probability_max?.[0]);
+    const code = Number(daily?.weather_code?.[0]);
+
+    const summary = weatherCodeToText(code);
+    const temp = Number.isFinite(min) && Number.isFinite(max) ? ` · ${text.weatherTemp(Math.round(min), Math.round(max))}` : "";
+    dom.weatherSummary.textContent = `${summary}${temp}`;
+    dom.weatherRain.textContent = text.weatherRain(Number.isFinite(rain) ? Math.round(rain) : "--");
+  } catch (_error) {
+    dom.weatherSummary.textContent = text.weatherUnavailable;
+    dom.weatherRain.textContent = text.weatherRain("--");
+  }
+}
+
+function weatherCodeToText(code) {
+  const lang = state.lang;
+  const dict = {
+    clear: { zh: "晴朗", en: "Clear", ja: "晴れ" },
+    partly: { zh: "局部多雲", en: "Partly cloudy", ja: "一部くもり" },
+    cloudy: { zh: "多雲", en: "Cloudy", ja: "くもり" },
+    fog: { zh: "有霧", en: "Foggy", ja: "霧" },
+    drizzle: { zh: "毛毛雨", en: "Drizzle", ja: "霧雨" },
+    rain: { zh: "下雨", en: "Rain", ja: "雨" },
+    heavyRain: { zh: "大雨", en: "Heavy rain", ja: "強い雨" },
+    snow: { zh: "降雪", en: "Snow", ja: "雪" },
+    thunder: { zh: "雷雨", en: "Thunderstorm", ja: "雷雨" },
+  };
+
+  let key = "cloudy";
+  if (code === 0) key = "clear";
+  else if (code === 1 || code === 2) key = "partly";
+  else if (code === 3) key = "cloudy";
+  else if (code === 45 || code === 48) key = "fog";
+  else if (code >= 51 && code <= 57) key = "drizzle";
+  else if ((code >= 61 && code <= 67) || (code >= 80 && code <= 82)) key = code >= 65 || code >= 82 ? "heavyRain" : "rain";
+  else if ((code >= 71 && code <= 77) || code === 85 || code === 86) key = "snow";
+  else if (code >= 95) key = "thunder";
+
+  return dict[key][lang] || dict[key].zh;
+}
+
+function getPlaceName(place, field) {
+  const override = PLACE_NAME_OVERRIDES[place.id];
+  if (override && normalizeText(override[field])) {
+    return normalizeText(override[field]);
+  }
+  return normalizeText(place[field]);
+}
+
 function getDisplayName(place) {
-  return place.map_label_name || place.name_zh || place.name_en || place.id;
+  if (state.lang === "en") return getPlaceName(place, "name_en") || getPlaceName(place, "name_zh") || normalizeText(place.map_label_name) || place.id;
+  if (state.lang === "ja") return getPlaceName(place, "name_ja") || getPlaceName(place, "name_en") || getPlaceName(place, "name_zh") || normalizeText(place.map_label_name) || place.id;
+  return getPlaceName(place, "name_zh") || normalizeText(place.map_label_name) || getPlaceName(place, "name_en") || place.id;
 }
 
 function getSecondaryName(place) {
+  const display = getDisplayName(place);
+  const zh = getPlaceName(place, "name_zh");
+  const en = getPlaceName(place, "name_en");
   const names = [];
-  const displayName = getDisplayName(place);
 
-  if (place.name_zh && place.name_zh !== displayName) {
-    names.push(place.name_zh);
+  if (state.lang === "zh") {
+    if (en && en !== display) names.push(en);
+    return names.join(" / ");
   }
 
-  if (place.name_en) {
-    names.push(place.name_en);
+  if (state.lang === "en") {
+    if (zh && zh !== display) names.push(zh);
+    return names.join(" / ");
   }
 
+  if (en && en !== display) names.push(en);
+  if (zh && zh !== display) names.push(zh);
   return names.join(" / ");
 }
+function humanizeSourceStatus(status) {
+  const row = SOURCE_STATUS[status];
+  if (!row) return tt("sourceUnknown");
+  return row[state.lang] || row.zh;
+}
 
-function humanizeSourceStatus(status, isHotel = false) {
-  if (isHotel) {
-    return "中心點";
+function trCategory(value, type) {
+  if (!value) return state.lang === "en" ? "Other" : state.lang === "ja" ? "その他" : "其他";
+  if (state.lang === "zh") return value;
+  const row = CAT[type] && CAT[type][value];
+  return row ? row[state.lang] || value : value;
+}
+
+function trMrt(value) {
+  if (!value) return tt("mrtPending");
+  if (state.lang === "zh") return value;
+  if (value === "龍山寺站") return state.lang === "en" ? "Longshan Temple Station" : "龍山寺駅";
+  return value;
+}
+
+function normalizeText(value) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function normalizeMealTag(value) {
+  const normalized = normalizeText(value);
+  if (!normalized) return "";
+  if (normalized === LEGACY_NIGHT_TAG) return NIGHT_TAG;
+  return normalized;
+}
+
+function normalizeSubcategory(value) {
+  const normalized = normalizeText(value);
+  if (!normalized) return "";
+  if (normalized === LEGACY_NIGHT_TAG) return NIGHT_TAG;
+  return normalized;
+}
+
+function cleanupTourHighlight(raw) {
+  const note = stripPlusCodeForDisplay(normalizeText(raw));
+  if (!note) return "";
+
+  const cleaned = note
+    .replace(/印刷地圖寫|紙本地圖|地圖點位|行程點位|地址與電話已核對|營業時間待補官方來源|常見正式店名為|非正式店名|地標用途|飯店本體/gi, "")
+    .replace(/[；;]+/g, "、")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!cleaned) return "";
+  if (/^(已核實|部分核實|待複核|map point)$/i.test(cleaned)) return "";
+  if (cleaned.length > 34) return `${cleaned.slice(0, 34)}…`;
+  return cleaned;
+}
+
+function buildTourLeadZh(place, mrt) {
+  const primary = normalizeText(place.primary_category);
+  const sub = normalizeSubcategory(place.subcategory);
+  const type = normalizeText(place.business_type);
+
+  if (primary === "景點" && sub === "寺廟") return `萬華最具代表性的信仰地標，古蹟氣氛濃厚，第一次來台北很值得安排。`;
+  if (primary === "景點" && sub === "古蹟") return `保留老街風貌與歷史建築，很適合散步拍照、感受舊城魅力。`;
+  if (primary === "景點" && sub === "公園") return `綠意休憩點，逛街之間可短暫放鬆，步行節奏很舒服。`;
+  if (primary === "景點" && sub === "商圈") return `在地街區感最強的一帶，邊走邊逛就能找到許多特色小店。`;
+  if (primary === "交通" && sub === "捷運站") return `萬華移動核心站點，前往西門町、台北車站都很順路。`;
+  if (primary === "交通" && sub === "火車站") return `台鐵樞紐之一，安排跨區移動或接續其他行程都很方便。`;
+  if (primary === "餐飲" && type === "drink_shop") return `在地人氣飲料店，口味穩定，逛街途中最適合順手帶一杯。`;
+  if (primary === "餐飲" && type === "cafe") return `氛圍輕鬆的咖啡停靠點，適合小歇片刻再繼續行程。`;
+  if (primary === "餐飲" && (type === "dessert" || type === "snack")) return `萬華經典小吃甜點路線的一站，適合安排成散步美食行程。`;
+  if (primary === "餐飲") return `在地人常去的餐飲選擇，口味有特色，推薦納入你的萬華必吃清單。`;
+  if (primary === "商店") return `旅途中補給很便利的採買點，日用品、零食與小物都能快速補齊。`;
+  if (primary === "其他設施" && sub === "銀行") return `旅途中換匯或金融需求的實用據點，地點好找、動線順。`;
+  if (primary === "其他設施" && sub === "郵局") return `寄件與郵務服務方便，安排購物後寄送也很實用。`;
+  if (primary === "其他設施" && sub === "停車場") return `自駕旅客友善的停車點，銜接周邊景點與美食更輕鬆。`;
+  if (primary === "其他設施" && sub === "飯店") return `凱達大飯店是萬華步行探索的最佳起點，從這裡出發最順路。`;
+  return `位於 ${mrt} 周邊，步行可達、動線直覺，適合安排在你的萬華散策路線。`;
+}
+
+function buildTourLeadEn(place, mrt) {
+  const primary = normalizeText(place.primary_category);
+  const sub = normalizeSubcategory(place.subcategory);
+  const type = normalizeText(place.business_type);
+
+  if (primary === "景點" && sub === "寺廟") return `One of Wanhua's iconic cultural landmarks and a must-see for first-time visitors.`;
+  if (primary === "景點" && sub === "古蹟") return `A photogenic historic block where old Taipei atmosphere is still alive.`;
+  if (primary === "景點" && sub === "公園") return `A relaxed green stop to recharge between market walks and food stops.`;
+  if (primary === "交通" && sub === "捷運站") return `A key MRT hub for easy rides to Ximen and Taipei Main Station.`;
+  if (primary === "餐飲" && type === "drink_shop") return `A popular local drink stop, perfect for a quick takeaway on your walk.`;
+  if (primary === "餐飲") return `A local favorite worth adding to your Wanhua food route.`;
+  if (primary === "商店") return `A convenient supply stop for snacks and daily essentials during your trip.`;
+  return `Close to ${mrt}, easy to reach on foot and suitable for a smooth walking itinerary.`;
+}
+
+function buildTourLeadJa(place, mrt) {
+  const primary = normalizeText(place.primary_category);
+  const sub = normalizeSubcategory(place.subcategory);
+  const type = normalizeText(place.business_type);
+
+  if (primary === "景點" && sub === "寺廟") return `萬華を代表する名所で、初めての台北旅行ならぜひ立ち寄りたいスポットです。`;
+  if (primary === "景點" && sub === "古蹟") return `歴史的な街並みが残り、散策や写真撮影にぴったりのエリアです。`;
+  if (primary === "景點" && sub === "公園") return `街歩きの合間にひと息つける、気持ちのよい休憩スポットです。`;
+  if (primary === "交通" && sub === "捷運站") return `西門・台北駅方面へ移動しやすい便利なMRT拠点です。`;
+  if (primary === "餐飲" && type === "drink_shop") return `地元で人気のドリンク店で、散策途中のテイクアウトにおすすめです。`;
+  if (primary === "餐飲") return `萬華のローカルグルメを体験できる、旅の満足度が高い一軒です。`;
+  if (primary === "商店") return `旅行中の買い足しに便利で、日用品や軽食をまとめて揃えられます。`;
+  return `${mrt} 周辺にあり、徒歩で回りやすい行程に組み込みやすいスポットです。`;
+}
+
+function getBasicIntro(place) {
+  const mrt = trMrt(place.near_mrt || tt("mrtPending"));
+  const hours = getResolvedOpeningHours(place);
+  const highlight = cleanupTourHighlight(place.notes);
+
+  if (state.lang === "en") {
+    const lead = buildTourLeadEn(place, mrt);
+    const h = highlight ? ` Highlight: ${highlight}.` : "";
+    const t = hours ? ` Best time: ${hours}.` : "";
+    return `${lead}${h}${t}`.trim();
   }
 
-  switch (status) {
-    case "verified":
-      return "已核對";
-    case "partially_verified":
-      return "部分核對";
-    case "paper_map_corrected":
-      return "紙本校正";
-    case "needs_review":
-      return "待複核";
-    case "map_only":
-      return "地圖點位";
-    case "closed":
-      return "已停業";
-    default:
-      return "行程點位";
+  if (state.lang === "ja") {
+    const lead = buildTourLeadJa(place, mrt);
+    const h = highlight ? ` 見どころ：${highlight}。` : "";
+    const t = hours ? ` おすすめ時間：${hours}。` : "";
+    return `${lead}${h}${t}`.trim();
   }
+
+  const lead = buildTourLeadZh(place, mrt);
+  const h = highlight ? ` 推薦亮點：${highlight}。` : "";
+  const t = hours ? ` 建議時段：${hours}。` : "";
+  return `${lead}${h}${t}`.trim();
+}
+
+function stripPlusCodeForDisplay(input) {
+  const normalized = normalizeText(input);
+  if (!normalized) return "";
+  if (PLUS_CODE_REGEX.test(normalized)) return "";
+  return normalized.replace(/^Plus\s*Code[:：]\s*/i, "").trim();
+}
+
+function isSuppressedPlace(place) {
+  const notes = normalizeText(place.notes);
+  return (
+    place.source_status === "closed" ||
+    place.is_active === false ||
+    /暫停營業|暫時關閉|歇業|停業/i.test(notes)
+  );
 }
 
 function buildSearchUrl(place) {
@@ -483,26 +1713,80 @@ function buildSearchUrl(place) {
 
 function buildRouteUrl(place) {
   const destination = buildMapQuery(place);
-  return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(
-    HOTEL.address_zh
-  )}&destination=${encodeURIComponent(destination)}`;
+  return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(HOTEL.address_zh)}&destination=${encodeURIComponent(destination)}`;
 }
 
 function buildEmbedUrl(place) {
   const query = buildMapQuery(place);
   if (GOOGLE_MAPS_USE_EMBED_API && GOOGLE_MAPS_API_KEY) {
-    return `https://www.google.com/maps/embed/v1/place?key=${encodeURIComponent(
-      GOOGLE_MAPS_API_KEY
-    )}&q=${encodeURIComponent(query)}&zoom=16`;
+    return `https://www.google.com/maps/embed/v1/place?key=${encodeURIComponent(GOOGLE_MAPS_API_KEY)}&q=${encodeURIComponent(query)}&zoom=16`;
   }
-
   return `https://www.google.com/maps?q=${encodeURIComponent(query)}&z=16&output=embed`;
 }
 
 function buildMapQuery(place) {
-  return [place.name_zh || place.map_label_name, place.address_zh || "台北市萬華區", "Taipei"]
+  const plusCodeQuery = resolvePlusCodeQuery(place);
+  const placeName = getPlaceName(place, "name_zh") || normalizeText(place.map_label_name) || getPlaceName(place, "name_en");
+  if (plusCodeQuery) {
+    return [placeName, plusCodeQuery].filter(Boolean).join(" ");
+  }
+
+  return [placeName, place.address_zh || "台北市萬華區", "Taipei"]
     .filter(Boolean)
     .join(" ");
+}
+
+function resolvePlusCodeQuery(place) {
+  const candidates = [
+    normalizeText(place.plus_code),
+    normalizeText(place.address_zh),
+    normalizeText(place.notes),
+    extractQueryFromGoogleMapsUrl(place.google_maps_url),
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    const cleaned = cleanupPlusCodeCandidate(candidate);
+    const match = cleaned.match(PLUS_CODE_REGEX);
+    if (!match) {
+      continue;
+    }
+
+    // Keep full candidate (with locality) whenever possible for better precision.
+    if (cleaned.includes(match[1])) {
+      return cleaned;
+    }
+
+    return match[1];
+  }
+
+  return "";
+}
+
+function cleanupPlusCodeCandidate(input) {
+  const normalized = normalizeText(input);
+  if (!normalized) {
+    return "";
+  }
+
+  return normalized
+    .replace(/^.*?(?:Plus\s*Code[:：])\s*/i, "")
+    .replace(/\s*[；;。]\s*$/, "")
+    .trim();
+}
+
+function extractQueryFromGoogleMapsUrl(url) {
+  const normalized = normalizeText(url);
+  if (!normalized) {
+    return "";
+  }
+
+  try {
+    const parsed = new URL(normalized);
+    const query = parsed.searchParams.get("query") || parsed.searchParams.get("q");
+    return query ? decodeURIComponent(query).replaceAll("+", " ") : "";
+  } catch (_error) {
+    return "";
+  }
 }
 
 function escapeHtml(value) {

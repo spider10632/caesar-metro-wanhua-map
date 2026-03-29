@@ -1,4 +1,4 @@
-window.WANHUA_POI_DATA = [
+﻿window.WANHUA_POI_DATA = [
     {
         "id":  "wanhua_001",
         "map_label_name":  "凱達大飯店",
@@ -19,7 +19,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "verified",
         "source_url":  "https://www.caesarpark.com.tw/en/location-detail/caesar-metro/",
         "is_active":  true,
-        "display_order":  1
+        "display_order":  1,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_002",
@@ -41,7 +42,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "partially_verified",
         "source_url":  "https://guidetotaiwan.com/en/transit/wanhua-station",
         "is_active":  true,
-        "display_order":  2
+        "display_order":  2,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_003",
@@ -63,7 +65,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "partially_verified",
         "source_url":  "https://guidetotaiwan.com/en/transit/longshan-temple-station",
         "is_active":  true,
-        "display_order":  3
+        "display_order":  3,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_004",
@@ -85,7 +88,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "verified",
         "source_url":  "https://www.travel.taipei/en/attraction/details/487",
         "is_active":  true,
-        "display_order":  4
+        "display_order":  4,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_005",
@@ -107,12 +111,13 @@ window.WANHUA_POI_DATA = [
         "source_status":  "map_only",
         "source_url":  "",
         "is_active":  true,
-        "display_order":  5
+        "display_order":  5,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_006",
-        "map_label_name":  "糖廍文化公園",
-        "name_zh":  "糖廍文化園區",
+        "map_label_name":  "臺北製糖所文化園區",
+        "name_zh":  "臺北製糖所文化園區",
         "name_en":  "Taipei Sugar Refinery Cultural Park",
         "primary_category":  "景點",
         "subcategory":  "其他",
@@ -125,11 +130,12 @@ window.WANHUA_POI_DATA = [
         "phone":  "02-2302-2335",
         "opening_hours":  "Tue-Sun 10:00-16:30; Mon closed",
         "near_mrt":  "龍山寺站",
-        "notes":  "紙本地圖標示為『糖廍文化公園』；正式名稱為『糖廍文化園區』",
+        "notes":  "紙本地圖常見標示「糖廍文化」；正式名稱為「臺北製糖所文化園區」",
         "source_status":  "paper_map_corrected",
         "source_url":  "https://www.taisugar.com.tw/english/CP2.aspx?n=10605",
         "is_active":  true,
-        "display_order":  6
+        "display_order":  6,
+        "walk_10min_from_hotel":  false
     },
     {
         "id":  "wanhua_007",
@@ -151,7 +157,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "partially_verified",
         "source_url":  "https://parks.gov.taipei/parks/m2/pkl_parks_m2C.php?sid=156",
         "is_active":  true,
-        "display_order":  7
+        "display_order":  7,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_008",
@@ -173,7 +180,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "map_only",
         "source_url":  "",
         "is_active":  true,
-        "display_order":  8
+        "display_order":  8,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_009",
@@ -195,7 +203,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "verified",
         "source_url":  "https://www.bopiliao.taipei/EN/Information",
         "is_active":  true,
-        "display_order":  9
+        "display_order":  9,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_010",
@@ -208,7 +217,7 @@ window.WANHUA_POI_DATA = [
         "meal_tags":  [
 
                       ],
-        "google_maps_url":  "https://www.google.com/maps/search/?api=1\u0026query=Bangka+Clothes+Commercial+District",
+        "google_maps_url":  "https://www.google.com/maps/search/?api=1\u0026query=2FMX%2BPQ+%E8%90%AC%E8%8F%AF%E5%8D%80+%E8%87%BA%E5%8C%97%E5%B8%82",
         "address_zh":  "",
         "phone":  "",
         "opening_hours":  "",
@@ -217,7 +226,9 @@ window.WANHUA_POI_DATA = [
         "source_status":  "map_only",
         "source_url":  "",
         "is_active":  true,
-        "display_order":  10
+        "display_order":  10,
+        "plus_code":  "2FMX+PQ 萬華區 臺北市",
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_011",
@@ -239,7 +250,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "verified",
         "source_url":  "https://umkt.jutfoundation.org.tw/en?language=en",
         "is_active":  true,
-        "display_order":  11
+        "display_order":  11,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_012",
@@ -251,7 +263,7 @@ window.WANHUA_POI_DATA = [
         "business_type":  "night_market",
         "meal_tags":  [
                           "晚餐",
-                          "消夜"
+                          "宵夜"
                       ],
         "google_maps_url":  "https://www.google.com/maps/search/?api=1\u0026query=Huaxi+Street+Tourist+Night+Market",
         "address_zh":  "",
@@ -262,7 +274,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "map_only",
         "source_url":  "",
         "is_active":  true,
-        "display_order":  12
+        "display_order":  12,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_013",
@@ -274,7 +287,7 @@ window.WANHUA_POI_DATA = [
         "business_type":  "night_market",
         "meal_tags":  [
                           "晚餐",
-                          "消夜"
+                          "宵夜"
                       ],
         "google_maps_url":  "https://www.google.com/maps/search/?api=1\u0026query=Bangka+Night+Market",
         "address_zh":  "",
@@ -285,7 +298,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "map_only",
         "source_url":  "",
         "is_active":  true,
-        "display_order":  13
+        "display_order":  13,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_014",
@@ -297,7 +311,7 @@ window.WANHUA_POI_DATA = [
         "business_type":  "night_market",
         "meal_tags":  [
                           "晚餐",
-                          "消夜"
+                          "宵夜"
                       ],
         "google_maps_url":  "https://www.google.com/maps/search/?api=1\u0026query=Guangzhou+Street+Night+Market",
         "address_zh":  "",
@@ -308,11 +322,12 @@ window.WANHUA_POI_DATA = [
         "source_status":  "map_only",
         "source_url":  "",
         "is_active":  true,
-        "display_order":  14
+        "display_order":  14,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_015",
-        "map_label_name":  "台南擔仔麵",
+        "map_label_name":  "華西街台南擔仔麵海鮮餐廳",
         "name_zh":  "華西街台南擔仔麵海鮮餐廳",
         "name_en":  "Tainan Tan Tsu Mien Seafood Restaurant",
         "primary_category":  "餐飲",
@@ -327,11 +342,12 @@ window.WANHUA_POI_DATA = [
         "phone":  "02-2308-1123",
         "opening_hours":  "Tue-Sun 11:30-14:00, 17:30-21:30; Mon closed",
         "near_mrt":  "龍山寺站",
-        "notes":  "由印刷地圖『台南擔仔麵』對應至正式店名",
+        "notes":  "別名標示：台南擔仔麵 / 台灣海鮮餐廳（已合併）",
         "source_status":  "verified",
         "source_url":  "https://www.seafoodtaipei.com.tw/",
         "is_active":  true,
-        "display_order":  15
+        "display_order":  15,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_016",
@@ -350,17 +366,18 @@ window.WANHUA_POI_DATA = [
         "phone":  "02-2308-1123",
         "opening_hours":  "Tue-Sun 11:30-14:00, 17:30-21:30; Mon closed",
         "near_mrt":  "龍山寺站",
-        "notes":  "由印刷地圖『台灣海鮮餐廳』對應至正式店名；與上一列為同一店",
+        "notes":  "已合併至 wanhua_015（華西街台南擔仔麵海鮮餐廳）；保留作為別名索引：台灣海鮮餐廳",
         "source_status":  "verified",
         "source_url":  "https://www.seafoodtaipei.com.tw/",
-        "is_active":  true,
-        "display_order":  16
+        "is_active":  false,
+        "display_order":  16,
+        "walk_10min_from_hotel":  false
     },
     {
         "id":  "wanhua_017",
-        "map_label_name":  "排骨麵",
-        "name_zh":  "排骨麵",
-        "name_en":  "Ribs Noodles",
+        "map_label_name":  "豐原清水排骨麵",
+        "name_zh":  "豐原清水排骨麵",
+        "name_en":  "Fengyuan Qingshui Pork Rib Noodles",
         "primary_category":  "餐飲",
         "subcategory":  "午餐",
         "business_type":  "restaurant",
@@ -368,16 +385,17 @@ window.WANHUA_POI_DATA = [
                           "午餐",
                           "晚餐"
                       ],
-        "google_maps_url":  "https://www.google.com/maps/search/?api=1\u0026query=Ribs+Noodles+Wanhua",
+        "google_maps_url":  "https://www.google.com/maps/search/?api=1\u0026query=G4%E8%B1%90%E5%8E%9F%E6%B8%85%E6%B0%B4%E6%8E%92%E9%AA%A8%E9%BA%B5",
         "address_zh":  "",
         "phone":  "",
         "opening_hours":  "",
         "near_mrt":  "龍山寺站",
-        "notes":  "地圖泛稱，非正式店名",
+        "notes":  "紙本標示為「排骨麵」；店名校正為「G4豐原清水排骨麵」",
         "source_status":  "generic_label",
         "source_url":  "",
         "is_active":  true,
-        "display_order":  17
+        "display_order":  17,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_046",
@@ -399,7 +417,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "verified",
         "source_url":  "https://guide.michelin.com/tw/zh_TW/taipei-region/taipei/restaurant/chang-hung-noodles",
         "is_active":  true,
-        "display_order":  17.1
+        "display_order":  17.1,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_047",
@@ -422,7 +441,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "verified",
         "source_url":  "https://guide.michelin.com/tw/zh_TW/taipei-region/taipei/restaurant/yuan-fang-guabao",
         "is_active":  true,
-        "display_order":  17.2
+        "display_order":  17.2,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_048",
@@ -445,7 +465,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "verified",
         "source_url":  "https://guide.michelin.com/tw/zh_TW/taipei-region/taipei/restaurant/hsiao-wang-steamed-minced-pork-with-pickles-in-broth",
         "is_active":  true,
-        "display_order":  17.3
+        "display_order":  17.3,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_018",
@@ -468,7 +489,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "partially_verified",
         "source_url":  "https://lordcat.net/archives/109",
         "is_active":  true,
-        "display_order":  18
+        "display_order":  18,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_019",
@@ -491,7 +513,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "partially_verified",
         "source_url":  "https://bigsharkgogogo.tw/chenchioystercc/",
         "is_active":  true,
-        "display_order":  19
+        "display_order":  19,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_020",
@@ -514,13 +537,14 @@ window.WANHUA_POI_DATA = [
         "source_status":  "partially_verified",
         "source_url":  "https://www.luosifen200.com/",
         "is_active":  true,
-        "display_order":  20
+        "display_order":  20,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_021",
-        "map_label_name":  "素食餐廳",
-        "name_zh":  "素食餐廳",
-        "name_en":  "Vegetarian Restaurant",
+        "map_label_name":  "吉祥素食",
+        "name_zh":  "吉祥素食",
+        "name_en":  "Jixiang Vegetarian Restaurant",
         "primary_category":  "餐飲",
         "subcategory":  "午餐",
         "business_type":  "restaurant",
@@ -537,37 +561,39 @@ window.WANHUA_POI_DATA = [
         "source_status":  "generic_label",
         "source_url":  "",
         "is_active":  true,
-        "display_order":  21
+        "display_order":  21,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_022",
-        "map_label_name":  "元祖胡椒餅",
+        "map_label_name":  "福州元祖胡椒餅",
         "name_zh":  "福州元祖胡椒餅",
         "name_en":  "Fuzhou Yuanzu Pepper Bun",
         "primary_category":  "餐飲",
-        "subcategory":  "消夜",
+        "subcategory":  "其他",
         "business_type":  "snack",
         "meal_tags":  [
                           "下午茶",
-                          "晚餐",
-                          "消夜"
+                          "晚餐"
                       ],
-        "google_maps_url":  "https://www.google.com/maps/search/?api=1\u0026query=%E5%85%83%E7%A5%96%E8%83%A1%E6%A4%92%E9%A4%85+%E8%90%AC%E8%8F%AF",
-        "address_zh":  "台北市萬華區和平西路三段89巷2弄5號",
+        "google_maps_url":  "https://www.google.com/maps/search/?api=1\u0026query=2GP2%2B67+%E5%AF%8C%E6%B0%91%E9%87%8C+%E8%87%BA%E5%8C%97%E5%B8%82%E8%90%AC%E8%8F%AF%E5%8D%80",
+        "address_zh":  "",
         "phone":  "02-2308-3075",
         "opening_hours":  "11:30-17:30",
         "near_mrt":  "龍山寺站",
-        "notes":  "印刷地圖寫『元祖胡椒餅』；依近期食記與店家資訊對應『福州元祖胡椒餅』",
+        "notes":  "胡椒餅",
         "source_status":  "partially_verified",
         "source_url":  "https://ifunny.blog/fujhou-peppercake/",
         "is_active":  true,
-        "display_order":  22
+        "display_order":  22,
+        "plus_code":  "2GP2+67 富民里 臺北市萬華區",
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_023",
-        "map_label_name":  "李家特小仙果",
-        "name_zh":  "李錦利八仙果",
-        "name_en":  "Li Jin Li Eight Immortals Fruit",
+        "map_label_name":  "李錦利食品有限公司",
+        "name_zh":  "李錦利食品有限公司",
+        "name_en":  "Li Jin Li Food Co., Ltd.",
         "primary_category":  "餐飲",
         "subcategory":  "其他",
         "business_type":  "snack",
@@ -583,19 +609,19 @@ window.WANHUA_POI_DATA = [
         "source_status":  "partially_verified",
         "source_url":  "https://www.facebook.com/mollyni.tw/posts/1045848157546778/",
         "is_active":  true,
-        "display_order":  23
+        "display_order":  23,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_024",
-        "map_label_name":  "周記粥",
+        "map_label_name":  "周記肉粥店",
         "name_zh":  "周記肉粥店",
         "name_en":  "Zhou Ji Rice Porridge",
         "primary_category":  "餐飲",
         "subcategory":  "早餐",
         "business_type":  "congee",
         "meal_tags":  [
-                          "早餐",
-                          "消夜"
+                          "早餐"
                       ],
         "google_maps_url":  "https://www.google.com/maps/search/?api=1\u0026query=%E5%91%A8%E8%A8%98%E7%B2%A5",
         "address_zh":  "台北市萬華區廣州街104號",
@@ -606,7 +632,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "partially_verified",
         "source_url":  "https://blake.com.tw/blog/post/zhouji-rouzhou-dian-2507",
         "is_active":  true,
-        "display_order":  24
+        "display_order":  24,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_025",
@@ -617,7 +644,8 @@ window.WANHUA_POI_DATA = [
         "subcategory":  "早餐",
         "business_type":  "breakfast",
         "meal_tags":  [
-                          "早餐"
+                          "早餐",
+                          "飲料"
                       ],
         "google_maps_url":  "https://www.google.com/maps/search/?api=1\u0026query=%E9%81%94%E4%BA%BA%E8%B1%86%E6%BC%BF%E5%A4%A7%E7%8E%8B",
         "address_zh":  "台北市萬華區西園路一段314-2號",
@@ -628,7 +656,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "partially_verified",
         "source_url":  "https://spot.line.me/detail/486247019371828921",
         "is_active":  true,
-        "display_order":  25
+        "display_order":  25,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_026",
@@ -640,7 +669,8 @@ window.WANHUA_POI_DATA = [
         "business_type":  "dessert",
         "meal_tags":  [
                           "下午茶",
-                          "晚餐"
+                          "晚餐",
+                          "飲料"
                       ],
         "google_maps_url":  "https://www.google.com/maps/search/?api=1\u0026query=%E9%BE%8D%E9%83%BD%E5%86%B0%E6%9E%9C%E5%B0%88%E6%A5%AD%E5%AE%B6",
         "address_zh":  "台北市萬華區和平西路三段192號",
@@ -651,13 +681,14 @@ window.WANHUA_POI_DATA = [
         "source_status":  "partially_verified",
         "source_url":  "https://www.facebook.com/LungTuIce/",
         "is_active":  true,
-        "display_order":  26
+        "display_order":  26,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_027",
-        "map_label_name":  "水餃",
-        "name_zh":  "水餃",
-        "name_en":  "Dumplings",
+        "map_label_name":  "海天香餃",
+        "name_zh":  "海天香餃",
+        "name_en":  "Haitian Xiang Dumplings",
         "primary_category":  "餐飲",
         "subcategory":  "午餐",
         "business_type":  "restaurant",
@@ -674,18 +705,20 @@ window.WANHUA_POI_DATA = [
         "source_status":  "generic_label",
         "source_url":  "",
         "is_active":  true,
-        "display_order":  27
+        "display_order":  27,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_028",
-        "map_label_name":  "50嵐",
-        "name_zh":  "50嵐",
-        "name_en":  "50 Lan Tea Shop",
+        "map_label_name":  "五十嵐龍山寺店",
+        "name_zh":  "五十嵐龍山寺店",
+        "name_en":  "50 Lan Longshan Temple Branch",
         "primary_category":  "餐飲",
         "subcategory":  "其他",
         "business_type":  "drink_shop",
         "meal_tags":  [
-                          "下午茶"
+                          "下午茶",
+                          "飲料"
                       ],
         "google_maps_url":  "https://www.google.com/maps/search/?api=1\u0026query=50%E5%B5%90+%E9%BE%8D%E5%B1%B1%E5%AF%BA",
         "address_zh":  "台北市萬華區和平西路三段139號1樓",
@@ -696,7 +729,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "partially_verified",
         "source_url":  "https://www.50lan.com/web/pointsout.asp",
         "is_active":  true,
-        "display_order":  28
+        "display_order":  28,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_029",
@@ -708,7 +742,8 @@ window.WANHUA_POI_DATA = [
         "business_type":  "cafe",
         "meal_tags":  [
                           "早餐",
-                          "下午茶"
+                          "下午茶",
+                          "飲料"
                       ],
         "google_maps_url":  "https://www.google.com/maps/search/?api=1\u0026query=Wanhua+Lin+House+Starbucks",
         "address_zh":  "台北市萬華區西園路一段306巷24號\u002626號",
@@ -719,7 +754,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "partially_verified",
         "source_url":  "https://www.starbucks.com.tw/stores/special/stores_special_bangka-xiyuan.jspx",
         "is_active":  true,
-        "display_order":  29
+        "display_order":  29,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_030",
@@ -741,7 +777,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "verified",
         "source_url":  "https://www.amo.com.tw/tw/locations",
         "is_active":  true,
-        "display_order":  30
+        "display_order":  30,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_031",
@@ -764,18 +801,20 @@ window.WANHUA_POI_DATA = [
         "source_status":  "partially_verified",
         "source_url":  "https://wisely.tw/read-33114.html",
         "is_active":  true,
-        "display_order":  31
+        "display_order":  31,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_032",
-        "map_label_name":  "萬華仙草冰",
-        "name_zh":  "萬華林建發仙草冰",
-        "name_en":  "Wanhua Lin Jian Fa Grass Jelly",
+        "map_label_name":  "萬華林建發仙草冰燒仙草",
+        "name_zh":  "萬華林建發仙草冰燒仙草",
+        "name_en":  "Wanhua Lin Jian Fa Grass Jelly Shaoxiancao",
         "primary_category":  "餐飲",
         "subcategory":  "其他",
         "business_type":  "dessert",
         "meal_tags":  [
-                          "下午茶"
+                          "下午茶",
+                          "飲料"
                       ],
         "google_maps_url":  "https://www.google.com/maps/search/?api=1\u0026query=Wanhua+Grass+Jelly+Ice",
         "address_zh":  "台北市萬華區艋舺大道138號",
@@ -786,7 +825,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "verified",
         "source_url":  "https://whdo.gov.taipei/News_Content.aspx?n=19CABBEF3F991E9E\u0026s=BB82DEAFAF6FDC6C\u0026sms=FE5F0DE8FA424CE8",
         "is_active":  true,
-        "display_order":  32
+        "display_order":  32,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_033",
@@ -809,7 +849,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "closed",
         "source_url":  "https://lordcat.net/archives/2903",
         "is_active":  false,
-        "display_order":  33
+        "display_order":  33,
+        "walk_10min_from_hotel":  false
     },
     {
         "id":  "wanhua_034",
@@ -831,7 +872,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "partially_verified",
         "source_url":  "https://www.carrefour.com.tw/uber_202221020-1231/",
         "is_active":  true,
-        "display_order":  34
+        "display_order":  34,
+        "walk_10min_from_hotel":  false
     },
     {
         "id":  "wanhua_035",
@@ -853,7 +895,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "partially_verified",
         "source_url":  "https://www.cdns.com.tw/articles/1032442",
         "is_active":  true,
-        "display_order":  35
+        "display_order":  35,
+        "walk_10min_from_hotel":  false
     },
     {
         "id":  "wanhua_036",
@@ -875,7 +918,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "verified",
         "source_url":  "https://www.pxmart.com.tw/customer-service/stores",
         "is_active":  true,
-        "display_order":  36
+        "display_order":  36,
+        "walk_10min_from_hotel":  false
     },
     {
         "id":  "wanhua_037",
@@ -897,7 +941,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "verified",
         "source_url":  "https://shop.showba.com.tw/Shop/StoreDetail/41219/34126",
         "is_active":  true,
-        "display_order":  37
+        "display_order":  37,
+        "walk_10min_from_hotel":  false
     },
     {
         "id":  "wanhua_038",
@@ -919,13 +964,14 @@ window.WANHUA_POI_DATA = [
         "source_status":  "partially_verified",
         "source_url":  "https://www.cosme.net.tw/channel_details/4982",
         "is_active":  true,
-        "display_order":  38
+        "display_order":  38,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_039",
-        "map_label_name":  "日本人文藥局",
-        "name_zh":  "日森人文藥局龍山寺店",
-        "name_en":  "Himori Pharmacy Longshan Temple Store",
+        "map_label_name":  "日森人文藥局",
+        "name_zh":  "日森人文藥局",
+        "name_en":  "Himori Pharmacy",
         "primary_category":  "商店",
         "subcategory":  "藥妝",
         "business_type":  "pharmacy",
@@ -941,21 +987,22 @@ window.WANHUA_POI_DATA = [
         "source_status":  "partially_verified",
         "source_url":  "https://kb.commonhealth.com.tw/pharmacies/657.html",
         "is_active":  true,
-        "display_order":  39
+        "display_order":  39,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_040",
-        "map_label_name":  "台灣銀行",
-        "name_zh":  "台灣銀行",
-        "name_en":  "Bank of Taiwan",
+        "map_label_name":  "臺灣銀行萬華分行",
+        "name_zh":  "臺灣銀行萬華分行",
+        "name_en":  "Bank of Taiwan Wanhua Branch",
         "primary_category":  "其他設施",
         "subcategory":  "銀行",
         "business_type":  "bank",
         "meal_tags":  [
 
                       ],
-        "google_maps_url":  "https://www.google.com/maps/search/?api=1\u0026query=Bank+of+Taiwan+Longshan+Temple",
-        "address_zh":  "",
+        "google_maps_url":  "https://www.google.com/maps/search/?api=1\u0026query=Bank+of+Taiwan+Wanhua+Branch",
+        "address_zh":  "108臺北市萬華區貴陽街二段26號",
         "phone":  "",
         "opening_hours":  "",
         "near_mrt":  "龍山寺站",
@@ -963,29 +1010,31 @@ window.WANHUA_POI_DATA = [
         "source_status":  "map_only",
         "source_url":  "https://www.bot.com.tw/en/locations",
         "is_active":  true,
-        "display_order":  40
+        "display_order":  40,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_041",
-        "map_label_name":  "郵局",
-        "name_zh":  "郵局",
-        "name_en":  "Post Office",
+        "map_label_name":  "莒光郵局",
+        "name_zh":  "莒光郵局",
+        "name_en":  "Juguang Post Office",
         "primary_category":  "其他設施",
         "subcategory":  "郵局",
         "business_type":  "post_office",
         "meal_tags":  [
 
                       ],
-        "google_maps_url":  "https://www.google.com/maps/search/?api=1\u0026query=Post+Office+Longshan+Temple+Taipei",
-        "address_zh":  "",
+        "google_maps_url":  "https://www.google.com/maps/search/?api=1\u0026query=Juguang+Post+Office",
+        "address_zh":  "108臺北市萬華區莒光路210號",
         "phone":  "",
         "opening_hours":  "",
         "near_mrt":  "龍山寺站",
-        "notes":  "地圖未標明分局名稱",
+        "notes":  "",
         "source_status":  "map_only",
         "source_url":  "",
         "is_active":  true,
-        "display_order":  41
+        "display_order":  41,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_042",
@@ -1007,7 +1056,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "map_only",
         "source_url":  "",
         "is_active":  true,
-        "display_order":  42
+        "display_order":  42,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_043",
@@ -1029,7 +1079,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "map_only",
         "source_url":  "",
         "is_active":  true,
-        "display_order":  43
+        "display_order":  43,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_044",
@@ -1051,7 +1102,8 @@ window.WANHUA_POI_DATA = [
         "source_status":  "map_only",
         "source_url":  "",
         "is_active":  true,
-        "display_order":  44
+        "display_order":  44,
+        "walk_10min_from_hotel":  true
     },
     {
         "id":  "wanhua_045",
@@ -1073,6 +1125,7 @@ window.WANHUA_POI_DATA = [
         "source_status":  "partially_verified",
         "source_url":  "https://www.caesarmetro.com/en/traffic/driving/",
         "is_active":  true,
-        "display_order":  45
+        "display_order":  45,
+        "walk_10min_from_hotel":  true
     }
 ];

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+JP:wght@600;700&family=Noto+Serif+TC:wght@600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
@@ -21,117 +21,80 @@
     <div class="ambient ambient--two"></div>
 
     <div class="page-shell">
-      <header class="hero">
-        <div class="hero__eyebrow-row">
-          <p class="eyebrow">CAESAR METRO TAIPEI</p>
-          <p class="hero__signature">Concierge Edition</p>
-        </div>
+      <header class="hero hero--title-only">
+        <div class="hero__title-row">
+          <h1 id="page-title">凱達大飯店周邊地圖</h1>
+          <div class="hero__controls">
+            <section id="weather-widget" class="weather-widget" aria-live="polite">
+              <p id="weather-title" class="weather-widget__title">今日天氣</p>
+              <p id="weather-summary" class="weather-widget__summary">讀取中...</p>
+              <p id="weather-rain" class="weather-widget__rain">降雨機率 --%</p>
+            </section>
 
-        <div class="hero__grid">
-          <div class="hero__main">
-            <p class="hero__kicker">Wanhua Walking Selection</p>
-            <h1>凱達大飯店周邊地圖</h1>
-            <p class="hero__intro">
-              以凱達大飯店為中心，整理萬華周邊景點、餐飲、交通與生活機能，讓住客像打開私人禮賓清單一樣，快速選出想去的點。
-            </p>
-          </div>
-
-          <div class="hero__card">
-            <p class="hero__card-label">Concierge Base</p>
-            <h2>凱達大飯店</h2>
-            <p>Caesar Metro Taipei</p>
-            <dl class="hero__facts">
-              <div>
-                <dt>位置</dt>
-                <dd>台北市萬華區艋舺大道167號</dd>
-              </div>
-              <div>
-                <dt>鄰近</dt>
-                <dd>龍山寺站 / 萬華車站</dd>
-              </div>
-              <div>
-                <dt>資料版本</dt>
-                <dd>Curated Wanhua POI</dd>
-              </div>
-            </dl>
-            <a
-              class="button button--hero"
-              href="https://www.google.com/maps/search/?api=1&query=Caesar+Metro+Taipei"
-              target="_blank"
-              rel="noreferrer"
-            >
-              開啟飯店 Google Maps
-            </a>
+            <div class="lang-switch" role="group" aria-label="Language switch">
+              <button id="lang-zh" class="lang-button is-active" type="button" data-lang="zh">中文</button>
+              <button id="lang-en" class="lang-button" type="button" data-lang="en">EN</button>
+              <button id="lang-ja" class="lang-button" type="button" data-lang="ja">日本語</button>
+            </div>
           </div>
         </div>
+
+        <nav class="hero-quick-nav" aria-label="Section quick navigation">
+          <span id="quick-nav-label" class="hero-quick-nav__label">快速抵達</span>
+          <a id="jump-filters" class="hero-jump" href="#panel-filters">行程條件</a>
+          <a id="jump-spotlight" class="hero-jump" href="#panel-spotlight">地圖聚焦</a>
+          <a id="jump-collection" class="hero-jump" href="#panel-collection">周邊清單</a>
+          <a id="jump-favorites" class="hero-jump" href="#panel-favorites">蒐藏清單</a>
+          <a id="jump-comment" class="hero-jump" href="#panel-comment">客人留言</a>
+          <a id="jump-hotel" class="hero-jump" href="#panel-hotel">飯店資訊</a>
+        </nav>
       </header>
+
+      <section class="guest-note panel">
+        <p id="guest-note-text">
+          歡迎使用本地圖。請先選擇左側分類或輸入關鍵字，再按「搜尋」；點選右側地點卡片後，中間地圖會立即切換，並可直接開啟 Google Maps 導航。
+        </p>
+      </section>
 
       <main class="experience">
         <aside class="rail">
-          <section class="panel panel--filters">
+          <section id="panel-filters" class="panel panel--filters jump-target">
             <div class="section-heading">
               <p class="eyebrow">Filters</p>
-              <h2>行程條件</h2>
+              <h2 id="filters-title">行程條件</h2>
             </div>
 
             <label class="search-field">
-              <span>搜尋名稱、地址或備註</span>
-              <input
-                id="search-input"
-                type="search"
-                placeholder="例如：夜市、星巴克、龍山寺"
-              />
+              <span id="search-label">搜尋名稱、地址或基本介紹</span>
+              <input id="search-input" type="search" placeholder="例如：夜市、星巴克、龍山寺" />
             </label>
 
             <div class="toggle-row">
               <label class="switch">
                 <input id="active-only" type="checkbox" checked />
-                <span>只顯示啟用資料</span>
+                <span id="active-only-text">只顯示啟用資料</span>
               </label>
-              <button id="reset-filters" class="text-button" type="button">
-                清除條件
-              </button>
+              <button id="reset-filters" class="text-button" type="button">清除條件</button>
             </div>
 
             <div class="filter-block">
               <div class="filter-block__head">
-                <h3>快速篩選</h3>
-                <span>給客人常用</span>
+                <h3 id="quick-title">快速篩選</h3>
+                <span id="quick-subtitle">給客人常用</span>
               </div>
               <div class="quick-filter-strip">
-                <button class="quick-filter" type="button" data-quick-filter="all">
-                  全部推薦
-                </button>
-                <button class="quick-filter" type="button" data-quick-primary="餐飲">
-                  在地美食
-                </button>
-                <button class="quick-filter" type="button" data-quick-primary="景點">
-                  必看景點
-                </button>
-                <button class="quick-filter" type="button" data-quick-primary="交通">
-                  交通節點
-                </button>
-                <button class="quick-filter" type="button" data-quick-primary="商店">
-                  生活採買
-                </button>
-                <button class="quick-filter" type="button" data-quick-primary="其他設施">
-                  旅宿機能
-                </button>
+                <button id="quick-all" class="quick-filter" type="button" data-quick-filter="all">全部推薦</button>
+                <button id="quick-food" class="quick-filter" type="button" data-quick-primary="餐飲">在地美食</button>
+                <button id="quick-sight" class="quick-filter" type="button" data-quick-primary="景點">必看景點</button>
+                <button id="quick-transport" class="quick-filter" type="button" data-quick-primary="交通">交通節點</button>
+                <button id="quick-shopping" class="quick-filter" type="button" data-quick-primary="商店">生活採買</button>
+                <button id="quick-facility" class="quick-filter" type="button" data-quick-primary="其他設施">旅宿機能</button>
               </div>
-            </div>
-
-            <div class="filter-actions">
-              <button id="apply-filters" class="button button--slim" type="button">
-                套用篩選
-              </button>
-              <span id="filter-pending" class="filter-pending" hidden>
-                已修改條件，按「套用篩選」更新結果。
-              </span>
             </div>
 
             <div class="filter-block">
               <div class="filter-block__head">
-                <h3>主分類</h3>
+                <h3 id="primary-title">主分類</h3>
                 <span id="primary-count"></span>
               </div>
               <div id="primary-filters" class="chip-wrap"></div>
@@ -139,7 +102,7 @@
 
             <div class="filter-block">
               <div class="filter-block__head">
-                <h3>次分類</h3>
+                <h3 id="subcategory-title">次分類</h3>
                 <span id="subcategory-count"></span>
               </div>
               <div id="subcategory-filters" class="chip-wrap"></div>
@@ -147,43 +110,95 @@
 
             <div class="filter-block">
               <div class="filter-block__head">
-                <h3>餐食標籤</h3>
+                <h3 id="meal-title">餐食標籤</h3>
                 <span id="meal-count"></span>
               </div>
               <div id="meal-filters" class="chip-wrap"></div>
+            </div>
+
+            <div class="filter-actions">
+              <button id="apply-filters" class="button button--slim" type="button">搜尋</button>
+              <span id="filter-pending" class="filter-pending" hidden>已修改條件，按「搜尋」更新結果。</span>
             </div>
           </section>
 
           <section class="panel panel--summary">
             <div class="section-heading">
               <p class="eyebrow">Overview</p>
-              <h2>目前結果</h2>
+              <h2 id="overview-title">目前結果</h2>
             </div>
 
             <div class="summary-grid">
               <article class="summary-card">
-                <span>符合條件</span>
+                <span id="summary-match-label">符合條件</span>
                 <strong id="result-count">0</strong>
               </article>
               <article class="summary-card">
-                <span>地圖焦點</span>
+                <span id="summary-focus-label">地圖焦點</span>
                 <strong id="focus-label">凱達大飯店</strong>
               </article>
             </div>
 
-            <p id="status-text" class="status-text">
-              目前以凱達大飯店為地圖中心，篩選後可切換成你想看的單一重點地點。
-            </p>
+            <p id="status-text" class="status-text">目前以凱達大飯店為地圖中心，篩選後可切換成你想看的單一重點地點。</p>
+          </section>
+
+          <section id="panel-favorites" class="panel panel--favorites jump-target">
+            <div class="section-heading">
+              <p class="eyebrow">My List</p>
+              <h2 id="favorites-title">蒐藏清單</h2>
+            </div>
+
+            <div class="filter-block__head">
+              <span id="favorites-count">0 筆</span>
+              <button id="favorites-clear" class="text-button" type="button">清空</button>
+            </div>
+
+            <p id="favorites-hint" class="status-text">在右側地點卡按「加入蒐藏」，就會出現在這裡。</p>
+            <div id="favorites-list" class="favorites-list"></div>
+          </section>
+
+          <section id="panel-comment" class="panel panel--comment jump-target">
+            <div class="section-heading">
+              <p class="eyebrow">Comment</p>
+              <h2 id="comment-title">客人留言</h2>
+            </div>
+
+            <div class="comment-focus">
+              <span id="comment-focus-label">目前地圖焦點</span>
+              <strong id="comment-focus-value">凱達大飯店</strong>
+            </div>
+
+            <label class="search-field comment-field">
+              <span id="comment-name-label">客人稱呼（選填）</span>
+              <input id="comment-name" type="text" placeholder="例如：王小姐" />
+            </label>
+
+            <label class="search-field comment-field">
+              <span id="comment-room-label">房號（選填）</span>
+              <input id="comment-room" type="text" placeholder="例如：1208" />
+            </label>
+
+            <label class="search-field comment-field">
+              <span id="comment-input-label">留言內容</span>
+              <textarea id="comment-input" class="comment-textarea" rows="4" placeholder="請輸入客人回饋、需求或備註"></textarea>
+            </label>
+
+            <div class="filter-actions">
+              <button id="comment-submit" class="button button--slim" type="button">送出留言</button>
+              <span id="comment-status" class="filter-pending" hidden></span>
+            </div>
+
+            <pre id="comment-preview" class="comment-preview" hidden></pre>
           </section>
         </aside>
 
-        <section class="spotlight panel">
+        <section id="panel-spotlight" class="spotlight panel jump-target">
           <div class="spotlight__header">
             <div class="section-heading">
               <p class="eyebrow">Spotlight</p>
-              <h2>地圖聚焦</h2>
+              <h2 id="spotlight-title">地圖聚焦</h2>
             </div>
-            <p class="spotlight__note">中間地圖直接使用 Google Maps 嵌入視窗</p>
+            <p id="spotlight-note" class="spotlight__note">中間地圖直接使用 Google Maps 嵌入視窗</p>
           </div>
 
           <div class="spotlight__content">
@@ -192,9 +207,7 @@
                 <div>
                   <p id="selected-kicker" class="spotlight__kicker">Hotel Anchor</p>
                   <h3 id="selected-name">凱達大飯店</h3>
-                  <p id="selected-secondary" class="spotlight__secondary">
-                    Caesar Metro Taipei
-                  </p>
+                  <p id="selected-secondary" class="spotlight__secondary">Caesar Metro Taipei</p>
                 </div>
                 <span id="selected-status" class="pill">中心點</span>
               </div>
@@ -205,13 +218,9 @@
                 <span id="selected-mrt" class="tag">龍山寺站</span>
               </div>
 
-              <p id="selected-address" class="spotlight__meta">
-                台北市萬華區艋舺大道167號
-              </p>
+              <p id="selected-address" class="spotlight__meta">台北市萬華區艋舺大道167號</p>
               <p id="selected-hours" class="spotlight__meta">24H front desk</p>
-              <p id="selected-notes" class="spotlight__notes">
-                以凱達大飯店為中心開始探索萬華。
-              </p>
+              <p id="selected-notes" class="spotlight__notes">以凱達大飯店為中心開始探索萬華。</p>
 
               <div class="spotlight__actions">
                 <a
@@ -232,6 +241,7 @@
                 >
                   從飯店前往
                 </a>
+                <button id="selected-favorite" class="button button--ghost" type="button">加入蒐藏</button>
               </div>
             </div>
 
@@ -248,21 +258,52 @@
           </div>
         </section>
 
-        <section class="collection panel">
+        <section id="panel-collection" class="collection panel jump-target">
           <div class="collection__header">
             <div class="section-heading">
               <p class="eyebrow">Collection</p>
-              <h2>周邊清單</h2>
+              <h2 id="collection-title">周邊清單</h2>
             </div>
-            <p class="collection__hint">
-              點選卡片即可把中間 Google 地圖切到該地點。
-            </p>
+            <p id="collection-hint" class="collection__hint">點選卡片即可把中間 Google 地圖切到該地點。</p>
           </div>
 
           <div id="results" class="card-list"></div>
         </section>
       </main>
+
+      <section id="panel-hotel" class="hero hero--bottom jump-target">
+        <div class="hero__card hero__card--bottom">
+          <p id="base-label" class="hero__card-label">Concierge Base</p>
+          <h2 id="base-name">凱達大飯店</h2>
+          <p>Caesar Metro Taipei</p>
+          <dl class="hero__facts">
+            <div>
+              <dt id="base-location-label">位置</dt>
+              <dd>台北市萬華區艋舺大道167號</dd>
+            </div>
+            <div>
+              <dt id="base-nearby-label">鄰近</dt>
+              <dd>龍山寺站 / 萬華車站</dd>
+            </div>
+            <div>
+              <dt id="base-version-label">飯店電話</dt>
+              <dd>02-2306-6777</dd>
+            </div>
+          </dl>
+          <a
+            id="base-open-btn"
+            class="button button--hero"
+            href="https://www.google.com/maps/search/?api=1&query=Caesar+Metro+Taipei"
+            target="_blank"
+            rel="noreferrer"
+          >
+            開啟飯店 Google Maps
+          </a>
+        </div>
+      </section>
     </div>
+
+    <button id="back-to-top" class="back-to-top" type="button" aria-label="回到頁面頂端">Top</button>
 
     <script src="./google-maps-config.js"></script>
     <script src="./wanhua_poi_curated.data.js"></script>
