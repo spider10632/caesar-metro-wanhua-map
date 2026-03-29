@@ -1352,6 +1352,7 @@ function renderFavorites() {
           </div>
           <div class="favorite-item__actions">
             <a class="button button--slim" href="${escapeAttribute(buildSearchUrl(place))}" target="_blank" rel="noreferrer">${escapeHtml(text.favoriteOpen)}</a>
+            <a class="button button--secondary button--slim" href="${escapeAttribute(buildRouteUrl(place))}" target="_blank" rel="noreferrer">${escapeHtml(text.routeFromHotelCard)}</a>
             <button class="button button--ghost button--slim" type="button" data-favorite-remove-id="${escapeAttribute(place.id)}">${escapeHtml(text.removeFavorite)}</button>
           </div>
         </article>
