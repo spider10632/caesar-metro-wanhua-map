@@ -39,6 +39,7 @@ const PLACE_NAME_OVERRIDES = {
     name_ja: "50嵐 龍山寺店",
   },
 };
+const MANUAL_SUPPRESSED_PLACE_IDS = new Set(["wanhua_046"]);
 
 const TEXT = {
   zh: {
@@ -173,7 +174,7 @@ const places = rawData
     subcategory: normalizeSubcategory(p.subcategory),
     meal_tags: uniqueValues((Array.isArray(p.meal_tags) ? p.meal_tags : []).map(normalizeMealTag)),
   }))
-  .filter((p) => !isSuppressedPlace(p))
+  .filter((p) => !isSuppressedPlace(p) && !MANUAL_SUPPRESSED_PLACE_IDS.has(p.id))
   .sort((a, b) => Number(a.display_order ?? 9999) - Number(b.display_order ?? 9999));
 const CONCIERGE_FIXED_PLACE_IDS = ["wanhua_004", "wanhua_018"];
 
@@ -265,6 +266,7 @@ const dom = {
   selectedRoute: document.querySelector("#selected-route"),
   selectedFavorite: document.querySelector("#selected-favorite"),
   mapFrame: document.querySelector("#map-frame"),
+  panelSpotlight: document.querySelector("#panel-spotlight"),
   panelCollection: document.querySelector("#panel-collection"),
   panelFavorites: document.querySelector("#panel-favorites"),
   results: document.querySelector("#results"),
@@ -706,20 +708,24 @@ function pickConciergeRandomRestaurantId() {
   return pool[Math.floor(Math.random() * pool.length)].id;
 }
 
-function getConciergeRestaurantPool(excludeFixed) {
+function getConciergeRestaurantPool(excludeFixed, filterClosedWithState = false) {
   let candidates = places.filter(
     (place) => normalizeText(place.primary_category) === "餐飲" && normalizeText(place.business_type) === "restaurant"
   );
   if (excludeFixed) {
     candidates = candidates.filter((place) => !CONCIERGE_FIXED_PLACE_IDS.includes(place.id));
   }
+  candidates = candidates.filter((place) => !isSuppressedPlace(place));
+  if (filterClosedWithState) {
+    candidates = candidates.filter((place) => !isClosedByGoogle(place));
+  }
   return candidates;
 }
 
 function getConciergeRandomRestaurantPlace() {
-  let pool = getConciergeRestaurantPool(true);
+  let pool = getConciergeRestaurantPool(true, true);
   if (!pool.length) {
-    pool = getConciergeRestaurantPool(false);
+    pool = getConciergeRestaurantPool(false, true);
   }
   if (!pool.length) return null;
 
@@ -761,22 +767,81 @@ function renderConciergePicks() {
   dom.picksList.innerHTML = picks
     .slice(0, 3)
     .map(({ place, title }) => {
-      const category = `${trCategory(place.primary_category, "primary")} / ${trCategory(normalizeSubcategory(place.subcategory), "subcategory")}`;
-      const note = getConciergeShortNote(place);
-      const noteLine = note ? `<p class="pick-card__note">${escapeHtml(note)}</p>` : "";
+      const displayName = getDisplayName(place);
+      const secondaryBase = getSecondaryName(place);
+      const secondaryParts = [];
+      if (title && title !== displayName) secondaryParts.push(displayName);
+      if (secondaryBase) secondaryParts.push(secondaryBase);
+      const secondary = uniqueValues(secondaryParts);
+      const openingHours = getResolvedOpeningHours(place);
+      const shortNote = getConciergeShortNote(place);
+      const address = stripPlusCodeForDisplay(normalizeText(place.address_zh));
+      const subcategoryDisplay = trCategory(normalizeSubcategory(place.subcategory), "subcategory");
+      const mealBadges = uniqueValues(place.meal_tags.map(normalizeMealTag))
+        .filter((tag) => trCategory(tag, "meal") !== subcategoryDisplay)
+        .map((tag) => `<span class="badge">${escapeHtml(trCategory(tag, "meal"))}</span>`)
+        .join("");
+      const walk10Badge = isWithin10MinWalk(place) ? `<span class="badge">${escapeHtml(trCategory(WALK_10MIN_SUBCATEGORY, "subcategory"))}</span>` : "";
+      const hoursLine = openingHours ? `<div>${escapeHtml(text.hours)}${escapeHtml(openingHours)}</div>` : "";
+      const noteLine = shortNote ? `<div>${escapeHtml(text.notes)}${escapeHtml(shortNote)}</div>` : "";
+      const favoriteLabel = isFavorite(place.id) ? text.removeFavorite : text.addFavorite;
 
       return `
-        <article class="place-card pick-card">
-          <h3 class="pick-card__title">${escapeHtml(title)}</h3>
-          <p class="pick-card__meta">${escapeHtml(category)}</p>
-          ${noteLine}
-          <div class="pick-card__actions">
-            <a class="button button--slim" href="${escapeAttribute(buildSearchUrl(place))}" target="_blank" rel="noreferrer">Google Maps</a>
+        <article class="place-card pick-card${state.selectedPlaceId === place.id ? " is-selected" : ""}" data-place-id="${escapeAttribute(place.id)}">
+          <div class="place-card__top">
+            <div>
+              <h3 class="place-card__title">${escapeHtml(title)}</h3>
+              ${secondary.length ? `<p class="place-card__secondary">${escapeHtml(secondary.join(" / "))}</p>` : ""}
+            </div>
+            <span class="badge">${escapeHtml(trCategory(place.primary_category, "primary"))}</span>
+          </div>
+          <div class="badge-row">
+            <span class="badge">${escapeHtml(subcategoryDisplay)}</span>
+            ${walk10Badge}
+            ${mealBadges}
+          </div>
+          <div class="place-card__meta">
+            <div>${escapeHtml(text.addr)}${escapeHtml(address || text.addrPending)}</div>
+            <div>${escapeHtml(text.mrt)}${escapeHtml(trMrt(place.near_mrt || text.mrtPending))}</div>
+            ${hoursLine}
+            ${noteLine}
+          </div>
+          <div class="place-card__actions">
+            <a class="button button--slim" data-stop-card-select="1" href="${escapeAttribute(buildSearchUrl(place))}" target="_blank" rel="noreferrer">Google Maps</a>
+            <a class="button button--secondary button--slim" data-stop-card-select="1" href="${escapeAttribute(buildRouteUrl(place))}" target="_blank" rel="noreferrer">${escapeHtml(text.routeFromHotelCard)}</a>
+            <button class="button button--ghost button--slim" type="button" data-stop-card-select="1" data-pick-favorite-id="${escapeAttribute(place.id)}">${escapeHtml(favoriteLabel)}</button>
           </div>
         </article>
       `;
     })
     .join("");
+
+  dom.picksList.querySelectorAll(".pick-card[data-place-id]").forEach((card) => {
+    card.addEventListener("click", () => {
+      const nextId = normalizeText(card.getAttribute("data-place-id"));
+      if (!nextId) return;
+      state.selectedPlaceId = nextId;
+      render();
+      if (dom.panelSpotlight) {
+        dom.panelSpotlight.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+  });
+
+  dom.picksList.querySelectorAll('[data-stop-card-select="1"]').forEach((element) => {
+    element.addEventListener("click", (event) => {
+      event.stopPropagation();
+    });
+  });
+
+  dom.picksList.querySelectorAll("[data-pick-favorite-id]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      toggleFavorite(button.dataset.pickFavoriteId);
+      render();
+    });
+  });
 }
 
 function isFavorite(placeId) {
@@ -1684,6 +1749,7 @@ function stripPlusCodeForDisplay(input) {
 }
 
 function isSuppressedPlace(place) {
+  if (MANUAL_SUPPRESSED_PLACE_IDS.has(place.id)) return true;
   const notes = normalizeText(place.notes);
   const openingHours = normalizeText(place.opening_hours);
   return (
@@ -1695,7 +1761,7 @@ function isSuppressedPlace(place) {
 }
 
 function hasClosedMarker(value) {
-  return /暫停營業|暫時關閉|永久停業|停業|歇業|已歇業|停止營業|休業中?/i.test(normalizeText(value));
+  return /暫停營業|暫時關閉|永久停業|停業|歇業|已歇業|停止營業|休業中?|臨時休業|一時休業|営業休止|閉業|temporarily\s*closed|permanently\s*closed|closed\s*permanently/i.test(normalizeText(value));
 }
 
 function buildSearchUrl(place) {
