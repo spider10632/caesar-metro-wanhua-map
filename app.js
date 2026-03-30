@@ -43,9 +43,9 @@ const MANUAL_SUPPRESSED_PLACE_IDS = new Set(["wanhua_046"]);
 
 const TEXT = {
   zh: {
-    title: "凱達大飯店周邊地圖",
+    title: "凱達大飯店週邊地圖",
     versionTag: "Version 2",
-    desc: "以凱達大飯店為中心的萬華周邊地圖，支援分類篩選並可直接開啟 Google Maps。",
+    desc: "以凱達大飯店為中心的萬華週邊地圖，支援分類篩選並可直接開啟 Google Maps。",
     quickReach: "快速抵達",
     jumpFilters: "搜尋景點",
     jumpSpotlight: "地圖聚焦",

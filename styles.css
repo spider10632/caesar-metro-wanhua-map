@@ -232,7 +232,8 @@ a {
 }
 
 .hero-jump--button {
-  font: inherit;
+  -webkit-appearance: none;
+  appearance: none;
   cursor: pointer;
 }
 
@@ -1421,7 +1422,7 @@ html[lang="ja"] .hero-quick-nav__label {
   }
 
   .hero h1 {
-    font-size: 2.9rem;
+    font-size: 2.7rem;
     line-height: 0.98;
   }
 
@@ -1615,7 +1616,7 @@ html[lang="ja"] .hero-quick-nav__label {
   }
 
   .hero h1 {
-    font-size: 2.45rem;
+    font-size: 2.2rem;
   }
 
   .section-heading h2,
