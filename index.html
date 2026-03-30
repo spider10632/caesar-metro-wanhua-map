@@ -60,6 +60,48 @@
         </section>
       </section>
 
+      <section id="panel-hotel" class="hero hero--bottom panel--hotel jump-target">
+        <div class="section-heading section-heading--hero">
+          <h2 id="hotel-info-title">飯店基本資訊</h2>
+        </div>
+        <div class="hero__card hero__card--bottom">
+          <p id="base-label" class="hero__card-label">Concierge Base</p>
+          <h2 id="base-name">凱達大飯店</h2>
+          <p>Caesar Metro Taipei</p>
+          <dl class="hero__facts">
+            <div>
+              <dt id="base-location-label">位置</dt>
+              <dd>台北市萬華區艋舺大道167號</dd>
+            </div>
+            <div>
+              <dt id="base-nearby-label">鄰近</dt>
+              <dd>龍山寺站 / 萬華車站</dd>
+            </div>
+            <div>
+              <dt id="base-version-label">飯店電話</dt>
+              <dd>02-2306-6777</dd>
+            </div>
+          </dl>
+          <a
+            id="base-open-btn"
+            class="button button--hero"
+            href="https://www.google.com/maps/search/?api=1&query=Caesar+Metro+Taipei"
+            target="_blank"
+            rel="noreferrer"
+          >
+            開啟飯店 Google Maps
+          </a>
+        </div>
+        <p id="version-tag" class="version-tag version-tag--hotel">Version 2</p>
+      </section>
+
+      <section id="panel-picks" class="panel panel--picks jump-target">
+        <div class="section-heading">
+          <h2 id="picks-title">周邊精選</h2>
+        </div>
+        <div id="picks-list" class="picks-list"></div>
+      </section>
+
       <main class="experience">
         <aside class="rail">
           <section id="panel-filters" class="panel panel--filters jump-target">
@@ -145,74 +187,7 @@
 
             <p id="status-text" class="status-text">目前以凱達大飯店為地圖中心，篩選後可切換成你想看的單一重點地點。</p>
           </section>
-
         </aside>
-
-        <section id="panel-spotlight" class="spotlight panel jump-target">
-          <div class="spotlight__header">
-            <div class="section-heading">
-              <p class="eyebrow">Spotlight</p>
-              <h2 id="spotlight-title">地圖聚焦</h2>
-            </div>
-            <p id="spotlight-note" class="spotlight__note">中間地圖直接使用 Google Maps 嵌入視窗</p>
-          </div>
-
-          <div class="spotlight__content">
-            <div class="spotlight__intro">
-              <div class="spotlight__title-row">
-                <div>
-                  <p id="selected-kicker" class="spotlight__kicker">Hotel Anchor</p>
-                  <h3 id="selected-name">凱達大飯店</h3>
-                  <p id="selected-secondary" class="spotlight__secondary">Caesar Metro Taipei</p>
-                </div>
-                <span id="selected-status" class="pill">中心點</span>
-              </div>
-
-              <div class="spotlight__badges">
-                <span id="selected-primary" class="tag">其他設施</span>
-                <span id="selected-subcategory" class="tag">飯店</span>
-                <span id="selected-mrt" class="tag">龍山寺站</span>
-              </div>
-
-              <p id="selected-address" class="spotlight__meta">台北市萬華區艋舺大道167號</p>
-              <p id="selected-hours" class="spotlight__meta">24H front desk</p>
-              <p id="selected-notes" class="spotlight__notes">以凱達大飯店為中心開始探索萬華。</p>
-
-              <div class="spotlight__actions">
-                <a
-                  id="selected-open"
-                  class="button"
-                  href="https://www.google.com/maps/search/?api=1&query=Caesar+Metro+Taipei"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  查看目前地點
-                </a>
-                <a
-                  id="selected-route"
-                  class="button button--secondary"
-                  href="https://www.google.com/maps/dir/?api=1&origin=Caesar+Metro+Taipei&destination=Caesar+Metro+Taipei"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  從飯店前往
-                </a>
-                <button id="selected-favorite" class="button button--ghost" type="button">加入蒐藏</button>
-              </div>
-            </div>
-
-            <div class="map-frame-shell">
-              <iframe
-                id="map-frame"
-                class="map-frame"
-                title="Google Maps"
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"
-                src="https://www.google.com/maps?q=Caesar%20Metro%20Taipei&z=16&output=embed"
-              ></iframe>
-            </div>
-          </div>
-        </section>
 
         <section id="panel-collection" class="collection panel jump-target">
           <div class="collection__header">
@@ -225,56 +200,90 @@
 
           <div id="results" class="card-list"></div>
         </section>
-
-        <section id="panel-favorites" class="panel panel--favorites panel--favorites-bottom jump-target" hidden>
-          <div class="section-heading">
-            <p class="eyebrow">My List</p>
-            <h2 id="favorites-title">蒐藏清單</h2>
-          </div>
-
-          <div class="filter-block__head">
-            <span id="favorites-count">0 筆</span>
-            <div class="favorites-inline-actions">
-              <button id="favorites-clear" class="text-button" type="button">清空</button>
-              <button id="favorites-back-search" class="text-button" type="button">回到搜尋</button>
-            </div>
-          </div>
-
-          <p id="favorites-hint" class="status-text">在地點卡按「加入蒐藏」，就會出現在這裡。</p>
-          <div id="favorites-list" class="favorites-list"></div>
-        </section>
       </main>
 
-      <section id="panel-hotel" class="hero hero--bottom jump-target">
-        <div class="hero__card hero__card--bottom">
-          <p id="base-label" class="hero__card-label">Concierge Base</p>
-          <h2 id="base-name">凱達大飯店</h2>
-          <p>Caesar Metro Taipei</p>
-          <dl class="hero__facts">
-            <div>
-              <dt id="base-location-label">位置</dt>
-              <dd>台北市萬華區艋舺大道167號</dd>
-            </div>
-            <div>
-              <dt id="base-nearby-label">鄰近</dt>
-              <dd>龍山寺站 / 萬華車站</dd>
-            </div>
-            <div>
-              <dt id="base-version-label">飯店電話</dt>
-              <dd>02-2306-6777</dd>
-            </div>
-          </dl>
-          <a
-            id="base-open-btn"
-            class="button button--hero"
-            href="https://www.google.com/maps/search/?api=1&query=Caesar+Metro+Taipei"
-            target="_blank"
-            rel="noreferrer"
-          >
-            開啟飯店 Google Maps
-          </a>
+      <section id="panel-favorites" class="panel panel--favorites panel--favorites-bottom jump-target" hidden>
+        <div class="section-heading">
+          <p class="eyebrow">My List</p>
+          <h2 id="favorites-title">蒐藏清單</h2>
         </div>
-        <p id="version-tag" class="version-tag version-tag--hotel">Version 2</p>
+
+        <div class="filter-block__head">
+          <span id="favorites-count">0 筆</span>
+          <div class="favorites-inline-actions">
+            <button id="favorites-clear" class="text-button" type="button">清空</button>
+            <button id="favorites-back-search" class="text-button" type="button">回到搜尋</button>
+          </div>
+        </div>
+
+        <p id="favorites-hint" class="status-text">在地點卡按「加入蒐藏」，就會出現在這裡。</p>
+        <div id="favorites-list" class="favorites-list"></div>
+      </section>
+
+      <section id="panel-spotlight" class="spotlight spotlight--bottom panel jump-target">
+        <div class="spotlight__header">
+          <div class="section-heading">
+            <p class="eyebrow">Spotlight</p>
+            <h2 id="spotlight-title">地圖聚焦</h2>
+          </div>
+          <p id="spotlight-note" class="spotlight__note">中間地圖直接使用 Google Maps 嵌入視窗</p>
+        </div>
+
+        <div class="spotlight__content">
+          <div class="spotlight__intro">
+            <div class="spotlight__title-row">
+              <div>
+                <p id="selected-kicker" class="spotlight__kicker">Hotel Anchor</p>
+                <h3 id="selected-name">凱達大飯店</h3>
+                <p id="selected-secondary" class="spotlight__secondary">Caesar Metro Taipei</p>
+              </div>
+              <span id="selected-status" class="pill">中心點</span>
+            </div>
+
+            <div class="spotlight__badges">
+              <span id="selected-primary" class="tag">其他設施</span>
+              <span id="selected-subcategory" class="tag">飯店</span>
+              <span id="selected-mrt" class="tag">龍山寺站</span>
+            </div>
+
+            <p id="selected-address" class="spotlight__meta">台北市萬華區艋舺大道167號</p>
+            <p id="selected-hours" class="spotlight__meta">24H front desk</p>
+            <p id="selected-notes" class="spotlight__notes">以凱達大飯店為中心開始探索萬華。</p>
+
+            <div class="spotlight__actions">
+              <a
+                id="selected-open"
+                class="button"
+                href="https://www.google.com/maps/search/?api=1&query=Caesar+Metro+Taipei"
+                target="_blank"
+                rel="noreferrer"
+              >
+                查看目前地點
+              </a>
+              <a
+                id="selected-route"
+                class="button button--secondary"
+                href="https://www.google.com/maps/dir/?api=1&origin=Caesar+Metro+Taipei&destination=Caesar+Metro+Taipei"
+                target="_blank"
+                rel="noreferrer"
+              >
+                從飯店前往
+              </a>
+              <button id="selected-favorite" class="button button--ghost" type="button">加入蒐藏</button>
+            </div>
+          </div>
+
+          <div class="map-frame-shell">
+            <iframe
+              id="map-frame"
+              class="map-frame"
+              title="Google Maps"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              src="https://www.google.com/maps?q=Caesar%20Metro%20Taipei&z=16&output=embed"
+            ></iframe>
+          </div>
+        </div>
       </section>
 
     </div>

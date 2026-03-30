@@ -60,6 +60,8 @@ const TEXT = {
     overview: "目前結果", match: "符合條件", focus: "地圖焦點",
     spotlight: "地圖聚焦", spotlightNote: "中間地圖直接使用 Google Maps 嵌入視窗",
     collection: "搜尋結果", collectionHint: "搜尋後會顯示符合條件的地點；點選卡片即可把中間 Google 地圖切到該地點。",
+    hotelInfoTitle: "飯店基本資訊", picksTitle: "周邊精選",
+    pickLongshanName: "龍山寺", pickLiangxiName: "兩喜號",
     baseLabel: "Concierge Base", baseName: "凱達大飯店", baseLocation: "位置", baseNearby: "鄰近", baseVersion: "飯店電話", baseOpen: "開啟飯店 Google Maps",
     statusBeforeSearch: "請先設定條件後按「搜尋」，再顯示點位。",
     listBeforeSearch: "請先按「搜尋」顯示點位清單。",
@@ -93,6 +95,8 @@ const TEXT = {
     overview: "Current Result", match: "Matched", focus: "Map Focus",
     spotlight: "Spotlight", spotlightNote: "The center map uses embedded Google Maps",
     collection: "Search Results", collectionHint: "Matching places appear after Search. Tap a card to move the center map to that place.",
+    hotelInfoTitle: "Hotel Information", picksTitle: "Concierge Picks",
+    pickLongshanName: "Longshan Temple", pickLiangxiName: "Liang Xi Hao",
     baseLabel: "Concierge Base", baseName: "Caesar Metro Taipei", baseLocation: "Location", baseNearby: "Nearby", baseVersion: "Hotel Phone", baseOpen: "Open Hotel in Google Maps",
     statusBeforeSearch: "Set your filters first, then tap Search to show places.",
     listBeforeSearch: "Tap Search to show the place list.",
@@ -126,6 +130,8 @@ const TEXT = {
     overview: "現在の結果", match: "一致件数", focus: "地図の中心",
     spotlight: "地図フォーカス", spotlightNote: "中央地図は Google Maps 埋め込み表示です",
     collection: "検索結果", collectionHint: "「検索」後に条件に合う地点が表示されます。カードを押すと中央地図が切り替わります。",
+    hotelInfoTitle: "ホテル基本情報", picksTitle: "周辺おすすめ",
+    pickLongshanName: "龍山寺", pickLiangxiName: "両喜号",
     baseLabel: "Concierge Base", baseName: "シーザーメトロ台北", baseLocation: "場所", baseNearby: "最寄り", baseVersion: "ホテル電話", baseOpen: "ホテルを Google Maps で開く",
     statusBeforeSearch: "条件を設定して「検索」を押すと、スポット一覧が表示されます。",
     listBeforeSearch: "「検索」を押すと周辺スポット一覧が表示されます。",
@@ -169,6 +175,7 @@ const places = rawData
   }))
   .filter((p) => !isSuppressedPlace(p))
   .sort((a, b) => Number(a.display_order ?? 9999) - Number(b.display_order ?? 9999));
+const CONCIERGE_FIXED_PLACE_IDS = ["wanhua_004", "wanhua_018"];
 
 const state = {
   lang: readLang(),
@@ -179,6 +186,7 @@ const state = {
   favoritesPanelOpen: false,
   dirty: false,
   favorites: readFavorites(),
+  conciergeRandomRestaurantId: pickConciergeRandomRestaurantId(),
   walkingCache: readWalkingCache(),
   openingHoursCache: readOpeningHoursCache(),
   walkingRefreshRunning: false,
@@ -216,6 +224,9 @@ const dom = {
   spotlightNote: document.querySelector("#spotlight-note"),
   collectionTitle: document.querySelector("#collection-title"),
   collectionHint: document.querySelector("#collection-hint"),
+  hotelInfoTitle: document.querySelector("#hotel-info-title"),
+  picksTitle: document.querySelector("#picks-title"),
+  picksList: document.querySelector("#picks-list"),
   baseLabel: document.querySelector("#base-label"),
   baseName: document.querySelector("#base-name"),
   baseLocationLabel: document.querySelector("#base-location-label"),
@@ -484,6 +495,8 @@ function applyStaticText() {
   dom.spotlightNote.textContent = text.spotlightNote;
   dom.collectionTitle.textContent = text.collection;
   dom.collectionHint.textContent = text.collectionHint;
+  if (dom.hotelInfoTitle) dom.hotelInfoTitle.textContent = text.hotelInfoTitle;
+  if (dom.picksTitle) dom.picksTitle.textContent = text.picksTitle;
   dom.baseLabel.textContent = text.baseLabel;
   dom.baseName.textContent = text.baseName;
   dom.baseLocationLabel.textContent = text.baseLocation;
@@ -685,6 +698,85 @@ function hideFavoritesPanel(withScroll) {
   if (withScroll && dom.panelCollection) {
     dom.panelCollection.scrollIntoView({ behavior: "smooth", block: "start" });
   }
+}
+
+function pickConciergeRandomRestaurantId() {
+  const pool = getConciergeRestaurantPool(true);
+  if (!pool.length) return "";
+  return pool[Math.floor(Math.random() * pool.length)].id;
+}
+
+function getConciergeRestaurantPool(excludeFixed) {
+  let candidates = places.filter(
+    (place) => normalizeText(place.primary_category) === "餐飲" && normalizeText(place.business_type) === "restaurant"
+  );
+  if (excludeFixed) {
+    candidates = candidates.filter((place) => !CONCIERGE_FIXED_PLACE_IDS.includes(place.id));
+  }
+  return candidates;
+}
+
+function getConciergeRandomRestaurantPlace() {
+  let pool = getConciergeRestaurantPool(true);
+  if (!pool.length) {
+    pool = getConciergeRestaurantPool(false);
+  }
+  if (!pool.length) return null;
+
+  let selected = pool.find((place) => place.id === state.conciergeRandomRestaurantId);
+  if (!selected) {
+    selected = pool[Math.floor(Math.random() * pool.length)];
+    state.conciergeRandomRestaurantId = selected.id;
+  }
+  return selected;
+}
+
+function getConciergeShortNote(place) {
+  const fromNotes = cleanupTourHighlight(place.notes);
+  const fromIntro = getBasicIntro(place);
+  const raw = normalizeText(fromNotes || fromIntro);
+  if (!raw) return "";
+  return raw.length > 64 ? `${raw.slice(0, 64)}…` : raw;
+}
+
+function renderConciergePicks() {
+  if (!dom.picksList) return;
+  const text = TEXT[state.lang] || TEXT.zh;
+
+  const longshan = places.find((place) => place.id === CONCIERGE_FIXED_PLACE_IDS[0]);
+  const liangXiHao = places.find((place) => place.id === CONCIERGE_FIXED_PLACE_IDS[1]);
+  const randomRestaurant = getConciergeRandomRestaurantPlace();
+
+  const picks = [
+    longshan ? { place: longshan, title: text.pickLongshanName } : null,
+    liangXiHao ? { place: liangXiHao, title: text.pickLiangxiName } : null,
+    randomRestaurant ? { place: randomRestaurant, title: getDisplayName(randomRestaurant) } : null,
+  ].filter(Boolean);
+
+  if (!picks.length) {
+    dom.picksList.innerHTML = `<div class="empty-state">${escapeHtml(text.empty)}</div>`;
+    return;
+  }
+
+  dom.picksList.innerHTML = picks
+    .slice(0, 3)
+    .map(({ place, title }) => {
+      const category = `${trCategory(place.primary_category, "primary")} / ${trCategory(normalizeSubcategory(place.subcategory), "subcategory")}`;
+      const note = getConciergeShortNote(place);
+      const noteLine = note ? `<p class="pick-card__note">${escapeHtml(note)}</p>` : "";
+
+      return `
+        <article class="place-card pick-card">
+          <h3 class="pick-card__title">${escapeHtml(title)}</h3>
+          <p class="pick-card__meta">${escapeHtml(category)}</p>
+          ${noteLine}
+          <div class="pick-card__actions">
+            <a class="button button--slim" href="${escapeAttribute(buildSearchUrl(place))}" target="_blank" rel="noreferrer">Google Maps</a>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
 }
 
 function isFavorite(placeId) {
@@ -1115,6 +1207,7 @@ function buildPlaceLookupQueries(place) {
 
 function render() {
   const text = TEXT[state.lang] || TEXT.zh;
+  renderConciergePicks();
   if (!state.hasSearched) {
     dom.resultCount.textContent = "0";
     dom.focusLabel.textContent = getDisplayName(HOTEL);
