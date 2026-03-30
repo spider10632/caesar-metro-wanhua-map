@@ -1122,7 +1122,17 @@ html[lang="ja"] .hero-quick-nav__label {
 }
 
 .pick-card .place-card__actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  width: 100%;
   align-items: stretch;
+}
+
+.pick-card .place-card__actions .button {
+  width: 100%;
+  min-width: 0;
+  flex: 0 1 auto;
 }
 
 .empty-state {
