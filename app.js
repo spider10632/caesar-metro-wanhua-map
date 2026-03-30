@@ -54,13 +54,13 @@ const TEXT = {
     jumpHotel: "飯店資訊",
     note: "使用方式：1. 在「搜尋景點」選分類或輸入關鍵字。2. 按「搜尋」後會自動跳到「搜尋結果」。3. 點任一地點卡可切換地圖，並可直接開啟 Google Maps 或從飯店出發導航。",
     filters: "搜尋景點", searchLabel: "搜尋名稱、地址或基本介紹", searchPlaceholder: "例如：夜市、星巴克、龍山寺",
-    activeOnly: "只顯示啟用資料", clear: "清除條件", quick: "快速篩選", quickSub: "給客人常用",
+    activeOnly: "只顯示啟用資料", clear: "清除條件", quick: "快速篩選", quickSub: "",
     quickAll: "全部推薦", quickFood: "在地美食", quickSight: "必看景點", quickTransport: "交通節點", quickShop: "生活採買", quickFacility: "旅宿機能",
     apply: "搜尋", pending: "已修改條件，按「搜尋」更新結果。",
     primary: "主分類", subcategory: "次分類", meal: "餐食標籤", countUnit: "類",
     overview: "目前結果", match: "符合條件", focus: "地圖焦點",
-    spotlight: "地圖聚焦", spotlightNote: "中間地圖直接使用 Google Maps 嵌入視窗",
-    collection: "搜尋結果", collectionHint: "搜尋後會顯示符合條件的地點；點選卡片即可把中間 Google 地圖切到該地點。",
+    spotlight: "地圖聚焦", spotlightNote: "",
+    collection: "搜尋結果", collectionHint: "",
     hotelInfoTitle: "飯店基本資訊", picksTitle: "周邊精選",
     pickLongshanName: "龍山寺", pickLiangxiName: "兩喜號",
     baseLabel: "Concierge Base", baseName: "凱達大飯店", baseLocation: "位置", baseNearby: "鄰近", baseVersion: "飯店電話", baseOpen: "開啟飯店 Google Maps",
@@ -89,13 +89,13 @@ const TEXT = {
     jumpHotel: "Hotel Info",
     note: "How to use: 1) Choose categories or enter keywords in Find Places. 2) Tap Search to jump to Search Results. 3) Tap any place card to switch the map, then open Google Maps or start from the hotel.",
     filters: "Find Places", searchLabel: "Search by name, address, or intro", searchPlaceholder: "Example: night market, Starbucks, Longshan Temple",
-    activeOnly: "Show active items only", clear: "Clear", quick: "Quick Picks", quickSub: "Guest favorites",
+    activeOnly: "Show active items only", clear: "Clear", quick: "Quick Picks", quickSub: "",
     quickAll: "All", quickFood: "Local Food", quickSight: "Top Sights", quickTransport: "Transport", quickShop: "Shopping", quickFacility: "Convenience",
     apply: "Search", pending: "Filters changed. Tap Search to refresh results.",
     primary: "Primary Category", subcategory: "Subcategory", meal: "Meal Tags", countUnit: "types",
     overview: "Current Result", match: "Matched", focus: "Map Focus",
-    spotlight: "Spotlight", spotlightNote: "The center map uses embedded Google Maps",
-    collection: "Search Results", collectionHint: "Matching places appear after Search. Tap a card to move the center map to that place.",
+    spotlight: "Spotlight", spotlightNote: "",
+    collection: "Search Results", collectionHint: "",
     hotelInfoTitle: "Hotel Information", picksTitle: "Concierge Picks",
     pickLongshanName: "Longshan Temple", pickLiangxiName: "Liang Xi Hao",
     baseLabel: "Concierge Base", baseName: "Caesar Metro Taipei", baseLocation: "Location", baseNearby: "Nearby", baseVersion: "Hotel Phone", baseOpen: "Open Hotel in Google Maps",
@@ -124,13 +124,13 @@ const TEXT = {
     jumpHotel: "ホテル情報",
     note: "使い方：1. 「スポット検索」でカテゴリやキーワードを選択。2. 「検索」を押すと「検索結果」へ移動。3. 地点カードを押すと地図が切り替わり、Googleマップまたはホテル出発ナビを開けます。",
     filters: "スポット検索", searchLabel: "名称・住所・紹介文で検索", searchPlaceholder: "例：夜市、スターバックス、龍山寺",
-    activeOnly: "有効データのみ表示", clear: "クリア", quick: "クイック選択", quickSub: "よく使う項目",
+    activeOnly: "有効データのみ表示", clear: "クリア", quick: "クイック選択", quickSub: "",
     quickAll: "おすすめ全部", quickFood: "ローカルグルメ", quickSight: "必見スポット", quickTransport: "交通拠点", quickShop: "買い物", quickFacility: "便利施設",
     apply: "検索", pending: "条件を変更しました。「検索」で結果を更新します。",
     primary: "主カテゴリ", subcategory: "サブカテゴリ", meal: "食事タグ", countUnit: "種類",
     overview: "現在の結果", match: "一致件数", focus: "地図の中心",
-    spotlight: "地図フォーカス", spotlightNote: "中央地図は Google Maps 埋め込み表示です",
-    collection: "検索結果", collectionHint: "「検索」後に条件に合う地点が表示されます。カードを押すと中央地図が切り替わります。",
+    spotlight: "地図フォーカス", spotlightNote: "",
+    collection: "検索結果", collectionHint: "",
     hotelInfoTitle: "ホテル基本情報", picksTitle: "周辺おすすめ",
     pickLongshanName: "龍山寺", pickLiangxiName: "両喜号",
     baseLabel: "Concierge Base", baseName: "シーザーメトロ台北", baseLocation: "場所", baseNearby: "最寄り", baseVersion: "ホテル電話", baseOpen: "ホテルを Google Maps で開く",
@@ -461,6 +461,12 @@ function renderChipGroup(container, values, selectedSet, type) {
 
 function applyStaticText() {
   const text = TEXT[state.lang] || TEXT.zh;
+  const setTextOrHide = (element, value) => {
+    if (!element) return;
+    const content = normalizeText(value);
+    element.textContent = content;
+    element.hidden = !content;
+  };
   document.documentElement.lang = state.lang === "zh" ? "zh-Hant" : state.lang;
   document.title = text.title;
   const meta = document.querySelector('meta[name="description"]');
@@ -478,7 +484,7 @@ function applyStaticText() {
   dom.activeOnlyText.textContent = text.activeOnly;
   dom.resetFilters.textContent = text.clear;
   dom.quickTitle.textContent = text.quick;
-  dom.quickSubtitle.textContent = text.quickSub;
+  setTextOrHide(dom.quickSubtitle, text.quickSub);
   dom.quickAll.textContent = text.quickAll;
   dom.quickFood.textContent = text.quickFood;
   dom.quickSight.textContent = text.quickSight;
@@ -494,9 +500,9 @@ function applyStaticText() {
   dom.summaryMatchLabel.textContent = text.match;
   dom.summaryFocusLabel.textContent = text.focus;
   dom.spotlightTitle.textContent = text.spotlight;
-  dom.spotlightNote.textContent = text.spotlightNote;
+  setTextOrHide(dom.spotlightNote, text.spotlightNote);
   dom.collectionTitle.textContent = text.collection;
-  dom.collectionHint.textContent = text.collectionHint;
+  setTextOrHide(dom.collectionHint, text.collectionHint);
   if (dom.hotelInfoTitle) dom.hotelInfoTitle.textContent = text.hotelInfoTitle;
   if (dom.picksTitle) dom.picksTitle.textContent = text.picksTitle;
   dom.baseLabel.textContent = text.baseLabel;
