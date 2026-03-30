@@ -737,14 +737,6 @@ function getConciergeRandomRestaurantPlace() {
   return selected;
 }
 
-function getConciergeShortNote(place) {
-  const fromNotes = cleanupTourHighlight(place.notes);
-  const fromIntro = getBasicIntro(place);
-  const raw = normalizeText(fromNotes || fromIntro);
-  if (!raw) return "";
-  return raw.length > 64 ? `${raw.slice(0, 64)}…` : raw;
-}
-
 function renderConciergePicks() {
   if (!dom.picksList) return;
   const text = TEXT[state.lang] || TEXT.zh;
@@ -774,7 +766,7 @@ function renderConciergePicks() {
       if (secondaryBase) secondaryParts.push(secondaryBase);
       const secondary = uniqueValues(secondaryParts);
       const openingHours = getResolvedOpeningHours(place);
-      const shortNote = getConciergeShortNote(place);
+      const intro = getBasicIntro(place);
       const address = stripPlusCodeForDisplay(normalizeText(place.address_zh));
       const subcategoryDisplay = trCategory(normalizeSubcategory(place.subcategory), "subcategory");
       const mealBadges = uniqueValues(place.meal_tags.map(normalizeMealTag))
@@ -783,7 +775,7 @@ function renderConciergePicks() {
         .join("");
       const walk10Badge = isWithin10MinWalk(place) ? `<span class="badge">${escapeHtml(trCategory(WALK_10MIN_SUBCATEGORY, "subcategory"))}</span>` : "";
       const hoursLine = openingHours ? `<div>${escapeHtml(text.hours)}${escapeHtml(openingHours)}</div>` : "";
-      const noteLine = shortNote ? `<div>${escapeHtml(text.notes)}${escapeHtml(shortNote)}</div>` : "";
+      const noteLine = intro ? `<div>${escapeHtml(text.notes)}${escapeHtml(intro)}</div>` : "";
       const favoriteLabel = isFavorite(place.id) ? text.removeFavorite : text.addFavorite;
 
       return `
