@@ -1042,6 +1042,7 @@ html[lang="ja"] .hero-quick-nav__label {
   display: grid;
   align-content: start;
   gap: 10px;
+  min-width: 0;
   border-width: 2px;
   border-color: rgba(176, 139, 86, 0.38);
   background: linear-gradient(180deg, rgba(255, 252, 246, 0.99), rgba(248, 239, 226, 0.96));
@@ -1118,6 +1119,10 @@ html[lang="ja"] .hero-quick-nav__label {
 .place-card__actions .button {
   flex: 1 1 calc(33.333% - 8px);
   min-width: 110px;
+}
+
+.pick-card .place-card__actions {
+  align-items: stretch;
 }
 
 .empty-state {
@@ -1275,6 +1280,21 @@ html[lang="ja"] .hero-quick-nav__label {
     max-width: 280px;
   }
 
+  .picks-list {
+    grid-template-columns: 1fr;
+  }
+
+  .pick-card .place-card__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pick-card .place-card__actions .button {
+    width: 100%;
+    min-width: 0;
+    flex-basis: 100%;
+  }
+
   .intro-row {
     display: block;
   }
@@ -1282,7 +1302,7 @@ html[lang="ja"] .hero-quick-nav__label {
 
 @media (max-width: 1120px) {
   .picks-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
   }
 
   .experience,
