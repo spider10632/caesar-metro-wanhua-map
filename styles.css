@@ -176,16 +176,28 @@ a {
 
 .version-tag--global {
   position: fixed;
-  right: 14px;
+  left: 14px;
   bottom: calc(14px + env(safe-area-inset-bottom, 0px));
   z-index: 42;
-  min-height: 30px;
-  padding: 0 12px;
+  min-height: 26px;
+  padding: 0 10px;
   border-color: rgba(145, 112, 67, 0.24);
   background: rgba(255, 247, 236, 0.94);
   color: var(--accent-deep);
-  box-shadow: 0 12px 28px rgba(46, 29, 12, 0.18);
+  font-size: 0.66rem;
+  box-shadow: 0 10px 22px rgba(46, 29, 12, 0.16);
   backdrop-filter: blur(8px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition: opacity 160ms ease, transform 160ms ease, visibility 160ms ease;
+}
+
+.version-tag--global.is-visible-bottom {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 .version-tag--hotel {
@@ -439,6 +451,13 @@ a {
   margin: 0;
 }
 
+.filters-note {
+  margin: 0 0 12px;
+  color: var(--ink-soft);
+  font-size: 0.94rem;
+  line-height: 1.85;
+}
+
 .intro-row {
   margin-top: 16px;
   display: block;
@@ -454,6 +473,11 @@ a {
   border: 1px solid rgba(145, 112, 67, 0.2);
   background: linear-gradient(180deg, rgba(255, 251, 246, 0.95), rgba(249, 241, 229, 0.9));
   box-shadow: var(--shadow);
+}
+
+.panel--concierge-gifts {
+  margin-top: 22px;
+  padding: 24px;
 }
 
 .concierge-subtitle {
@@ -1391,7 +1415,7 @@ html[lang="ja"] .hero-quick-nav__label {
 
 .back-to-top {
   position: fixed;
-  right: 96px;
+  right: 22px;
   bottom: 22px;
   z-index: 30;
   display: inline-flex;
@@ -1415,7 +1439,7 @@ html[lang="ja"] .hero-quick-nav__label {
 
 .open-favorites {
   position: fixed;
-  right: 168px;
+  right: 92px;
   bottom: 22px;
   z-index: 41;
   display: inline-flex;
@@ -1603,6 +1627,7 @@ html[lang="ja"] .hero-quick-nav__label {
 
   .hero,
   .panel--concierge,
+  .panel--concierge-gifts,
   .guest-note,
   .panel--filters,
   .panel--summary,
@@ -1887,7 +1912,7 @@ html[lang="ja"] .hero-quick-nav__label {
   }
 
   .back-to-top {
-    right: 78px;
+    right: 14px;
     bottom: calc(14px + env(safe-area-inset-bottom, 0px));
     min-width: 52px;
     min-height: 52px;
@@ -1896,7 +1921,7 @@ html[lang="ja"] .hero-quick-nav__label {
   }
 
   .open-favorites {
-    right: 148px;
+    right: 86px;
     bottom: calc(14px + env(safe-area-inset-bottom, 0px));
     min-width: 108px;
     min-height: 52px;
@@ -1905,7 +1930,7 @@ html[lang="ja"] .hero-quick-nav__label {
   }
 
   .version-tag--global {
-    right: 14px;
+    left: 14px;
     bottom: calc(14px + env(safe-area-inset-bottom, 0px));
   }
 }
@@ -1917,6 +1942,7 @@ html[lang="ja"] .hero-quick-nav__label {
 
   .hero,
   .panel--concierge,
+  .panel--concierge-gifts,
   .guest-note,
   .panel--filters,
   .panel--summary,

@@ -63,8 +63,8 @@ const TEXT = {
     overview: "目前結果", match: "符合條件", focus: "地圖焦點",
     spotlight: "地圖聚焦", spotlightNote: "",
     collection: "搜尋結果", collectionHint: "",
-    conciergeTitle: "Concierge 推薦",
-    conciergeSubtitle: "提供第一次來訪與伴手禮建議，可自由收合查看。",
+    conciergeTitle: "服務中心推薦",
+    conciergeSubtitle: "提供第一次來訪與周邊精選建議，可自由收合查看。",
     conciergeFirstTitle: "第一次來",
     conciergeGiftTitle: "伴手禮推薦",
     conciergeOrderNote: "如需協助訂購，請洽禮賓部",
@@ -108,7 +108,7 @@ const TEXT = {
     spotlight: "Spotlight", spotlightNote: "",
     collection: "Search Results", collectionHint: "",
     conciergeTitle: "Concierge Recommendations",
-    conciergeSubtitle: "Practical first-visit and souvenir suggestions. Collapse any section as needed.",
+    conciergeSubtitle: "Practical first-visit and neighborhood picks. Collapse any section as needed.",
     conciergeFirstTitle: "First-time Visitor",
     conciergeGiftTitle: "Souvenir Picks",
     conciergeOrderNote: "For order assistance, please contact Concierge",
@@ -152,7 +152,7 @@ const TEXT = {
     spotlight: "地図フォーカス", spotlightNote: "",
     collection: "検索結果", collectionHint: "",
     conciergeTitle: "コンシェルジュおすすめ",
-    conciergeSubtitle: "初めての方への案内とお土産提案です。必要に応じて各セクションを開閉できます。",
+    conciergeSubtitle: "初めての方への案内と周辺おすすめです。必要に応じて各セクションを開閉できます。",
     conciergeFirstTitle: "初めての方へ",
     conciergeGiftTitle: "お土産おすすめ",
     conciergeOrderNote: "ご注文サポートが必要な場合は、コンシェルジュまでお問い合わせください。",
@@ -291,12 +291,12 @@ const state = {
   hasSearched: false,
   favoritesPanelOpen: false,
   collapsed: {
-    hotel: false,
-    picks: false,
+    hotel: true,
+    picks: true,
     filters: false,
     spotlight: true,
-    conciergeFirst: false,
-    conciergeGift: false,
+    conciergeFirst: true,
+    conciergeGift: true,
   },
   dirty: false,
   favorites: readFavorites(),
@@ -348,14 +348,14 @@ const dom = {
   conciergeFirst: document.querySelector("#concierge-first"),
   conciergeFirstBody: document.querySelector("#concierge-first-body"),
   conciergeFirstList: document.querySelector("#concierge-first-list"),
-  conciergeGift: document.querySelector("#concierge-gift"),
-  conciergeGiftBody: document.querySelector("#concierge-gift-body"),
+  conciergeGift: document.querySelector("#panel-gifts"),
+  conciergeGiftBody: document.querySelector("#panel-gifts-body"),
   conciergeGiftList: document.querySelector("#concierge-gift-list"),
   conciergeOrderNote: document.querySelector("#concierge-order-note"),
   toggleHotel: document.querySelector("#toggle-hotel"),
   panelHotelBody: document.querySelector("#panel-hotel-body"),
   togglePicks: document.querySelector("#toggle-picks"),
-  panelPicksBody: document.querySelector("#panel-picks-body"),
+  panelPicksBody: document.querySelector("#concierge-picks-body"),
   toggleFilters: document.querySelector("#toggle-filters"),
   panelFiltersBody: document.querySelector("#panel-filters-body"),
   toggleSpotlight: document.querySelector("#toggle-spotlight"),
@@ -430,7 +430,7 @@ function init() {
   initializeFilters();
   attachEvents();
   syncFavoritesPanelVisibility();
-  syncBackToTop();
+  syncFloatingControls();
   refreshWeather();
   window.setInterval(refreshWeather, 30 * 60 * 1000);
   render();
@@ -774,7 +774,7 @@ function attachEvents() {
     });
   }
 
-  window.addEventListener("scroll", syncBackToTop, { passive: true });
+  window.addEventListener("scroll", syncFloatingControls, { passive: true });
 }
 
 function bindCollapseToggle(key, button) {
@@ -851,6 +851,18 @@ function syncMealFilterVisibility() {
 function syncBackToTop() {
   if (!dom.backToTop) return;
   dom.backToTop.classList.toggle("is-visible", window.scrollY > 320);
+}
+
+function syncVersionTagVisibility() {
+  if (!dom.versionTag) return;
+  const doc = document.documentElement;
+  const nearBottom = window.scrollY + window.innerHeight >= doc.scrollHeight - 120;
+  dom.versionTag.classList.toggle("is-visible-bottom", nearBottom);
+}
+
+function syncFloatingControls() {
+  syncBackToTop();
+  syncVersionTagVisibility();
 }
 
 function syncSectionCollapseUI() {
@@ -1551,6 +1563,7 @@ function render() {
     renderListBeforeSearch();
     renderFavorites();
     updateFavoriteCount();
+    syncFloatingControls();
     return;
   }
 
@@ -1564,6 +1577,7 @@ function render() {
   renderList(filtered);
   renderFavorites();
   updateFavoriteCount();
+  syncFloatingControls();
 }
 
 function applyFilters(place) {
