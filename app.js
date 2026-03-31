@@ -294,7 +294,7 @@ const state = {
     hotel: false,
     picks: false,
     filters: false,
-    spotlight: false,
+    spotlight: true,
     conciergeFirst: false,
     conciergeGift: false,
   },

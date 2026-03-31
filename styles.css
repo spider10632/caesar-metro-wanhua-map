@@ -1731,13 +1731,22 @@ html[lang="ja"] .hero-quick-nav__label {
   .hero__eyebrow-row,
   .toggle-row,
   .collection__header,
-  .spotlight__header,
   .spotlight__title-row,
   .spotlight__actions,
   .place-card__top,
   .place-card__actions {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .spotlight__header.section-heading--collapse-row {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .spotlight__header.section-heading--collapse-row .section-heading {
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   .hero__eyebrow-row {
