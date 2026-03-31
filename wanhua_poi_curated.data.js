@@ -1127,5 +1127,28 @@
         "is_active":  true,
         "display_order":  45,
         "walk_10min_from_hotel":  true
+    },
+    {
+        "id":  "wanhua_049",
+        "map_label_name":  "萬華太和餅舖",
+        "name_zh":  "萬華太和餅舖",
+        "name_en":  "Wanhua Taihe Pastry Shop",
+        "primary_category":  "餐飲",
+        "subcategory":  "其他",
+        "business_type":  "snack",
+        "meal_tags":  [
+                          "伴手禮"
+                      ],
+        "google_maps_url":  "https://www.google.com/maps/search/?api=1\u0026query=%E8%90%AC%E8%8F%AF%E5%A4%AA%E5%92%8C%E9%A4%85%E8%88%96",
+        "address_zh":  "108台北市萬華區康定路300號",
+        "phone":  "02-2306-9629",
+        "opening_hours":  "",
+        "near_mrt":  "龍山寺站",
+        "notes":  "萬華在地老字號糕餅店，適合購買伴手禮。",
+        "source_status":  "partially_verified",
+        "source_url":  "https://www.google.com/maps/search/?api=1\u0026query=%E8%90%AC%E8%8F%AF%E5%A4%AA%E5%92%8C%E9%A4%85%E8%88%96",
+        "is_active":  true,
+        "display_order":  46,
+        "walk_10min_from_hotel":  true
     }
 ];
