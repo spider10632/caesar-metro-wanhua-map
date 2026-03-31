@@ -14,7 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+JP:wght@600;700&family=Noto+Serif+TC:wght@600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260330-3" />
+    <link rel="stylesheet" href="./styles.css?v=20260401-1" />
   </head>
   <body>
     <div class="ambient ambient--one"></div>
@@ -35,6 +35,21 @@
             <button id="jump-favorites" class="hero-jump hero-jump--button" type="button">蒐藏清單</button>
             <a id="jump-spotlight" class="hero-jump" href="#panel-spotlight">地圖聚焦</a>
           </nav>
+
+          <div class="hero-home-entry">
+            <button
+              id="add-home-btn"
+              class="hero-jump hero-jump--button hero-jump--helper"
+              type="button"
+              aria-expanded="false"
+              aria-controls="add-home-hint"
+            >
+              加入主畫面
+            </button>
+            <p id="add-home-hint" class="hero-home-hint" hidden>
+              iPhone：點右上角分享 → 加入主畫面
+            </p>
+          </div>
 
           <section id="weather-widget" class="weather-widget" aria-live="polite">
             <p id="weather-title" class="weather-widget__title">今日天氣</p>
@@ -289,8 +304,8 @@
     <button id="open-favorites" class="open-favorites" type="button" aria-label="開啟蒐藏清單">蒐藏清單</button>
     <button id="back-to-top" class="back-to-top" type="button" aria-label="回到頁面頂端">Top</button>
 
-    <script src="./google-maps-config.js?v=20260330-3"></script>
-    <script src="./wanhua_poi_curated.data.js?v=20260330-3"></script>
-    <script src="./app.js?v=20260330-3"></script>
+    <script src="./google-maps-config.js?v=20260401-1"></script>
+    <script src="./wanhua_poi_curated.data.js?v=20260401-1"></script>
+    <script src="./app.js?v=20260401-1"></script>
   </body>
 </html>

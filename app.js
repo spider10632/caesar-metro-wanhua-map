@@ -52,6 +52,8 @@ const TEXT = {
     jumpCollection: "搜尋結果",
     jumpFavorites: "蒐藏清單",
     jumpHotel: "飯店資訊",
+    addHomeButton: "加入主畫面",
+    addHomeHint: "iPhone：點右上角分享 → 加入主畫面",
     note: "使用方式：1. 在「搜尋景點」選分類或輸入關鍵字。2. 按「搜尋」後會自動跳到「搜尋結果」。3. 點任一地點卡可切換地圖，並可直接開啟 Google Maps 或從飯店出發導航。",
     filters: "搜尋景點", searchLabel: "搜尋名稱、地址或基本介紹", searchPlaceholder: "例如：夜市、星巴克、龍山寺",
     activeOnly: "只顯示啟用資料", clear: "清除條件", quick: "快速篩選", quickSub: "",
@@ -87,6 +89,8 @@ const TEXT = {
     jumpCollection: "Search Results",
     jumpFavorites: "Saved List",
     jumpHotel: "Hotel Info",
+    addHomeButton: "Add to Home Screen",
+    addHomeHint: "iPhone: tap Share at top-right → Add to Home Screen.",
     note: "How to use: 1) Choose categories or enter keywords in Find Places. 2) Tap Search to jump to Search Results. 3) Tap any place card to switch the map, then open Google Maps or start from the hotel.",
     filters: "Find Places", searchLabel: "Search by name, address, or intro", searchPlaceholder: "Example: night market, Starbucks, Longshan Temple",
     activeOnly: "Show active items only", clear: "Clear", quick: "Quick Picks", quickSub: "",
@@ -122,6 +126,8 @@ const TEXT = {
     jumpCollection: "検索結果",
     jumpFavorites: "保存リスト",
     jumpHotel: "ホテル情報",
+    addHomeButton: "ホーム画面に追加",
+    addHomeHint: "iPhone：右上の共有をタップ → ホーム画面に追加",
     note: "使い方：1. 「スポット検索」でカテゴリやキーワードを選択。2. 「検索」を押すと「検索結果」へ移動。3. 地点カードを押すと地図が切り替わり、Googleマップまたはホテル出発ナビを開けます。",
     filters: "スポット検索", searchLabel: "名称・住所・紹介文で検索", searchPlaceholder: "例：夜市、スターバックス、龍山寺",
     activeOnly: "有効データのみ表示", clear: "クリア", quick: "クイック選択", quickSub: "",
@@ -241,6 +247,8 @@ const dom = {
   jumpSpotlight: document.querySelector("#jump-spotlight"),
   jumpFavorites: document.querySelector("#jump-favorites"),
   jumpHotel: document.querySelector("#jump-hotel"),
+  addHomeBtn: document.querySelector("#add-home-btn"),
+  addHomeHint: document.querySelector("#add-home-hint"),
   langSelect: document.querySelector("#lang-select"),
   primaryFilters: document.querySelector("#primary-filters"),
   subcategoryFilters: document.querySelector("#subcategory-filters"),
@@ -477,6 +485,11 @@ function applyStaticText() {
   if (dom.jumpSpotlight) dom.jumpSpotlight.textContent = text.jumpSpotlight;
   if (dom.jumpFavorites) dom.jumpFavorites.textContent = text.jumpFavorites;
   if (dom.jumpHotel) dom.jumpHotel.textContent = text.jumpHotel;
+  if (dom.addHomeBtn) {
+    dom.addHomeBtn.textContent = text.addHomeButton;
+    dom.addHomeBtn.setAttribute("aria-label", text.addHomeButton);
+  }
+  if (dom.addHomeHint) dom.addHomeHint.textContent = text.addHomeHint;
   dom.guestNoteText.textContent = text.note;
   dom.filtersTitle.textContent = text.filters;
   dom.searchLabel.textContent = text.searchLabel;
@@ -610,6 +623,14 @@ function attachEvents() {
 
   if (dom.backToTop) {
     dom.backToTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  }
+
+  if (dom.addHomeBtn && dom.addHomeHint) {
+    dom.addHomeBtn.addEventListener("click", () => {
+      const nextOpen = dom.addHomeHint.hidden;
+      dom.addHomeHint.hidden = !nextOpen;
+      dom.addHomeBtn.setAttribute("aria-expanded", nextOpen ? "true" : "false");
+    });
   }
 
   window.addEventListener("scroll", syncBackToTop, { passive: true });

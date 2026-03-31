@@ -258,6 +258,30 @@ a {
   gap: 14px;
 }
 
+.hero-home-entry {
+  display: grid;
+  gap: 8px;
+  min-width: 220px;
+  max-width: 340px;
+  flex: 0 1 340px;
+}
+
+.hero-jump--helper {
+  justify-content: flex-start;
+  padding: 0 14px;
+}
+
+.hero-home-hint {
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 245, 230, 0.96);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
 .hero__footer-controls {
   position: relative;
   z-index: 1;
@@ -1290,6 +1314,18 @@ html[lang="ja"] .hero-quick-nav__label {
     max-width: 280px;
   }
 
+  .hero-home-entry {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .hero-jump--helper {
+    width: 100%;
+    justify-content: center;
+  }
+
   .picks-list {
     grid-template-columns: 1fr;
   }
@@ -1400,7 +1436,7 @@ html[lang="ja"] .hero-quick-nav__label {
     grid-template-columns: minmax(0, 1fr) 150px;
     grid-template-areas:
       "nav weather"
-      "lang lang";
+      "helper lang";
     padding: 0;
     border: 0;
     border-top: 0;
@@ -1424,6 +1460,23 @@ html[lang="ja"] .hero-quick-nav__label {
     margin-top: 0;
     justify-content: flex-end;
     align-self: center;
+  }
+
+  .hero-home-entry {
+    grid-area: helper;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    flex: none;
+  }
+
+  .hero-jump--helper {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero-home-hint {
+    font-size: 0.78rem;
   }
 
   .hero__footer-controls .lang-select {
