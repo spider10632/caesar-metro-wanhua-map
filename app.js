@@ -44,7 +44,7 @@ const MANUAL_SUPPRESSED_PLACE_IDS = new Set(["wanhua_046"]);
 const TEXT = {
   zh: {
     title: "凱達大飯店週邊地圖",
-    versionTag: "Version 2",
+    versionTag: "Version 3",
     desc: "以凱達大飯店為中心的萬華週邊地圖，支援分類篩選並可直接開啟 Google Maps。",
     quickReach: "快速抵達",
     jumpFilters: "搜尋景點",
@@ -63,6 +63,13 @@ const TEXT = {
     overview: "目前結果", match: "符合條件", focus: "地圖焦點",
     spotlight: "地圖聚焦", spotlightNote: "",
     collection: "搜尋結果", collectionHint: "",
+    conciergeTitle: "Concierge 推薦",
+    conciergeSubtitle: "提供第一次來訪與伴手禮建議，可自由收合查看。",
+    conciergeFirstTitle: "第一次來",
+    conciergeGiftTitle: "伴手禮推薦",
+    conciergeOrderNote: "For order assistance, please contact Concierge",
+    collapseShow: "展開",
+    collapseHide: "收合",
     hotelInfoTitle: "飯店基本資訊", picksTitle: "周邊精選",
     pickLongshanName: "龍山寺", pickLiangxiName: "兩喜號",
     baseLabel: "Concierge Base", baseName: "凱達大飯店", baseLocation: "位置", baseNearby: "鄰近", baseVersion: "飯店電話", baseOpen: "開啟飯店 Google Maps",
@@ -81,7 +88,7 @@ const TEXT = {
   },
   en: {
     title: "Caesar Metro Taipei Nearby Map",
-    versionTag: "Version 2",
+    versionTag: "Version 3",
     desc: "A Wanhua area map centered on Caesar Metro Taipei with category filters and direct Google Maps links.",
     quickReach: "Quick Access",
     jumpFilters: "Find Places",
@@ -100,6 +107,13 @@ const TEXT = {
     overview: "Current Result", match: "Matched", focus: "Map Focus",
     spotlight: "Spotlight", spotlightNote: "",
     collection: "Search Results", collectionHint: "",
+    conciergeTitle: "Concierge Recommendations",
+    conciergeSubtitle: "Practical first-visit and souvenir suggestions. Collapse any section as needed.",
+    conciergeFirstTitle: "First-time Visitor",
+    conciergeGiftTitle: "Souvenir Picks",
+    conciergeOrderNote: "For order assistance, please contact Concierge",
+    collapseShow: "Expand",
+    collapseHide: "Collapse",
     hotelInfoTitle: "Hotel Information", picksTitle: "Concierge Picks",
     pickLongshanName: "Longshan Temple", pickLiangxiName: "Liang Xi Hao",
     baseLabel: "Concierge Base", baseName: "Caesar Metro Taipei", baseLocation: "Location", baseNearby: "Nearby", baseVersion: "Hotel Phone", baseOpen: "Open Hotel in Google Maps",
@@ -118,7 +132,7 @@ const TEXT = {
   },
   ja: {
     title: "シーザーメトロ台北 周辺マップ",
-    versionTag: "Version 2",
+    versionTag: "Version 3",
     desc: "シーザーメトロ台北を中心にした萬華エリア地図。カテゴリ絞り込みとGoogleマップ連携に対応。",
     quickReach: "クイック移動",
     jumpFilters: "スポット検索",
@@ -137,6 +151,13 @@ const TEXT = {
     overview: "現在の結果", match: "一致件数", focus: "地図の中心",
     spotlight: "地図フォーカス", spotlightNote: "",
     collection: "検索結果", collectionHint: "",
+    conciergeTitle: "コンシェルジュおすすめ",
+    conciergeSubtitle: "初めての方への案内とお土産提案です。必要に応じて各セクションを開閉できます。",
+    conciergeFirstTitle: "初めての方へ",
+    conciergeGiftTitle: "お土産おすすめ",
+    conciergeOrderNote: "For order assistance, please contact Concierge",
+    collapseShow: "展開",
+    collapseHide: "折りたたむ",
     hotelInfoTitle: "ホテル基本情報", picksTitle: "周辺おすすめ",
     pickLongshanName: "龍山寺", pickLiangxiName: "両喜号",
     baseLabel: "Concierge Base", baseName: "シーザーメトロ台北", baseLocation: "場所", baseNearby: "最寄り", baseVersion: "ホテル電話", baseOpen: "ホテルを Google Maps で開く",
@@ -183,6 +204,84 @@ const places = rawData
   .filter((p) => !isSuppressedPlace(p) && !MANUAL_SUPPRESSED_PLACE_IDS.has(p.id))
   .sort((a, b) => Number(a.display_order ?? 9999) - Number(b.display_order ?? 9999));
 const CONCIERGE_FIXED_PLACE_IDS = ["wanhua_004", "wanhua_018"];
+const CONCIERGE_FIRST_TIME_PLACE_IDS = ["wanhua_004", "wanhua_009", "wanhua_012"];
+const CONCIERGE_GIFT_ITEMS = [
+  {
+    id: "gift_a01",
+    brand: "chiate",
+    logo: "ChiaTe",
+    name: {
+      zh: "佳德糕餅 鳳梨酥 12 入",
+      en: "ChiaTe Pineapple Pastry (12 pcs)",
+      ja: "佳徳パイナップルケーキ 12個入り",
+    },
+    intro: {
+      zh: "經典款禮盒，口感平衡，第一次購買伴手禮很穩妥。",
+      en: "A classic gift box with balanced flavor and broad appeal.",
+      ja: "定番の詰め合わせで、初めてのお土産選びにも安心です。",
+    },
+  },
+  {
+    id: "gift_a02",
+    brand: "chiate",
+    logo: "ChiaTe",
+    name: {
+      zh: "佳德糕餅 鳳梨酥 6 入",
+      en: "ChiaTe Pineapple Pastry (6 pcs)",
+      ja: "佳徳パイナップルケーキ 6個入り",
+    },
+    intro: {
+      zh: "小份量版本，適合先試口味或小型贈禮。",
+      en: "A smaller pack ideal for tasting or a light gift.",
+      ja: "少量パックで、試し買いにも気軽な贈り物にも向いています。",
+    },
+  },
+  {
+    id: "gift_a03",
+    brand: "sunnyhills",
+    logo: "SunnyHills",
+    name: {
+      zh: "微熱山丘 鳳梨酥 10 入",
+      en: "SunnyHills Pineapple Cake (10 pcs)",
+      ja: "サニーヒルズ パイナップルケーキ 10個入り",
+    },
+    intro: {
+      zh: "以土鳳梨風味著名，酸甜層次明顯，辨識度高。",
+      en: "Known for its native pineapple profile with brighter fruity notes.",
+      ja: "土鳳梨の風味が際立ち、甘酸っぱい層が楽しめる人気商品です。",
+    },
+  },
+  {
+    id: "gift_a05",
+    brand: "sugarspice",
+    logo: "SUGAR & SPICE",
+    name: {
+      zh: "糖村 法式牛軋糖 400G（夾鏈袋）",
+      en: "Sugar & Spice French Nougat 400g (zip bag)",
+      ja: "糖村 フレンチヌガー 400g（ジッパーバッグ）",
+    },
+    intro: {
+      zh: "大份量分享款，奶香濃郁，適合多人分裝。",
+      en: "A larger sharing size with rich milk aroma and chewy texture.",
+      ja: "大容量でシェア向き。ミルクの香りがしっかりした定番ヌガーです。",
+    },
+  },
+  {
+    id: "gift_a06",
+    brand: "sugarspice",
+    logo: "SUGAR & SPICE",
+    name: {
+      zh: "糖村 法式牛軋糖 250G（夾鏈袋）",
+      en: "Sugar & Spice French Nougat 250g (zip bag)",
+      ja: "糖村 フレンチヌガー 250g（ジッパーバッグ）",
+    },
+    intro: {
+      zh: "中份量好攜帶，適合個人收藏或少量贈送。",
+      en: "A compact size that is easy to carry and gift.",
+      ja: "持ち運びやすい中容量で、少人数向けのギフトに最適です。",
+    },
+  },
+];
 
 const state = {
   lang: readLang(),
@@ -191,6 +290,14 @@ const state = {
   selectedPlaceId: null,
   hasSearched: false,
   favoritesPanelOpen: false,
+  collapsed: {
+    hotel: false,
+    picks: false,
+    filters: false,
+    spotlight: false,
+    conciergeFirst: false,
+    conciergeGift: false,
+  },
   dirty: false,
   favorites: readFavorites(),
   conciergeRandomRestaurantId: pickConciergeRandomRestaurantId(),
@@ -234,6 +341,27 @@ const dom = {
   hotelInfoTitle: document.querySelector("#hotel-info-title"),
   picksTitle: document.querySelector("#picks-title"),
   picksList: document.querySelector("#picks-list"),
+  conciergeTitle: document.querySelector("#concierge-title"),
+  conciergeSubtitle: document.querySelector("#concierge-subtitle"),
+  conciergeFirstTitle: document.querySelector("#concierge-first-title"),
+  conciergeGiftTitle: document.querySelector("#concierge-gift-title"),
+  conciergeFirst: document.querySelector("#concierge-first"),
+  conciergeFirstBody: document.querySelector("#concierge-first-body"),
+  conciergeFirstList: document.querySelector("#concierge-first-list"),
+  conciergeGift: document.querySelector("#concierge-gift"),
+  conciergeGiftBody: document.querySelector("#concierge-gift-body"),
+  conciergeGiftList: document.querySelector("#concierge-gift-list"),
+  conciergeOrderNote: document.querySelector("#concierge-order-note"),
+  toggleHotel: document.querySelector("#toggle-hotel"),
+  panelHotelBody: document.querySelector("#panel-hotel-body"),
+  togglePicks: document.querySelector("#toggle-picks"),
+  panelPicksBody: document.querySelector("#panel-picks-body"),
+  toggleFilters: document.querySelector("#toggle-filters"),
+  panelFiltersBody: document.querySelector("#panel-filters-body"),
+  toggleSpotlight: document.querySelector("#toggle-spotlight"),
+  panelSpotlightBody: document.querySelector("#panel-spotlight-body"),
+  toggleConciergeFirst: document.querySelector("#toggle-concierge-first"),
+  toggleConciergeGift: document.querySelector("#toggle-concierge-gift"),
   baseLabel: document.querySelector("#base-label"),
   baseName: document.querySelector("#base-name"),
   baseLocationLabel: document.querySelector("#base-location-label"),
@@ -516,6 +644,11 @@ function applyStaticText() {
   setTextOrHide(dom.spotlightNote, text.spotlightNote);
   dom.collectionTitle.textContent = text.collection;
   setTextOrHide(dom.collectionHint, text.collectionHint);
+  if (dom.conciergeTitle) dom.conciergeTitle.textContent = text.conciergeTitle;
+  if (dom.conciergeSubtitle) dom.conciergeSubtitle.textContent = text.conciergeSubtitle;
+  if (dom.conciergeFirstTitle) dom.conciergeFirstTitle.textContent = text.conciergeFirstTitle;
+  if (dom.conciergeGiftTitle) dom.conciergeGiftTitle.textContent = text.conciergeGiftTitle;
+  if (dom.conciergeOrderNote) dom.conciergeOrderNote.textContent = text.conciergeOrderNote;
   if (dom.hotelInfoTitle) dom.hotelInfoTitle.textContent = text.hotelInfoTitle;
   if (dom.picksTitle) dom.picksTitle.textContent = text.picksTitle;
   dom.baseLabel.textContent = text.baseLabel;
@@ -534,6 +667,7 @@ function applyStaticText() {
   dom.backToTop.textContent = text.top;
   dom.backToTop.setAttribute("aria-label", text.backTop);
   if (dom.langSelect) dom.langSelect.value = state.lang;
+  syncSectionCollapseUI();
   updateFavoriteCount();
   renderFavoriteButtonLabel();
 }
@@ -621,6 +755,13 @@ function attachEvents() {
     });
   }
 
+  bindCollapseToggle("hotel", dom.toggleHotel);
+  bindCollapseToggle("picks", dom.togglePicks);
+  bindCollapseToggle("filters", dom.toggleFilters);
+  bindCollapseToggle("spotlight", dom.toggleSpotlight);
+  bindCollapseToggle("conciergeFirst", dom.toggleConciergeFirst);
+  bindCollapseToggle("conciergeGift", dom.toggleConciergeGift);
+
   if (dom.backToTop) {
     dom.backToTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
   }
@@ -634,6 +775,14 @@ function attachEvents() {
   }
 
   window.addEventListener("scroll", syncBackToTop, { passive: true });
+}
+
+function bindCollapseToggle(key, button) {
+  if (!button) return;
+  button.addEventListener("click", () => {
+    state.collapsed[key] = !state.collapsed[key];
+    syncSectionCollapseUI();
+  });
 }
 
 function markDirty() {
@@ -702,6 +851,27 @@ function syncMealFilterVisibility() {
 function syncBackToTop() {
   if (!dom.backToTop) return;
   dom.backToTop.classList.toggle("is-visible", window.scrollY > 320);
+}
+
+function syncSectionCollapseUI() {
+  const text = TEXT[state.lang] || TEXT.zh;
+  const renderToggle = (key, button, body) => {
+    if (!button || !body) return;
+    const collapsed = Boolean(state.collapsed[key]);
+    body.hidden = collapsed;
+    button.classList.toggle("is-collapsed", collapsed);
+    button.textContent = collapsed ? "+" : "−";
+    button.setAttribute("aria-expanded", collapsed ? "false" : "true");
+    button.setAttribute("aria-label", collapsed ? text.collapseShow : text.collapseHide);
+    button.setAttribute("title", collapsed ? text.collapseShow : text.collapseHide);
+  };
+
+  renderToggle("hotel", dom.toggleHotel, dom.panelHotelBody);
+  renderToggle("picks", dom.togglePicks, dom.panelPicksBody);
+  renderToggle("filters", dom.toggleFilters, dom.panelFiltersBody);
+  renderToggle("spotlight", dom.toggleSpotlight, dom.panelSpotlightBody);
+  renderToggle("conciergeFirst", dom.toggleConciergeFirst, dom.conciergeFirstBody);
+  renderToggle("conciergeGift", dom.toggleConciergeGift, dom.conciergeGiftBody);
 }
 
 function syncFavoritesPanelVisibility() {
@@ -861,6 +1031,86 @@ function renderConciergePicks() {
       render();
     });
   });
+}
+
+function renderConciergeSections() {
+  renderConciergeFirstTime();
+  renderConciergeGiftList();
+}
+
+function renderConciergeFirstTime() {
+  if (!dom.conciergeFirstList) return;
+  const text = TEXT[state.lang] || TEXT.zh;
+
+  const firstTimePlaces = CONCIERGE_FIRST_TIME_PLACE_IDS
+    .map((id) => places.find((place) => place.id === id))
+    .filter(Boolean)
+    .filter((place) => !isSuppressedPlace(place) && !isClosedByGoogle(place));
+
+  if (!firstTimePlaces.length) {
+    dom.conciergeFirstList.innerHTML = `<div class="empty-state">${escapeHtml(text.empty)}</div>`;
+    return;
+  }
+
+  dom.conciergeFirstList.innerHTML = firstTimePlaces
+    .map((place) => {
+      const favoriteLabel = isFavorite(place.id) ? text.removeFavorite : text.addFavorite;
+      return `
+        <article class="place-card concierge-first-card">
+          <div class="place-card__top">
+            <div>
+              <h3 class="place-card__title">${escapeHtml(getDisplayName(place))}</h3>
+              <p class="place-card__secondary">${escapeHtml(trCategory(place.primary_category, "primary"))} / ${escapeHtml(trCategory(normalizeSubcategory(place.subcategory), "subcategory"))}</p>
+            </div>
+          </div>
+          <div class="place-card__actions concierge-first-card__actions">
+            <a class="button button--slim" href="${escapeAttribute(buildSearchUrl(place))}" target="_blank" rel="noreferrer">${escapeHtml(text.favoriteOpen)}</a>
+            <a class="button button--secondary button--slim" href="${escapeAttribute(buildRouteUrl(place))}" target="_blank" rel="noreferrer">${escapeHtml(text.routeFromHotelCard)}</a>
+            <button class="button button--ghost button--slim" type="button" data-concierge-first-favorite-id="${escapeAttribute(place.id)}">${escapeHtml(favoriteLabel)}</button>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
+  dom.conciergeFirstList.querySelectorAll("[data-concierge-first-favorite-id]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      const placeId = normalizeText(button.dataset.conciergeFirstFavoriteId);
+      if (!placeId) return;
+      toggleFavorite(placeId);
+      render();
+    });
+  });
+}
+
+function renderConciergeGiftList() {
+  if (!dom.conciergeGiftList) return;
+
+  dom.conciergeGiftList.innerHTML = CONCIERGE_GIFT_ITEMS
+    .map((item) => {
+      const code = normalizeText(item.id).replace("gift_", "").toUpperCase();
+      const name = localizeConciergeText(item.name);
+      const intro = localizeConciergeText(item.intro);
+      return `
+        <article class="concierge-gift-item">
+          <div class="concierge-gift-logo concierge-gift-logo--${escapeAttribute(item.brand)}">
+            <span>${escapeHtml(item.logo)}</span>
+          </div>
+          <div class="concierge-gift-body">
+            <p class="concierge-gift-code">${escapeHtml(code)}</p>
+            <h3>${escapeHtml(name)}</h3>
+            <p>${escapeHtml(intro)}</p>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+}
+
+function localizeConciergeText(copyMap) {
+  if (!copyMap || typeof copyMap !== "object") return "";
+  return normalizeText(copyMap[state.lang]) || normalizeText(copyMap.zh) || normalizeText(copyMap.en) || normalizeText(copyMap.ja) || "";
 }
 
 function isFavorite(placeId) {
@@ -1292,6 +1542,7 @@ function buildPlaceLookupQueries(place) {
 function render() {
   const text = TEXT[state.lang] || TEXT.zh;
   renderConciergePicks();
+  renderConciergeSections();
   if (!state.hasSearched) {
     dom.resultCount.textContent = "0";
     dom.focusLabel.textContent = getDisplayName(HOTEL);
